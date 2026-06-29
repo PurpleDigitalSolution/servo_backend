@@ -12,30 +12,30 @@
 - [x] Setup branching strategy
 - [x] Protect main branch
 - [x] Configure `.gitignore`
-- [ ] Add `README.md`
+- [X] Add `README.md`
 
 ---
 
 ## Backend Setup
 
-- [ ] Initialize Express + TypeScript
-- [ ] Configure ESLint
-- [ ] Configure Prettier
-- [ ] Configure Husky
-- [ ] Configure lint-staged
-- [ ] Configure environment variables
+- [x] Initialize Express + TypeScript
+- [x] Configure ESLint
+- [x] Configure Prettier
+- [x] Configure Husky
+- [x] Configure lint-staged
+- [x] Configure environment variables
 - [ ] Configure Zod validation
-- [ ] Configure tsconfig
-- [ ] Setup folder structure
+- [x] Configure tsconfig
+- [x] Setup folder structure
 
 ---
 
 ## Database
 
-- [ ] Install PostgreSQL
-- [ ] Setup Prisma
-- [ ] Create initial migration
-- [ ] Configure Prisma Client
+- [x] Install PostgreSQL
+- [x] Setup Prisma
+- [x] Create initial migration
+- [x] Configure Prisma Client
 - [ ] Create seed script
 - [ ] Seed demo data
 
@@ -43,12 +43,12 @@
 
 ## Infrastructure
 
-- [ ] Global Error Handler
-- [ ] Response Formatter
-- [ ] Request Validation
+- [x] Global Error Handler
+- [x] Response Formatter
+- [x] Request Validation
 - [ ] Logger (Pino)
-- [ ] Helmet
-- [ ] CORS
+- [x] Helmet
+- [x] CORS
 - [ ] Rate Limiter
 - [ ] Health Check Endpoint
 
