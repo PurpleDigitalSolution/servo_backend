@@ -50,16 +50,15 @@ export class AuthController {
         client: clientSource,
       };
 
-      await SessionService.signTo(res, sessionPayload, clientSource);
+      const { accessToken } = await SessionService.signTo(
+        res,
+        sessionPayload,
+        clientSource,
+      );
+      const result = { accessToken, user: userWithoutPassword };
       res
         .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            userWithoutPassword,
-            "User logged in successfully",
-          ),
-        );
+        .json(new ApiResponse(200, result, "User logged in successfully"));
     });
   };
 

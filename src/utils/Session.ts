@@ -45,7 +45,7 @@ export class SessionService {
       email: payload.email,
       role: payload.role,
       permissions: payload.permissions,
-      client: payload.client,
+      client: client,
     };
 
     const payloadWithSessionId = { ...cleanPayload, sessionId };
@@ -112,12 +112,15 @@ export class SessionService {
       // Re-sign using cleaned up properties
       await this.signTo(res, decoded, decodedClient);
 
-      req.user = {
-        userId: decoded.userId,
-        role: decoded.role,
-        email: decoded.email,
-        permissions: decoded.permissions,
-        client: decoded.client,
+      // Rotate the existing session to prevent refresh-token replay, then issue a fresh session chain
+      await TokenService.rotateSession(decoded.userId, decoded.sessionId);
+      const { accessToken } = await this.signTo(res, decoded, decodedClient);
+      // Attach the freshly issued session payload (including the new sessionId) to the request
+      req.user = jwt.verify(
+        accessToken,
+        config.JWT_SECRET,
+      ) as SessionPayload & {
+        sessionId: string;
       };
 
       return next();

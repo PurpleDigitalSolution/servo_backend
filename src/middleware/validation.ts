@@ -30,7 +30,6 @@ export const validate = (schema: any) => {
 import validator from "validator";
 
 export const sanitizeBodyMiddleware = (
-  err: unknown,
   req: Request,
   res: Response,
   next: NextFunction,

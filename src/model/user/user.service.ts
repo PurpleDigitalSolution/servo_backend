@@ -24,17 +24,25 @@ export class UserService {
     return await UserRepository.getProfileByUserId(userId);
   }
   static async updateProfile(userId: string, dto: updateProfileDTO) {
+    const allowedKeys: (keyof updateProfileDTO)[] = [
+      "firstName",
+      "lastName",
+      "phoneNumber",
+      "dateOfBirth",
+      "address",
+    ];
     const cleanDTO = Object.fromEntries(
-      Object.entries(dto).filter(([_, value]) => {
-        if (value === undefined || value === null) return false;
+      Object.entries(dto)
+        .filter(([key]) => allowedKeys.includes(key as keyof updateProfileDTO))
+        .filter(([_, value]) => {
+          if (value === undefined || value === null) return false;
+          if (typeof value === "string") {
+            return value.trim() !== "";
+          }
 
-        if (typeof value === "string") {
-          return value.trim() !== "";
-        }
-
-        return true;
-      }),
-    );
+          return true;
+        }),
+    ) as updateProfileDTO;
 
     return await UserRepository.updateProfile(userId, cleanDTO);
   }

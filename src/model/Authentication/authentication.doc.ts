@@ -10,7 +10,7 @@ import { registry } from "../../docs/registry.js";
 registry.registerPath({
   method: "post",
 
-  path: "/auth/register",
+  path: "/auth/mobile/register",
 
   tags: ["Authentication"],
 

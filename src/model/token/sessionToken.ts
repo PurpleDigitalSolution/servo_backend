@@ -9,7 +9,7 @@ export class TokenRepository {
     });
   }
   static findSession(userId: string, sessionId: string) {
-    return prisma.sessionToken.findUnique({
+    return prisma.sessionToken.findFirst({
       where: {
         userId,
         sessionTokenId: sessionId,
@@ -17,7 +17,7 @@ export class TokenRepository {
     });
   }
   static markAsRotated(userId: string, sessionId: string) {
-    return prisma.sessionToken.update({
+    return prisma.sessionToken.updateMany({
       where: {
         userId,
         sessionTokenId: sessionId,
@@ -29,7 +29,7 @@ export class TokenRepository {
     });
   }
   static deleteSession(userId: string, sessionId: string) {
-    return prisma.sessionToken.delete({
+    return prisma.sessionToken.deleteMany({
       where: {
         userId,
         sessionTokenId: sessionId,

@@ -26,13 +26,12 @@ authenticationRouter.post(
   "/admin/login",
   validate(loginRequestSchema),
   AuthController.loginAdmin,
-
-  // general authentication routes
-  authenticationRouter.get(
-    "/authenticated",
-    protect,
-    AuthController.getAuthenticatedUser,
-  ),
-  authenticationRouter.post("/logout", protect, AuthController.logout),
 );
+// general authentication routes
+authenticationRouter.get(
+  "/authenticated",
+  protect,
+  AuthController.getAuthenticatedUser,
+);
+authenticationRouter.post("/logout", protect, AuthController.logout);
 export default authenticationRouter;

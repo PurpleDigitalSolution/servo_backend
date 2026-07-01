@@ -40,8 +40,8 @@ export const errorHandler = (
     error = new ApiError(
       error.statusCode || 500,
       error.message || "Internal Server Error",
+      error.errors || [],
       error.details || null,
-      [],
       error.stack,
     );
   }

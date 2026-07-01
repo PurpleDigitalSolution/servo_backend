@@ -91,10 +91,6 @@ export const updateProfileResponseSchema = z.object({
     .string()
     .optional()
     .openapi({ description: "User's family name", example: "Doe" }),
-  email: z.string().email().optional().openapi({
-    description: "User's email address",
-    example: "john.doe@example.com",
-  }),
   phoneNumber: z
     .string()
     .optional()
