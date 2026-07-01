@@ -12,45 +12,45 @@
 - [x] Setup branching strategy
 - [x] Protect main branch
 - [x] Configure `.gitignore`
-- [ ] Add `README.md`
+- [x] Add `README.md`
 
 ---
 
 ## Backend Setup
 
-- [ ] Initialize Express + TypeScript
-- [ ] Configure ESLint
-- [ ] Configure Prettier
-- [ ] Configure Husky
-- [ ] Configure lint-staged
-- [ ] Configure environment variables
+- [x] Initialize Express + TypeScript
+- [x] Configure ESLint
+- [x] Configure Prettier
+- [x] Configure Husky
+- [x] Configure lint-staged
+- [x] Configure environment variables
 - [ ] Configure Zod validation
-- [ ] Configure tsconfig
-- [ ] Setup folder structure
+- [x] Configure tsconfig
+- [x] Setup folder structure
 
 ---
 
 ## Database
 
-- [ ] Install PostgreSQL
-- [ ] Setup Prisma
-- [ ] Create initial migration
-- [ ] Configure Prisma Client
-- [ ] Create seed script
+- [x] Install PostgreSQL
+- [x] Setup Prisma
+- [x] Create initial migration
+- [x] Configure Prisma Client
+- [x] Create seed script
 - [ ] Seed demo data
 
 ---
 
 ## Infrastructure
 
-- [ ] Global Error Handler
-- [ ] Response Formatter
-- [ ] Request Validation
+- [x] Global Error Handler
+- [x] Response Formatter
+- [x] Request Validation
 - [ ] Logger (Pino)
-- [ ] Helmet
-- [ ] CORS
+- [x] Helmet
+- [x] CORS
 - [ ] Rate Limiter
-- [ ] Health Check Endpoint
+- [x] Health Check Endpoint
 
 ---
 
@@ -58,21 +58,21 @@
 
 ## User Authentication
 
-- [ ] Register
-- [ ] Login
-- [ ] Refresh Token
-- [ ] Logout
-- [ ] Forgot Password *(if required)*
-- [ ] Reset Password *(if required)*
+- [x] Register
+- [x] Login
+- [x] Refresh Token
+- [x] Logout
+- [ ] Forgot Password _(if required)_
+- [ ] Reset Password _(if required)_
 
 ---
 
 ## Authorization
 
-- [ ] JWT Authentication
-- [ ] Role-Based Access Control
-- [ ] Protected Routes
-- [ ] Admin Middleware
+- [x] JWT Authentication
+- [x] Role-Based Access Control
+- [x] Protected Routes
+- [x] Admin Middleware
 
 ---
 
@@ -80,18 +80,18 @@
 
 ## Backend
 
-- [ ] Get Profile
-- [ ] Update Profile
+- [x] Get Profile
+- [x] Update Profile
 - [ ] Change Password
 
 ---
 
 ## Admin
 
-- [ ] List Users
-- [ ] Search Users
-- [ ] View User Details
-- [ ] Suspend User *(optional)*
+- [x] List Users
+- [x] Search Users
+- [x] View User Details
+- [ ] Suspend User _(optional)_
 
 ---
 
@@ -231,7 +231,7 @@
 
 # API Documentation
 
-- [ ] Swagger Setup
+- [x] Swagger Setup
 - [ ] Document Authentication APIs
 - [ ] Document Station APIs
 - [ ] Document Order APIs
@@ -283,8 +283,8 @@
 
 - [ ] Production Environment
 - [ ] API Configuration
-- [ ] Generate APK/AAB *(Android)*
-- [ ] Generate IPA *(iOS, if required)*
+- [ ] Generate APK/AAB _(Android)_
+- [ ] Generate IPA _(iOS, if required)_
 
 ---
 

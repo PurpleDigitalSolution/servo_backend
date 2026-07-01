@@ -5,8 +5,6 @@ interface Config {
   PORT: number;
   DATABASE_URL: string;
   JWT_SECRET: string;
-  JWT_ACCESS_EXPIRES?: string;
-  JWT_REFRESH_EXPIRES?: string;
   LOG_LEVEL: "debug" | "info" | "warn" | "error";
   CORS_ORIGIN: string;
   SERVO_SESSION_ACCESS_TOKEN_EXPIRES?: string;
@@ -16,7 +14,11 @@ interface Config {
   CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_SECRET_KEY: string;
-  ENCRYPTION_KEY:string;
+  ENCRYPTION_KEY: string;
+  seed: {
+    adminPassword: string;
+    superAdminPassword: string;
+  };
 }
 
 export const config: Config = {
@@ -24,8 +26,6 @@ export const config: Config = {
   PORT: env.PORT,
   DATABASE_URL: env.DATABASE_URL,
   JWT_SECRET: env.JWT_SECRET,
-  JWT_ACCESS_EXPIRES: env.JWT_ACCESS_EXPIRES,
-  JWT_REFRESH_EXPIRES: env.JWT_REFRESH_EXPIRES,
   LOG_LEVEL: env.LOG_LEVEL,
   CORS_ORIGIN: env.CORS_ORIGIN,
   SERVO_SESSION_ACCESS_TOKEN_EXPIRES: env.SERVO_SESSION_ACCESS_TOKEN_EXPIRES,
@@ -35,7 +35,11 @@ export const config: Config = {
   CLOUD_NAME: env.CLOUD_NAME,
   CLOUDINARY_API_KEY: env.CLOUDINARY_API_KEY,
   CLOUDINARY_SECRET_KEY: env.CLOUDINARY_SECRET_KEY,
-  ENCRYPTION_KEY:env.ENCRYPTION_KEY,
+  ENCRYPTION_KEY: env.ENCRYPTION_KEY,
+  seed: {
+    adminPassword: env.ADMIN_PASSWORD,
+    superAdminPassword: env.SUPER_ADMIN_PASSWORD,
+  },
 };
 
 export type { Config };
