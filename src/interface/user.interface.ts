@@ -1,12 +1,34 @@
-import { UserType } from "../types/general.js";
+import { UserRole } from "../types/general.js";
 
 export interface CreateUserDTO {
   email: string;
   password: string;
-  role: UserType;
+  role: UserRole;
   firstName: string;
   lastName: string;
   phoneNumber: string;
   dateOfBirth: Date;
   address: string;
+}
+export interface userWithoutPassword {
+  id: string;
+  email: string;
+  role: string;
+  accountStatus: "ACTIVE" | "SUSPENDED" | "BANNED";
+  userProfile: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    dateOfBirth: Date;
+    address: string;
+  } | null;
+  createdAt: Date;
+}
+export interface updateProfileDTO {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  dateOfBirth?: Date;
+  address?: string;
 }

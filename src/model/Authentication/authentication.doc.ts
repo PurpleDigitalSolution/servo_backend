@@ -2,6 +2,7 @@ import {
   createUserSchema,
   loginBodySchema,
   registrationResponseSchema,
+  userLoginResponse,
 } from "../../validation/authentication.validation.js";
 import { errorSchema } from "../../validation/comm.js";
 import { registry } from "../../docs/registry.js";
@@ -52,9 +53,45 @@ registry.registerPath({
 });
 registry.registerPath({
   method: "post",
-  path: "/auth/login",
+  path: "/auth/admin/login",
   tags: ["Authentication"],
-  summary: "User login",
+  summary: "Admin login",
+  description: "Authenticates an admin user and returns a JWT token.",
+  request: {
+    body: {
+      required: true,
+      content: {
+        "application/json": {
+          schema: loginBodySchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Login successful",
+      content: {
+        "application/json": {
+          schema: userLoginResponse,
+        },
+      },
+    },
+    400: {
+      description: "Validation Error",
+
+      content: {
+        "application/json": {
+          schema: errorSchema,
+        },
+      },
+    },
+  },
+});
+registry.registerPath({
+  method: "post",
+  path: "/auth/mobile/login",
+  tags: ["Authentication"],
+  summary: "Mobile User login",
   description: "Authenticates a user and returns a JWT token.",
   request: {
     body: {
@@ -71,7 +108,7 @@ registry.registerPath({
       description: "Login successful",
       content: {
         "application/json": {
-          schema: {},
+          schema: userLoginResponse,
         },
       },
     },

@@ -32,11 +32,23 @@ export class AuthRepository {
   static async findUserByEmail(email: string) {
     return await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        accountStatus: true,
+        passwordHash: true,
+        userProfile: true,
+        createdAt: true,
+      },
     });
   }
   static async findUserById(id: string) {
     return await prisma.user.findUnique({
       where: { id },
+      include: {
+        userProfile: true,
+      },
     });
   }
   static async updateUserPassword(id: string, newPassword: string) {

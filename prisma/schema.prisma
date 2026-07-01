@@ -12,6 +12,7 @@ enum UserRole {
   DRIVER
   ADMIN
   AGENT
+  SUPER_ADMIN
 }
 
 enum AccountStatus {
@@ -27,6 +28,44 @@ enum VerificationStatus {
   EXPIRED
 }
 
+enum Permission {
+  // Users
+  USER_CREATE
+  USER_READ
+  USER_UPDATE
+  USER_DELETE
+  USER_SUSPEND
+
+  // Roles
+  ROLE_CREATE
+  ROLE_READ
+  ROLE_UPDATE
+  ROLE_DELETE
+  ROLE_ASSIGN
+
+  // Stations
+  STATION_CREATE
+  STATION_READ
+  STATION_UPDATE
+  STATION_DELETE
+
+  // Orders
+  ORDER_READ
+  ORDER_UPDATE
+  ORDER_CANCEL
+  ORDER_APPROVE
+
+  // Payments
+  PAYMENT_READ
+  PAYMENT_VERIFY
+  PAYMENT_REFUND
+
+  // Dashboard
+  DASHBOARD_READ
+
+  // Settings
+  SETTINGS_UPDATE
+}
 model User {
   id                 String             @id @default(uuid())
   email              String             @unique
@@ -37,6 +76,7 @@ model User {
   verificationStatus VerificationStatus @default(PENDING)
 
   userProfile        UserProfile?
+  sessionTokens      SessionToken[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
@@ -57,3 +97,17 @@ model UserProfile {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Added Cascade delete
 
 }
+model SessionToken {
+  id             String    @id @default(uuid())
+  sessionTokenId String    @unique
+  userId         String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  usedAt         DateTime?
+  revoked        Boolean   @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+

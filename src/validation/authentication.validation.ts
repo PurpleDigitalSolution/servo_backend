@@ -1,93 +1,126 @@
 import { z } from "zod";
 import { registry } from "../docs/registry.js";
 
-export const createUserBodySchema = z.object({
-  email: z.email({ message: "Invalid email address" }).openapi({
+// ==========================================
+// 1. REUSABLE ATOMIC SCHEMAS (DRY Principle)
+// ==========================================
+const EmailSchema = z
+  .string()
+  .email({ message: "Invalid email address" })
+  .openapi({
     type: "string",
     format: "email",
-    description: "User's role, either 'admin' or 'user'",
-  }),
-  password: z
+    description: "User's unique email address",
+    example: "developer@example.com",
+  });
+
+const PasswordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters long" })
+  .openapi({
+    type: "string",
+    format: "password",
+    description: "User's account password (minimum 8 characters)",
+  });
+
+const RoleSchema = z
+  .enum(["ADMIN", "USER"], {
+    message: "Role must be either 'ADMIN' or 'USER'",
+  })
+  .openapi({
+    type: "string",
+    description: "User access control role",
+    example: "USER",
+  });
+
+const DateOfBirthSchema = z
+  .string()
+  .refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date of birth",
+  })
+  .openapi({
+    type: "string",
+    format: "date",
+    description: "Date of birth in YYYY-MM-DD format",
+    example: "1995-12-04",
+  });
+
+// ==========================================
+// 2. REQUEST BODY SCHEMAS
+// ==========================================
+export const createUserBodySchema = z.object({
+  email: EmailSchema,
+  password: PasswordSchema,
+  role: RoleSchema,
+  firstName: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .openapi({
-      type: "string",
-      format: "password",
-      description: "User's password, must be at least 8 characters long",
-    }),
-  role: z
-    .enum(["admin", "user"], {
-      message: "Role must be either 'admin' or 'user'",
-    })
-    .openapi({
-      type: "string",
-      description: "User's role, either 'admin' or 'user'",
-    }),
-  firstName: z.string().min(1, { message: "First name is required" }).openapi({
-    type: "string",
-    description: "User's first name",
-  }),
-  lastName: z.string().min(1, { message: "Last name is required" }).openapi({
-    type: "string",
-    description: "User's last name",
-  }),
+    .min(1, { message: "First name is required" })
+    .openapi({ description: "User's given first name" }),
+  lastName: z
+    .string()
+    .min(1, { message: "Last name is required" })
+    .openapi({ description: "User's family name" }),
   phoneNumber: z
     .string()
     .min(1, { message: "Phone number is required" })
-    .openapi({
-      type: "string",
-      description: "User's phone number",
-    }),
-  dateOfBirth: z
+    .openapi({ description: "Contact phone number" }),
+  dateOfBirth: DateOfBirthSchema,
+  address: z
     .string()
-    .refine((date) => !isNaN(Date.parse(date)), {
-      message: "Invalid date of birth",
-    })
-    .openapi({
-      type: "string",
-      format: "date",
-      description: "Date of birth in YYYY-MM-DD format",
-    }),
-  address: z.string().min(1, { message: "Address is required" }).openapi({
-    type: "string",
-    description: "User's address",
-  }),
+    .min(1, { message: "Address is required" })
+    .openapi({ description: "Physical residential address" }),
 });
 
 export const loginBodySchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }).openapi({
+  email: EmailSchema,
+  password: PasswordSchema,
+});
+
+export const createUserSchema = z.object({ body: createUserBodySchema });
+export const loginRequestSchema = z.object({ body: loginBodySchema });
+
+// ==========================================
+// 3. RESPONSE SCHEMAS
+// ==========================================
+export const registrationResponseSchema = createUserBodySchema.omit({
+  password: true,
+});
+
+export const userLoginResponse = z.object({
+  token: z.string().openapi({
     type: "string",
-    format: "email",
-    description: "User's email address",
+    description: "JWT authorization token for authenticated requests",
   }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
+  userData: z
+    .object({
+      id: z
+        .string()
+        .uuid()
+        .openapi({ description: "Unique database identifier" }),
+      email: EmailSchema,
+      role: RoleSchema,
+      accountStatus: z
+        .enum(["ACTIVE", "INACTIVE"])
+        .openapi({ description: "Current account status flag" }),
+      userProfile: createUserBodySchema.omit({
+        email: true,
+        password: true,
+        role: true,
+      }),
+      createdAt: z
+        .string()
+        .datetime()
+        .openapi({ description: "ISO timestamp of account creation" }),
+    })
     .openapi({
-      type: "string",
-      format: "password",
-      description: "User's password, must be at least 8 characters long",
+      description: "User object profile payload",
     }),
 });
 
-export const loginRequestSchema = z.object({
-  body: loginBodySchema,
-});
-export const createUserSchema = z.object({
-  body: createUserBodySchema,
-});
-
-export const registrationResponseSchema = z.object({
-  email: z.string().email(),
-  role: z.enum(["admin", "user"]),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  phoneNumber: z.string().min(1),
-  dateOfBirth: z.string().refine((date) => !isNaN(Date.parse(date))),
-  address: z.string().min(1),
-});
-
+// ==========================================
+// 4. REGISTRY REGISTER-COMPONENTS
+// ==========================================
 registry.register("CreateUserRequest", createUserBodySchema);
 registry.register("RegistrationResponse", registrationResponseSchema);
-
 registry.register("LoginRequest", loginBodySchema);
+registry.register("LoginResponse", userLoginResponse);

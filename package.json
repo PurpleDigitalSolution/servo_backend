@@ -11,7 +11,11 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "dev": "tsx watch src/index.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint . --ext .ts,.js",
+    "seed": "tsx src/seeds/index.ts"
   },
   "keywords": [],
   "author": "",

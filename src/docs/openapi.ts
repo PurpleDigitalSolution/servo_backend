@@ -1,13 +1,14 @@
 import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { registry } from "./registry.js";
 import "../model/Authentication/authentication.doc.js";
+import "../model/user/user.doc.js";
 const generator = new OpenApiGeneratorV3(registry.definitions);
 
 export const openApiDocument = generator.generateDocument({
   openapi: "3.0.3",
 
   info: {
-    title: "School Management API",
+    title: "Servo API",
     version: "1.0.0",
     description: "School Management System REST API",
   },

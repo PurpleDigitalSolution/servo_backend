@@ -27,17 +27,17 @@ export type AggregateUser = {
 };
 
 export type UserAvgAggregateOutputType = {
-  balance: number | null;
+  balance: runtime.Decimal | null;
 };
 
 export type UserSumAggregateOutputType = {
-  balance: number | null;
+  balance: runtime.Decimal | null;
 };
 
 export type UserMinAggregateOutputType = {
   id: string | null;
   email: string | null;
-  balance: number | null;
+  balance: runtime.Decimal | null;
   passwordHash: string | null;
   role: $Enums.UserRole | null;
   accountStatus: $Enums.AccountStatus | null;
@@ -49,7 +49,7 @@ export type UserMinAggregateOutputType = {
 export type UserMaxAggregateOutputType = {
   id: string | null;
   email: string | null;
-  balance: number | null;
+  balance: runtime.Decimal | null;
   passwordHash: string | null;
   role: $Enums.UserRole | null;
   accountStatus: $Enums.AccountStatus | null;
@@ -211,7 +211,7 @@ export type UserGroupByArgs<
 export type UserGroupByOutputType = {
   id: string;
   email: string;
-  balance: number;
+  balance: runtime.Decimal;
   passwordHash: string;
   role: $Enums.UserRole;
   accountStatus: $Enums.AccountStatus;
@@ -244,7 +244,12 @@ export type UserWhereInput = {
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
   id?: Prisma.StringFilter<"User"> | string;
   email?: Prisma.StringFilter<"User"> | string;
-  balance?: Prisma.FloatFilter<"User"> | number;
+  balance?:
+    | Prisma.DecimalFilter<"User">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFilter<"User"> | string;
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole;
   accountStatus?: Prisma.EnumAccountStatusFilter<"User"> | $Enums.AccountStatus;
@@ -252,10 +257,11 @@ export type UserWhereInput = {
     Prisma.EnumVerificationStatusFilter<"User"> | $Enums.VerificationStatus;
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
-  UserProfile?: Prisma.XOR<
+  userProfile?: Prisma.XOR<
     Prisma.UserProfileNullableScalarRelationFilter,
     Prisma.UserProfileWhereInput
   > | null;
+  sessionTokens?: Prisma.SessionTokenListRelationFilter;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -268,7 +274,8 @@ export type UserOrderByWithRelationInput = {
   verificationStatus?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  UserProfile?: Prisma.UserProfileOrderByWithRelationInput;
+  userProfile?: Prisma.UserProfileOrderByWithRelationInput;
+  sessionTokens?: Prisma.SessionTokenOrderByRelationAggregateInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -278,7 +285,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
     OR?: Prisma.UserWhereInput[];
     NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
-    balance?: Prisma.FloatFilter<"User"> | number;
+    balance?:
+      | Prisma.DecimalFilter<"User">
+      | runtime.Decimal
+      | runtime.DecimalJsLike
+      | number
+      | string;
     passwordHash?: Prisma.StringFilter<"User"> | string;
     role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole;
     accountStatus?:
@@ -287,10 +299,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
       Prisma.EnumVerificationStatusFilter<"User"> | $Enums.VerificationStatus;
     createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
-    UserProfile?: Prisma.XOR<
+    userProfile?: Prisma.XOR<
       Prisma.UserProfileNullableScalarRelationFilter,
       Prisma.UserProfileWhereInput
     > | null;
+    sessionTokens?: Prisma.SessionTokenListRelationFilter;
   },
   "id" | "email"
 >;
@@ -322,7 +335,12 @@ export type UserScalarWhereWithAggregatesInput = {
     | Prisma.UserScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<"User"> | string;
   email?: Prisma.StringWithAggregatesFilter<"User"> | string;
-  balance?: Prisma.FloatWithAggregatesFilter<"User"> | number;
+  balance?:
+    | Prisma.DecimalWithAggregatesFilter<"User">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string;
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole;
   accountStatus?:
@@ -337,33 +355,40 @@ export type UserScalarWhereWithAggregatesInput = {
 export type UserCreateInput = {
   id?: string;
   email: string;
-  balance?: number;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  UserProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateInput = {
   id?: string;
   email: string;
-  balance?: number;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  UserProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   accountStatus?:
@@ -373,13 +398,19 @@ export type UserUpdateInput = {
     | $Enums.VerificationStatus;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  UserProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   accountStatus?:
@@ -389,13 +420,14 @@ export type UserUncheckedUpdateInput = {
     | $Enums.VerificationStatus;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  UserProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateManyInput = {
   id?: string;
   email: string;
-  balance?: number;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
@@ -407,7 +439,12 @@ export type UserCreateManyInput = {
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   accountStatus?:
@@ -422,7 +459,12 @@ export type UserUpdateManyMutationInput = {
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   accountStatus?:
@@ -487,12 +529,12 @@ export type StringFieldUpdateOperationsInput = {
   set?: string;
 };
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number;
-  increment?: number;
-  decrement?: number;
-  multiply?: number;
-  divide?: number;
+export type DecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string;
 };
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
@@ -537,28 +579,56 @@ export type UserUpdateOneRequiredWithoutUserProfileNestedInput = {
   >;
 };
 
+export type UserCreateNestedOneWithoutSessionTokensInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSessionTokensInput,
+    Prisma.UserUncheckedCreateWithoutSessionTokensInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSessionTokensInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserUpdateOneRequiredWithoutSessionTokensNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSessionTokensInput,
+    Prisma.UserUncheckedCreateWithoutSessionTokensInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSessionTokensInput;
+  upsert?: Prisma.UserUpsertWithoutSessionTokensInput;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutSessionTokensInput,
+      Prisma.UserUpdateWithoutSessionTokensInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutSessionTokensInput
+  >;
+};
+
 export type UserCreateWithoutUserProfileInput = {
   id?: string;
   email: string;
-  balance?: number;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutUserProfileInput = {
   id?: string;
   email: string;
-  balance?: number;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutUserProfileInput = {
@@ -592,7 +662,12 @@ export type UserUpdateToOneWithWhereWithoutUserProfileInput = {
 export type UserUpdateWithoutUserProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   accountStatus?:
@@ -602,12 +677,18 @@ export type UserUpdateWithoutUserProfileInput = {
     | $Enums.VerificationStatus;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutUserProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   accountStatus?:
@@ -617,6 +698,141 @@ export type UserUncheckedUpdateWithoutUserProfileInput = {
     | $Enums.VerificationStatus;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+};
+
+export type UserCreateWithoutSessionTokensInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+};
+
+export type UserUncheckedCreateWithoutSessionTokensInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+};
+
+export type UserCreateOrConnectWithoutSessionTokensInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSessionTokensInput,
+    Prisma.UserUncheckedCreateWithoutSessionTokensInput
+  >;
+};
+
+export type UserUpsertWithoutSessionTokensInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutSessionTokensInput,
+    Prisma.UserUncheckedUpdateWithoutSessionTokensInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSessionTokensInput,
+    Prisma.UserUncheckedCreateWithoutSessionTokensInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutSessionTokensInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutSessionTokensInput,
+    Prisma.UserUncheckedUpdateWithoutSessionTokensInput
+  >;
+};
+
+export type UserUpdateWithoutSessionTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutSessionTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+};
+
+/**
+ * Count Type UserCountOutputType
+ */
+
+export type UserCountOutputType = {
+  sessionTokens: number;
+};
+
+export type UserCountOutputTypeSelect<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  sessionTokens?: boolean | UserCountOutputTypeCountSessionTokensArgs;
+};
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeDefaultArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the UserCountOutputType
+   */
+  select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null;
+};
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSessionTokensArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.SessionTokenWhereInput;
 };
 
 export type UserSelect<
@@ -633,7 +849,9 @@ export type UserSelect<
     verificationStatus?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    UserProfile?: boolean | Prisma.User$UserProfileArgs<ExtArgs>;
+    userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
+    sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
+    _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
 >;
@@ -705,7 +923,9 @@ export type UserInclude<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  UserProfile?: boolean | Prisma.User$UserProfileArgs<ExtArgs>;
+  userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
+  sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
+  _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
@@ -722,13 +942,14 @@ export type $UserPayload<
 > = {
   name: "User";
   objects: {
-    UserProfile: Prisma.$UserProfilePayload<ExtArgs> | null;
+    userProfile: Prisma.$UserProfilePayload<ExtArgs> | null;
+    sessionTokens: Prisma.$SessionTokenPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
       email: string;
-      balance: number;
+      balance: runtime.Decimal;
       passwordHash: string;
       role: $Enums.UserRole;
       accountStatus: $Enums.AccountStatus;
@@ -1285,8 +1506,8 @@ export interface Prisma__UserClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
-  UserProfile<T extends Prisma.User$UserProfileArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.User$UserProfileArgs<ExtArgs>>,
+  userProfile<T extends Prisma.User$userProfileArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$userProfileArgs<ExtArgs>>,
   ): Prisma.Prisma__UserProfileClient<
     runtime.Types.Result.GetResult<
       Prisma.$UserProfilePayload<ExtArgs>,
@@ -1297,6 +1518,17 @@ export interface Prisma__UserClient<
     null,
     ExtArgs,
     GlobalOmitOptions
+  >;
+  sessionTokens<T extends Prisma.User$sessionTokensArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$sessionTokensArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$SessionTokenPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
   >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1336,7 +1568,7 @@ export interface Prisma__UserClient<
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", "String">;
   readonly email: Prisma.FieldRef<"User", "String">;
-  readonly balance: Prisma.FieldRef<"User", "Float">;
+  readonly balance: Prisma.FieldRef<"User", "Decimal">;
   readonly passwordHash: Prisma.FieldRef<"User", "String">;
   readonly role: Prisma.FieldRef<"User", "UserRole">;
   readonly accountStatus: Prisma.FieldRef<"User", "AccountStatus">;
@@ -1786,9 +2018,9 @@ export type UserDeleteManyArgs<
 };
 
 /**
- * User.UserProfile
+ * User.userProfile
  */
-export type User$UserProfileArgs<
+export type User$userProfileArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
@@ -1805,6 +2037,36 @@ export type User$UserProfileArgs<
    */
   include?: Prisma.UserProfileInclude<ExtArgs> | null;
   where?: Prisma.UserProfileWhereInput;
+};
+
+/**
+ * User.sessionTokens
+ */
+export type User$sessionTokensArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the SessionToken
+   */
+  select?: Prisma.SessionTokenSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the SessionToken
+   */
+  omit?: Prisma.SessionTokenOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SessionTokenInclude<ExtArgs> | null;
+  where?: Prisma.SessionTokenWhereInput;
+  orderBy?:
+    | Prisma.SessionTokenOrderByWithRelationInput
+    | Prisma.SessionTokenOrderByWithRelationInput[];
+  cursor?: Prisma.SessionTokenWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    Prisma.SessionTokenScalarFieldEnum | Prisma.SessionTokenScalarFieldEnum[];
 };
 
 /**

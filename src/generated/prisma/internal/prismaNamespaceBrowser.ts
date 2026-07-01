@@ -56,6 +56,7 @@ export const AnyNull = runtime.AnyNull;
 export const ModelName = {
   User: "User",
   UserProfile: "UserProfile",
+  SessionToken: "SessionToken",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -104,6 +105,19 @@ export const UserProfileScalarFieldEnum = {
 export type UserProfileScalarFieldEnum =
   (typeof UserProfileScalarFieldEnum)[keyof typeof UserProfileScalarFieldEnum];
 
+export const SessionTokenScalarFieldEnum = {
+  id: "id",
+  sessionTokenId: "sessionTokenId",
+  userId: "userId",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+  usedAt: "usedAt",
+  revoked: "revoked",
+} as const;
+
+export type SessionTokenScalarFieldEnum =
+  (typeof SessionTokenScalarFieldEnum)[keyof typeof SessionTokenScalarFieldEnum];
+
 export const SortOrder = {
   asc: "asc",
   desc: "desc",
@@ -117,3 +131,10 @@ export const QueryMode = {
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+export const NullsOrder = {
+  first: "first",
+  last: "last",
+} as const;
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];

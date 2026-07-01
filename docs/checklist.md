@@ -12,7 +12,7 @@
 - [x] Setup branching strategy
 - [x] Protect main branch
 - [x] Configure `.gitignore`
-- [X] Add `README.md`
+- [x] Add `README.md`
 
 ---
 
@@ -36,7 +36,7 @@
 - [x] Setup Prisma
 - [x] Create initial migration
 - [x] Configure Prisma Client
-- [ ] Create seed script
+- [x] Create seed script
 - [ ] Seed demo data
 
 ---
@@ -50,7 +50,7 @@
 - [x] Helmet
 - [x] CORS
 - [ ] Rate Limiter
-- [ ] Health Check Endpoint
+- [x] Health Check Endpoint
 
 ---
 
@@ -58,21 +58,21 @@
 
 ## User Authentication
 
-- [ ] Register
-- [ ] Login
-- [ ] Refresh Token
-- [ ] Logout
-- [ ] Forgot Password *(if required)*
-- [ ] Reset Password *(if required)*
+- [x] Register
+- [x] Login
+- [x] Refresh Token
+- [x] Logout
+- [ ] Forgot Password _(if required)_
+- [ ] Reset Password _(if required)_
 
 ---
 
 ## Authorization
 
-- [ ] JWT Authentication
-- [ ] Role-Based Access Control
-- [ ] Protected Routes
-- [ ] Admin Middleware
+- [x] JWT Authentication
+- [x] Role-Based Access Control
+- [x] Protected Routes
+- [x] Admin Middleware
 
 ---
 
@@ -80,18 +80,18 @@
 
 ## Backend
 
-- [ ] Get Profile
-- [ ] Update Profile
+- [x] Get Profile
+- [x] Update Profile
 - [ ] Change Password
 
 ---
 
 ## Admin
 
-- [ ] List Users
-- [ ] Search Users
-- [ ] View User Details
-- [ ] Suspend User *(optional)*
+- [x] List Users
+- [x] Search Users
+- [x] View User Details
+- [ ] Suspend User _(optional)_
 
 ---
 
@@ -231,7 +231,7 @@
 
 # API Documentation
 
-- [ ] Swagger Setup
+- [x] Swagger Setup
 - [ ] Document Authentication APIs
 - [ ] Document Station APIs
 - [ ] Document Order APIs
@@ -283,8 +283,8 @@
 
 - [ ] Production Environment
 - [ ] API Configuration
-- [ ] Generate APK/AAB *(Android)*
-- [ ] Generate IPA *(iOS, if required)*
+- [ ] Generate APK/AAB _(Android)_
+- [ ] Generate IPA _(iOS, if required)_
 
 ---
 

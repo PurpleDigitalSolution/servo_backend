@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export class ApiError extends Error {
   public statusCode: number;
@@ -28,7 +28,12 @@ export class ApiError extends Error {
   }
 }
 
-export const errorHandler = (err: any, req: Request, res: Response) => {
+export const errorHandler = (
+  err: any,
+  req: Request,
+  res: Response, // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: NextFunction,
+) => {
   let error = err;
 
   if (!(error instanceof ApiError)) {
