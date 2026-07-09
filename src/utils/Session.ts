@@ -10,6 +10,7 @@ import { TokenRepository } from "../model/token/sessionToken.js";
 import { TokenService } from "../model/token/token.service.js";
 import { ApiError } from "../utils/errorHandler.js";
 import { ClientType, isClientAllowed } from "./getClient.js";
+import { getSessionToken } from "./getToken.js";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -89,7 +90,9 @@ export class SessionService {
     next: NextFunction,
     client?: ClientType,
   ): Promise<void> {
-    const refreshToken = req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME];
+    const refreshToken =
+      req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME] ||
+      getSessionToken(req);
     if (!refreshToken) {
       return next(new ApiError(401, "Unauthorized: Session cookie missing"));
     }
@@ -138,7 +141,9 @@ export class SessionService {
     res: Response,
     next: NextFunction,
   ): Promise<void> {
-    const accessToken = req.cookies[config.SERVO_SESSION_ACCESS_TOKEN_NAME];
+    const accessToken =
+      req.cookies[config.SERVO_SESSION_ACCESS_TOKEN_NAME] ||
+      getSessionToken(req);
     const refreshToken = req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME];
 
     if (!accessToken && !refreshToken) {
@@ -178,6 +183,39 @@ export class SessionService {
           401,
           "Unauthorized: Invalid or expired token access credentials.",
         ),
+      );
+    }
+  }
+  static async refreshSession(
+    req: Request,
+    res: Response,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const refreshToken =
+      req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME] ||
+      getSessionToken(req);
+
+    if (!refreshToken) {
+      throw new ApiError(401, "Unauthorized: Missing refresh token");
+    }
+    try {
+      const decoded = jwt.verify(
+        refreshToken,
+        config.JWT_SECRET,
+      ) as SessionPayload & { sessionId: string };
+      const isActive = await TokenService.isActiveToken(
+        decoded.userId,
+        decoded.sessionId,
+      );
+      if (!isActive) {
+        await this.clearFrom(res, decoded.userId, decoded.sessionId);
+        throw new ApiError(403, "Session invalid or revoked.");
+      }
+      const decodedClient = decoded.client;
+      return this.signTo(res, decoded, decodedClient);
+    } catch {
+      throw new ApiError(
+        401,
+        "Unauthorized: Invalid or expired refresh token.",
       );
     }
   }

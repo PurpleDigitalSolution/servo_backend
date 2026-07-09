@@ -72,7 +72,19 @@ export class AuthController {
   static loginMobile = AuthController.handleLoginPipeline("MOBILE");
 
   static loginAdmin = AuthController.handleLoginPipeline("ADMIN");
-
+  static refreshSession = asyncHandler(async (req: Request, res: Response) => {
+    const { accessToken, refreshToken } = await SessionService.refreshSession(
+      req,
+      res,
+    );
+    res.json(
+      new ApiResponse(
+        200,
+        { accessToken, refreshToken },
+        "Session refreshed successfully",
+      ),
+    );
+  });
   static logout = asyncHandler(async (req: Request, res: Response) => {
     await AuthenticationService.logout(res, req);
     res

@@ -56,6 +56,7 @@ export const AnyNull = runtime.AnyNull;
 export const ModelName = {
   User: "User",
   UserProfile: "UserProfile",
+  Station: "Station",
   SessionToken: "SessionToken",
 } as const;
 
@@ -105,6 +106,28 @@ export const UserProfileScalarFieldEnum = {
 export type UserProfileScalarFieldEnum =
   (typeof UserProfileScalarFieldEnum)[keyof typeof UserProfileScalarFieldEnum];
 
+export const StationScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  addressState: "addressState",
+  addressStreet: "addressStreet",
+  addressCity: "addressCity",
+  addressCountry: "addressCountry",
+  isAvailable: "isAvailable",
+  latitude: "latitude",
+  longitude: "longitude",
+  openTime: "openTime",
+  closeTime: "closeTime",
+  is24h: "is24h",
+  fuelTypes: "fuelTypes",
+  prices: "prices",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type StationScalarFieldEnum =
+  (typeof StationScalarFieldEnum)[keyof typeof StationScalarFieldEnum];
+
 export const SessionTokenScalarFieldEnum = {
   id: "id",
   sessionTokenId: "sessionTokenId",
@@ -125,12 +148,28 @@ export const SortOrder = {
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull,
+} as const;
+
+export type JsonNullValueInput =
+  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
+
 export const QueryMode = {
   default: "default",
   insensitive: "insensitive",
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull,
+} as const;
+
+export type JsonNullValueFilter =
+  (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
 
 export const NullsOrder = {
   first: "first",

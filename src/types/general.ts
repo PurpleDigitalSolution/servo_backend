@@ -5,3 +5,4 @@ export type AccountStatus = "ACTIVE" | "SUSPENDED" | "BANNED";
 
 export type VerificationStatus =
   "PENDING" | "VERIFIED" | "REJECTED" | "EXPIRED";
+export type FuelType = "PETROL" | "DIESEL" | "COOKING_GAS";
