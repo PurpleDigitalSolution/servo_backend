@@ -2,6 +2,7 @@ import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { registry } from "./registry.js";
 import "../model/Authentication/authentication.doc.js";
 import "../model/user/user.doc.js";
+import "../model/station/station.doc.js";
 const generator = new OpenApiGeneratorV3(registry.definitions);
 
 export const openApiDocument = generator.generateDocument({
@@ -24,6 +25,14 @@ export const openApiDocument = generator.generateDocument({
     {
       name: "Authentication",
       description: "Authentication endpoints",
+    },
+    {
+      name: "User Management",
+      description: "Endpoints for managing user accounts and profiles",
+    },
+    {
+      name: "Station Management",
+      description: "Endpoints for managing gas stations",
     },
   ],
 });

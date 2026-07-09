@@ -413,6 +413,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never
 export const ModelName = {
   User: "User",
   UserProfile: "UserProfile",
+  Station: "Station",
   SessionToken: "SessionToken",
 } as const;
 
@@ -435,7 +436,7 @@ export type TypeMap<
     omit: GlobalOmitOptions;
   };
   meta: {
-    modelProps: "user" | "userProfile" | "sessionToken";
+    modelProps: "user" | "userProfile" | "station" | "sessionToken";
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -591,6 +592,82 @@ export type TypeMap<
         };
       };
     };
+    Station: {
+      payload: Prisma.$StationPayload<ExtArgs>;
+      fields: Prisma.StationFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.StationFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.StationFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>;
+        };
+        findFirst: {
+          args: Prisma.StationFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.StationFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>;
+        };
+        findMany: {
+          args: Prisma.StationFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>[];
+        };
+        create: {
+          args: Prisma.StationCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>;
+        };
+        createMany: {
+          args: Prisma.StationCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.StationCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>[];
+        };
+        delete: {
+          args: Prisma.StationDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>;
+        };
+        update: {
+          args: Prisma.StationUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>;
+        };
+        deleteMany: {
+          args: Prisma.StationDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.StationUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.StationUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>[];
+        };
+        upsert: {
+          args: Prisma.StationUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StationPayload>;
+        };
+        aggregate: {
+          args: Prisma.StationAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStation>;
+        };
+        groupBy: {
+          args: Prisma.StationGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.StationGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.StationCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.StationCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
     SessionToken: {
       payload: Prisma.$SessionTokenPayload<ExtArgs>;
       fields: Prisma.SessionTokenFieldRefs;
@@ -736,6 +813,28 @@ export const UserProfileScalarFieldEnum = {
 export type UserProfileScalarFieldEnum =
   (typeof UserProfileScalarFieldEnum)[keyof typeof UserProfileScalarFieldEnum];
 
+export const StationScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  addressState: "addressState",
+  addressStreet: "addressStreet",
+  addressCity: "addressCity",
+  addressCountry: "addressCountry",
+  isAvailable: "isAvailable",
+  latitude: "latitude",
+  longitude: "longitude",
+  openTime: "openTime",
+  closeTime: "closeTime",
+  is24h: "is24h",
+  fuelTypes: "fuelTypes",
+  prices: "prices",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type StationScalarFieldEnum =
+  (typeof StationScalarFieldEnum)[keyof typeof StationScalarFieldEnum];
+
 export const SessionTokenScalarFieldEnum = {
   id: "id",
   sessionTokenId: "sessionTokenId",
@@ -756,12 +855,28 @@ export const SortOrder = {
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull,
+} as const;
+
+export type JsonNullValueInput =
+  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
+
 export const QueryMode = {
   default: "default",
   insensitive: "insensitive",
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull,
+} as const;
+
+export type JsonNullValueFilter =
+  (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
 
 export const NullsOrder = {
   first: "first",
@@ -870,6 +985,38 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   "Boolean"
+>;
+
+/**
+ * Reference to a field of type 'FuelType[]'
+ */
+export type ListEnumFuelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "FuelType[]"
+>;
+
+/**
+ * Reference to a field of type 'FuelType'
+ */
+export type EnumFuelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "FuelType"
+>;
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "Json"
+>;
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "QueryMode"
 >;
 
 /**
@@ -1008,6 +1155,7 @@ export type PrismaClientOptions = (
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit;
   userProfile?: Prisma.UserProfileOmit;
+  station?: Prisma.StationOmit;
   sessionToken?: Prisma.SessionTokenOmit;
 };
 

@@ -88,12 +88,12 @@ registry.registerPath({
     "Retrieves the public and administrative profile information for a specific user identity.",
 
   request: {
-    query: userIdParamSchema, // ✅ Verified parameter mapping object
+    query: userIdParamSchema,
   },
 
   responses: {
     200: {
-      description: "User profile information successfully retrieved.", // ✅ Fixed semantic description
+      description: "User profile information successfully retrieved.",
       content: {
         "application/json": {
           schema: updateProfileResponseSchema,

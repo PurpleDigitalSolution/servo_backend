@@ -63,3 +63,11 @@ export const Permission = {
 } as const;
 
 export type Permission = (typeof Permission)[keyof typeof Permission];
+
+export const FuelType = {
+  PETROL: "PETROL",
+  DIESEL: "DIESEL",
+  COOKING_GAS: "COOKING_GAS",
+} as const;
+
+export type FuelType = (typeof FuelType)[keyof typeof FuelType];

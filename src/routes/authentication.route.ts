@@ -33,5 +33,6 @@ authenticationRouter.get(
   protect,
   AuthController.getAuthenticatedUser,
 );
+authenticationRouter.get("/refresh", AuthController.refreshSession);
 authenticationRouter.post("/logout", protect, AuthController.logout);
 export default authenticationRouter;

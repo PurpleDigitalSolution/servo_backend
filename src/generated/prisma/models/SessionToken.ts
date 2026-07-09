@@ -482,14 +482,6 @@ export type SessionTokenUncheckedUpdateManyWithoutUserNestedInput = {
     Prisma.SessionTokenScalarWhereInput | Prisma.SessionTokenScalarWhereInput[];
 };
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null;
-};
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean;
-};
-
 export type SessionTokenCreateWithoutUserInput = {
   id?: string;
   sessionTokenId: string;

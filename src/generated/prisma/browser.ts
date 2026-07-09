@@ -27,6 +27,11 @@ export type User = Prisma.UserModel;
  */
 export type UserProfile = Prisma.UserProfileModel;
 /**
+ * Model Station
+ *
+ */
+export type Station = Prisma.StationModel;
+/**
  * Model SessionToken
  *
  */

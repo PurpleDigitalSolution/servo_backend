@@ -110,7 +110,7 @@
 
 ## Admin Dashboard
 
-- [ ] Station Table
+- [x] Station Table
 - [ ] Add Station
 - [ ] Edit Station
 - [ ] Delete Station
