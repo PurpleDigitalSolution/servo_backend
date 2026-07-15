@@ -73,6 +73,28 @@ enum FuelType {
   COOKING_GAS
 }
 
+enum OrderStatus {
+  PENDING_PAYMENT
+  PENDING_CONFIRMATION
+  CONFIRMED
+  ASSIGNED
+  IN_TRANSIT
+  ARRIVED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  PAYSTACK
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
 model User {
   id                 String             @id @default(uuid())
   email              String             @unique
@@ -81,11 +103,17 @@ model User {
   role               UserRole           @default(USER)
   accountStatus      AccountStatus      @default(ACTIVE)
   verificationStatus VerificationStatus @default(PENDING)
+  token              String?            @unique
+  tokenExpiry        DateTime?
+  otp                String?            @unique
+  otpExpiry          DateTime?
 
   userProfile   UserProfile?
   sessionTokens SessionToken[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  orders        Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([role])
   @@index([accountStatus])
@@ -123,6 +151,8 @@ model Station {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
+  orders Order[]
+
   @@unique([name, addressStreet, addressCity])
   @@index([addressCity])
   @@index([isAvailable])
@@ -140,4 +170,40 @@ model SessionToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  stationId       String
+  status          OrderStatus @default(PENDING_PAYMENT)
+  fuelType        FuelType
+  quantity        Decimal     @db.Decimal(10, 2)
+  price           Decimal     @db.Decimal(10, 2)
+  deliveryAddress String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @default(now()) @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  station      Station       @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model Transaction {
+  id                 String          @id @default(uuid())
+  orderId            String
+  order              Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount             Decimal         @db.Decimal(10,2)
+  currency           String          @default("NGN")
+  paymentMethod      PaymentMethod
+  status             PaymentStatus   @default(PENDING)
+  reference          String          @unique
+  gatewayReference   String?
+  authorizationUrl   String?
+  accessCode         String?
+  paidAt             DateTime?
+  gatewayResponse    Json?
+
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 }

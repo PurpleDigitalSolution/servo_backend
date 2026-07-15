@@ -6,6 +6,7 @@ import {
   updateProfileBodySchema,
   updateProfileResponseSchema,
   userIdParamSchema,
+  usersSchema,
 } from "../../validation/user.validation.js";
 
 import { z } from "zod";
@@ -26,7 +27,7 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: z.object({
-            users: z.array(updateProfileResponseSchema),
+            users: z.array(usersSchema),
           }),
         },
       },
@@ -81,14 +82,14 @@ registry.registerPath({
 });
 registry.registerPath({
   method: "get",
-  path: "/users/user-profile",
+  path: "/users/user-profile/{id}",
   tags: ["User Management"],
   summary: "Get a user profile",
   description:
     "Retrieves the public and administrative profile information for a specific user identity.",
 
   request: {
-    query: userIdParamSchema,
+    params: userIdParamSchema,
   },
 
   responses: {

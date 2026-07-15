@@ -10,6 +10,7 @@ import router from "./routes/index.js";
 dotenv.config();
 
 const app = express();
+
 app.use(helmetMiddleware);
 const allowedOrigins = [
   "http://localhost:3000",
@@ -37,7 +38,13 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      (req as any).rawBody = buf;
+    },
+  }),
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/api-docs", ...swaggerMiddleware);

@@ -36,3 +36,13 @@ export type Station = Prisma.StationModel;
  *
  */
 export type SessionToken = Prisma.SessionTokenModel;
+/**
+ * Model Order
+ *
+ */
+export type Order = Prisma.OrderModel;
+/**
+ * Model Transaction
+ *
+ */
+export type Transaction = Prisma.TransactionModel;

@@ -9,14 +9,20 @@ import { UserRole } from "../../types/general.js";
 import { ClientType } from "../../utils/getClient.js";
 
 export class AuthController {
-  private static handleLoginPipeline = (clientSource: ClientType) => {
+  // Inject AuthenticationService dependency through constructor
+  constructor(
+    private readonly authService: AuthenticationService,
+    private readonly sessionService: typeof SessionService = SessionService,
+  ) {}
+
+  /**
+   * Generates localized login processing pipelines mapped to target clients (e.g., MOBILE or ADMIN).
+   */
+  private handleLoginPipeline(clientSource: ClientType) {
     return asyncHandler(async (req: Request, res: Response) => {
       const { email, password } = req.body;
 
-      const userWithoutPassword = await AuthenticationService.login(
-        email,
-        password,
-      );
+      const userWithoutPassword = await this.authService.login(email, password);
 
       const expectedClient =
         userWithoutPassword.role === "ADMIN" ||
@@ -25,7 +31,7 @@ export class AuthController {
           : "MOBILE";
 
       if (clientSource !== expectedClient) {
-        res
+        return res
           .status(403)
           .json(
             new ApiResponse(
@@ -34,7 +40,6 @@ export class AuthController {
               `Forbidden: Channel mismatch for role [${userWithoutPassword.role}]`,
             ),
           );
-        return;
       }
 
       const sessionPayload: SessionPayload = {
@@ -50,52 +55,60 @@ export class AuthController {
         client: clientSource,
       };
 
-      const { accessToken } = await SessionService.signTo(
+      const { accessToken } = await this.sessionService.signTo(
         res,
         sessionPayload,
         clientSource,
       );
+
       const result = { accessToken, user: userWithoutPassword };
-      res
+
+      return res
         .status(200)
         .json(new ApiResponse(200, result, "User logged in successfully"));
     });
-  };
+  }
 
-  static register = asyncHandler(async (req: Request, res: Response) => {
-    const response = await AuthenticationService.registerUser(req.body);
-    res
+  // Define route handlers as instance properties bound to the class context
+  readonly register = asyncHandler(async (req: Request, res: Response) => {
+    const response = await this.authService.registerUser(req.body);
+    return res
       .status(201)
       .json(new ApiResponse(201, response, "User registered successfully"));
   });
 
-  static loginMobile = AuthController.handleLoginPipeline("MOBILE");
+  readonly loginMobile = this.handleLoginPipeline("MOBILE");
 
-  static loginAdmin = AuthController.handleLoginPipeline("ADMIN");
-  static refreshSession = asyncHandler(async (req: Request, res: Response) => {
-    const { accessToken, refreshToken } = await SessionService.refreshSession(
-      req,
-      res,
-    );
-    res.json(
-      new ApiResponse(
-        200,
-        { accessToken, refreshToken },
-        "Session refreshed successfully",
-      ),
-    );
-  });
-  static logout = asyncHandler(async (req: Request, res: Response) => {
-    await AuthenticationService.logout(res, req);
-    res
+  readonly loginAdmin = this.handleLoginPipeline("ADMIN");
+
+  readonly refreshSession = asyncHandler(
+    async (req: Request, res: Response) => {
+      const { accessToken, refreshToken } =
+        await this.sessionService.refreshSession(req, res);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { accessToken, refreshToken },
+            "Session refreshed successfully",
+          ),
+        );
+    },
+  );
+
+  readonly logout = asyncHandler(async (req: Request, res: Response) => {
+    await this.authService.logout(res, req);
+    return res
       .status(200)
       .json(new ApiResponse(200, null, "User logged out successfully"));
   });
-  static getAuthenticatedUser = asyncHandler(
+
+  readonly getAuthenticatedUser = asyncHandler(
     async (req: Request, res: Response) => {
       const userWithoutPassword =
-        await AuthenticationService.getAuthenticatedUser(req);
-      res
+        await this.authService.getAuthenticatedUser(req);
+      return res
         .status(200)
         .json(
           new ApiResponse(
@@ -106,4 +119,51 @@ export class AuthController {
         );
     },
   );
+
+  readonly forgetPassword = asyncHandler(
+    async (req: Request, res: Response) => {
+      const { email } = req.body;
+      await this.authService.forgetPassword(email);
+      return res
+        .status(202)
+        .json(
+          new ApiResponse(
+            202,
+            null,
+            "Password reset instructions sent successfully",
+          ),
+        );
+    },
+  );
+
+  readonly verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+    const { otp, purpose, email } = req.body;
+
+    if (!otp || typeof otp !== "string") {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, "OTP is required for verification"));
+    }
+
+    // FIXED: Correctly capture output payload structure and mapping
+    const verificationResult = await this.authService.verifyOtp(
+      email,
+      otp,
+      purpose,
+    );
+
+    return res
+      .status(202)
+      .json(
+        new ApiResponse(202, verificationResult, "OTP verified successfully"),
+      );
+  });
+
+  readonly resetPassword = asyncHandler(async (req: Request, res: Response) => {
+    const { token, newPassword } = req.body;
+    await this.authService.resetPassword(token, newPassword);
+    return res
+      .status(202)
+      .json(new ApiResponse(202, null, "Password reset successfully"));
+  });
 }

@@ -25,6 +25,18 @@ const envSchema = z.object({
   ENCRYPTION_KEY: z.string().min(24),
   ADMIN_PASSWORD: z.string().min(12),
   SUPER_ADMIN_PASSWORD: z.string().min(12),
+  PAYSTACK_SECRET_KEY: z.string().min(1),
+  PAYSTACK_BASE_URL: z.string().url().default("https://api.paystack.co"),
+  EMAIL_HOST: z.string().default("smtp.gmail.com"),
+  EMAIL_USER: z.string().email(),
+  EMAIL_PASS: z.string().min(6),
+  EMAIL_PORT: z
+    .string()
+    .default("587")
+    .transform((val) => Number(val)),
+  EMAIL_SERVICE: z.string().default("gmail"),
+  RESEND_API_KEY: z.string().min(1),
+  RESEND_USER: z.string().min(1),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

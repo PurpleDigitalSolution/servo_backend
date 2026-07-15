@@ -42,6 +42,10 @@ export type UserMinAggregateOutputType = {
   role: $Enums.UserRole | null;
   accountStatus: $Enums.AccountStatus | null;
   verificationStatus: $Enums.VerificationStatus | null;
+  token: string | null;
+  tokenExpiry: Date | null;
+  otp: string | null;
+  otpExpiry: Date | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 };
@@ -54,6 +58,10 @@ export type UserMaxAggregateOutputType = {
   role: $Enums.UserRole | null;
   accountStatus: $Enums.AccountStatus | null;
   verificationStatus: $Enums.VerificationStatus | null;
+  token: string | null;
+  tokenExpiry: Date | null;
+  otp: string | null;
+  otpExpiry: Date | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 };
@@ -66,6 +74,10 @@ export type UserCountAggregateOutputType = {
   role: number;
   accountStatus: number;
   verificationStatus: number;
+  token: number;
+  tokenExpiry: number;
+  otp: number;
+  otpExpiry: number;
   createdAt: number;
   updatedAt: number;
   _all: number;
@@ -87,6 +99,10 @@ export type UserMinAggregateInputType = {
   role?: true;
   accountStatus?: true;
   verificationStatus?: true;
+  token?: true;
+  tokenExpiry?: true;
+  otp?: true;
+  otpExpiry?: true;
   createdAt?: true;
   updatedAt?: true;
 };
@@ -99,6 +115,10 @@ export type UserMaxAggregateInputType = {
   role?: true;
   accountStatus?: true;
   verificationStatus?: true;
+  token?: true;
+  tokenExpiry?: true;
+  otp?: true;
+  otpExpiry?: true;
   createdAt?: true;
   updatedAt?: true;
 };
@@ -111,6 +131,10 @@ export type UserCountAggregateInputType = {
   role?: true;
   accountStatus?: true;
   verificationStatus?: true;
+  token?: true;
+  tokenExpiry?: true;
+  otp?: true;
+  otpExpiry?: true;
   createdAt?: true;
   updatedAt?: true;
   _all?: true;
@@ -216,6 +240,10 @@ export type UserGroupByOutputType = {
   role: $Enums.UserRole;
   accountStatus: $Enums.AccountStatus;
   verificationStatus: $Enums.VerificationStatus;
+  token: string | null;
+  tokenExpiry: Date | null;
+  otp: string | null;
+  otpExpiry: Date | null;
   createdAt: Date;
   updatedAt: Date;
   _count: UserCountAggregateOutputType | null;
@@ -255,6 +283,10 @@ export type UserWhereInput = {
   accountStatus?: Prisma.EnumAccountStatusFilter<"User"> | $Enums.AccountStatus;
   verificationStatus?:
     Prisma.EnumVerificationStatusFilter<"User"> | $Enums.VerificationStatus;
+  token?: Prisma.StringNullableFilter<"User"> | string | null;
+  tokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  otp?: Prisma.StringNullableFilter<"User"> | string | null;
+  otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   userProfile?: Prisma.XOR<
@@ -262,6 +294,7 @@ export type UserWhereInput = {
     Prisma.UserProfileWhereInput
   > | null;
   sessionTokens?: Prisma.SessionTokenListRelationFilter;
+  orders?: Prisma.OrderListRelationFilter;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -272,16 +305,23 @@ export type UserOrderByWithRelationInput = {
   role?: Prisma.SortOrder;
   accountStatus?: Prisma.SortOrder;
   verificationStatus?: Prisma.SortOrder;
+  token?: Prisma.SortOrderInput | Prisma.SortOrder;
+  tokenExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
+  otp?: Prisma.SortOrderInput | Prisma.SortOrder;
+  otpExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   userProfile?: Prisma.UserProfileOrderByWithRelationInput;
   sessionTokens?: Prisma.SessionTokenOrderByRelationAggregateInput;
+  orders?: Prisma.OrderOrderByRelationAggregateInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
   {
     id?: string;
     email?: string;
+    token?: string;
+    otp?: string;
     AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
     OR?: Prisma.UserWhereInput[];
     NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
@@ -297,6 +337,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
       Prisma.EnumAccountStatusFilter<"User"> | $Enums.AccountStatus;
     verificationStatus?:
       Prisma.EnumVerificationStatusFilter<"User"> | $Enums.VerificationStatus;
+    tokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+    otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
     createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     userProfile?: Prisma.XOR<
@@ -304,8 +346,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
       Prisma.UserProfileWhereInput
     > | null;
     sessionTokens?: Prisma.SessionTokenListRelationFilter;
+    orders?: Prisma.OrderListRelationFilter;
   },
-  "id" | "email"
+  "id" | "email" | "token" | "otp"
 >;
 
 export type UserOrderByWithAggregationInput = {
@@ -316,6 +359,10 @@ export type UserOrderByWithAggregationInput = {
   role?: Prisma.SortOrder;
   accountStatus?: Prisma.SortOrder;
   verificationStatus?: Prisma.SortOrder;
+  token?: Prisma.SortOrderInput | Prisma.SortOrder;
+  tokenExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
+  otp?: Prisma.SortOrderInput | Prisma.SortOrder;
+  otpExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
@@ -348,6 +395,12 @@ export type UserScalarWhereWithAggregatesInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusWithAggregatesFilter<"User">
     | $Enums.VerificationStatus;
+  token?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
+  tokenExpiry?:
+    Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
+  otp?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
+  otpExpiry?:
+    Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string;
 };
@@ -360,10 +413,15 @@ export type UserCreateInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateInput = {
@@ -374,10 +432,15 @@ export type UserUncheckedCreateInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserUpdateInput = {
@@ -396,10 +459,17 @@ export type UserUpdateInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
@@ -418,10 +488,17 @@ export type UserUncheckedUpdateInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateManyInput = {
@@ -432,6 +509,10 @@ export type UserCreateManyInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -452,6 +533,12 @@ export type UserUpdateManyMutationInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -472,6 +559,12 @@ export type UserUncheckedUpdateManyInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -484,6 +577,10 @@ export type UserCountOrderByAggregateInput = {
   role?: Prisma.SortOrder;
   accountStatus?: Prisma.SortOrder;
   verificationStatus?: Prisma.SortOrder;
+  token?: Prisma.SortOrder;
+  tokenExpiry?: Prisma.SortOrder;
+  otp?: Prisma.SortOrder;
+  otpExpiry?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
@@ -500,6 +597,10 @@ export type UserMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder;
   accountStatus?: Prisma.SortOrder;
   verificationStatus?: Prisma.SortOrder;
+  token?: Prisma.SortOrder;
+  tokenExpiry?: Prisma.SortOrder;
+  otp?: Prisma.SortOrder;
+  otpExpiry?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
@@ -512,6 +613,10 @@ export type UserMinOrderByAggregateInput = {
   role?: Prisma.SortOrder;
   accountStatus?: Prisma.SortOrder;
   verificationStatus?: Prisma.SortOrder;
+  token?: Prisma.SortOrder;
+  tokenExpiry?: Prisma.SortOrder;
+  otp?: Prisma.SortOrder;
+  otpExpiry?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
@@ -547,6 +652,14 @@ export type EnumAccountStatusFieldUpdateOperationsInput = {
 
 export type EnumVerificationStatusFieldUpdateOperationsInput = {
   set?: $Enums.VerificationStatus;
+};
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null;
+};
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null;
 };
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -605,6 +718,32 @@ export type UserUpdateOneRequiredWithoutSessionTokensNestedInput = {
   >;
 };
 
+export type UserCreateNestedOneWithoutOrdersInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutOrdersInput,
+    Prisma.UserUncheckedCreateWithoutOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrdersInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserUpdateOneRequiredWithoutOrdersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutOrdersInput,
+    Prisma.UserUncheckedCreateWithoutOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrdersInput;
+  upsert?: Prisma.UserUpsertWithoutOrdersInput;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutOrdersInput,
+      Prisma.UserUpdateWithoutOrdersInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutOrdersInput
+  >;
+};
+
 export type UserCreateWithoutUserProfileInput = {
   id?: string;
   email: string;
@@ -613,9 +752,14 @@ export type UserCreateWithoutUserProfileInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutUserProfileInput = {
@@ -626,9 +770,14 @@ export type UserUncheckedCreateWithoutUserProfileInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutUserProfileInput = {
@@ -675,9 +824,16 @@ export type UserUpdateWithoutUserProfileInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutUserProfileInput = {
@@ -696,9 +852,16 @@ export type UserUncheckedUpdateWithoutUserProfileInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutSessionTokensInput = {
@@ -709,9 +872,14 @@ export type UserCreateWithoutSessionTokensInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutSessionTokensInput = {
@@ -722,9 +890,14 @@ export type UserUncheckedCreateWithoutSessionTokensInput = {
   role?: $Enums.UserRole;
   accountStatus?: $Enums.AccountStatus;
   verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutSessionTokensInput = {
@@ -771,9 +944,16 @@ export type UserUpdateWithoutSessionTokensInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutSessionTokensInput = {
@@ -792,9 +972,136 @@ export type UserUncheckedUpdateWithoutSessionTokensInput = {
   verificationStatus?:
     | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
     | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput;
+};
+
+export type UserCreateWithoutOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+};
+
+export type UserUncheckedCreateWithoutOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+};
+
+export type UserCreateOrConnectWithoutOrdersInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutOrdersInput,
+    Prisma.UserUncheckedCreateWithoutOrdersInput
+  >;
+};
+
+export type UserUpsertWithoutOrdersInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutOrdersInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutOrdersInput,
+    Prisma.UserUncheckedCreateWithoutOrdersInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutOrdersInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutOrdersInput
+  >;
+};
+
+export type UserUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 /**
@@ -803,6 +1110,7 @@ export type UserUncheckedUpdateWithoutSessionTokensInput = {
 
 export type UserCountOutputType = {
   sessionTokens: number;
+  orders: number;
 };
 
 export type UserCountOutputTypeSelect<
@@ -810,6 +1118,7 @@ export type UserCountOutputTypeSelect<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   sessionTokens?: boolean | UserCountOutputTypeCountSessionTokensArgs;
+  orders?: boolean | UserCountOutputTypeCountOrdersArgs;
 };
 
 /**
@@ -835,6 +1144,16 @@ export type UserCountOutputTypeCountSessionTokensArgs<
   where?: Prisma.SessionTokenWhereInput;
 };
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.OrderWhereInput;
+};
+
 export type UserSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
@@ -847,10 +1166,15 @@ export type UserSelect<
     role?: boolean;
     accountStatus?: boolean;
     verificationStatus?: boolean;
+    token?: boolean;
+    tokenExpiry?: boolean;
+    otp?: boolean;
+    otpExpiry?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
     sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
+    orders?: boolean | Prisma.User$ordersArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
@@ -868,6 +1192,10 @@ export type UserSelectCreateManyAndReturn<
     role?: boolean;
     accountStatus?: boolean;
     verificationStatus?: boolean;
+    token?: boolean;
+    tokenExpiry?: boolean;
+    otp?: boolean;
+    otpExpiry?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
   },
@@ -886,6 +1214,10 @@ export type UserSelectUpdateManyAndReturn<
     role?: boolean;
     accountStatus?: boolean;
     verificationStatus?: boolean;
+    token?: boolean;
+    tokenExpiry?: boolean;
+    otp?: boolean;
+    otpExpiry?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
   },
@@ -900,6 +1232,10 @@ export type UserSelectScalar = {
   role?: boolean;
   accountStatus?: boolean;
   verificationStatus?: boolean;
+  token?: boolean;
+  tokenExpiry?: boolean;
+  otp?: boolean;
+  otpExpiry?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
 };
@@ -915,6 +1251,10 @@ export type UserOmit<
   | "role"
   | "accountStatus"
   | "verificationStatus"
+  | "token"
+  | "tokenExpiry"
+  | "otp"
+  | "otpExpiry"
   | "createdAt"
   | "updatedAt",
   ExtArgs["result"]["user"]
@@ -925,6 +1265,7 @@ export type UserInclude<
 > = {
   userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
   sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
+  orders?: boolean | Prisma.User$ordersArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
@@ -944,6 +1285,7 @@ export type $UserPayload<
   objects: {
     userProfile: Prisma.$UserProfilePayload<ExtArgs> | null;
     sessionTokens: Prisma.$SessionTokenPayload<ExtArgs>[];
+    orders: Prisma.$OrderPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -954,6 +1296,10 @@ export type $UserPayload<
       role: $Enums.UserRole;
       accountStatus: $Enums.AccountStatus;
       verificationStatus: $Enums.VerificationStatus;
+      token: string | null;
+      tokenExpiry: Date | null;
+      otp: string | null;
+      otpExpiry: Date | null;
       createdAt: Date;
       updatedAt: Date;
     },
@@ -1530,6 +1876,17 @@ export interface Prisma__UserClient<
       >
     | Null
   >;
+  orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$OrderPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1573,6 +1930,10 @@ export interface UserFieldRefs {
   readonly role: Prisma.FieldRef<"User", "UserRole">;
   readonly accountStatus: Prisma.FieldRef<"User", "AccountStatus">;
   readonly verificationStatus: Prisma.FieldRef<"User", "VerificationStatus">;
+  readonly token: Prisma.FieldRef<"User", "String">;
+  readonly tokenExpiry: Prisma.FieldRef<"User", "DateTime">;
+  readonly otp: Prisma.FieldRef<"User", "String">;
+  readonly otpExpiry: Prisma.FieldRef<"User", "DateTime">;
   readonly createdAt: Prisma.FieldRef<"User", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"User", "DateTime">;
 }
@@ -2067,6 +2428,35 @@ export type User$sessionTokensArgs<
   skip?: number;
   distinct?:
     Prisma.SessionTokenScalarFieldEnum | Prisma.SessionTokenScalarFieldEnum[];
+};
+
+/**
+ * User.orders
+ */
+export type User$ordersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null;
+  where?: Prisma.OrderWhereInput;
+  orderBy?:
+    | Prisma.OrderOrderByWithRelationInput
+    | Prisma.OrderOrderByWithRelationInput[];
+  cursor?: Prisma.OrderWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
 };
 
 /**

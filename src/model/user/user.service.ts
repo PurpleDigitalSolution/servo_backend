@@ -1,29 +1,40 @@
 import { updateProfileDTO } from "../../interface/user.interface.js";
-import { UserRepository } from "./user.repository.js";
+import { ApiError } from "../../utils/errorHandler.js";
+import { IUserRepository } from "./user.repository.js";
 
 export class UserService {
-  static async getUsers(limit: string, page: string) {
+  // Inject repository dependency through class constructor
+  constructor(private readonly userRepository: IUserRepository) {}
+
+  async getCustomer(limit: string, page: string) {
     const take = Math.min(100, Math.max(1, Number(limit) || 50));
     const pageNum = Math.max(1, Number(page) || 1);
     const skip = (pageNum - 1) * take;
 
-    const [users, totalUsers] = await Promise.all([
-      UserRepository.findUsersPaginated(skip, take),
-      UserRepository.countUsers(),
+    const [users, totalCustomers] = await Promise.all([
+      this.userRepository.findCustomersPaginated(skip, take),
+      this.userRepository.countCustomers(),
     ]);
+
     return {
       users,
       pagination: {
-        totalUsers,
-        totalPages: Math.ceil(totalUsers / take),
+        totalCustomers,
+        totalPages: Math.ceil(totalCustomers / take),
         currentPage: pageNum,
       },
     };
   }
-  static async getProfile(userId: string) {
-    return await UserRepository.getProfileByUserId(userId);
+
+  async getProfile(userId: string) {
+    const result = await this.userRepository.getProfileByUserId(userId);
+    if (!result) {
+      throw new ApiError(404, "User not found");
+    }
+    return result;
   }
-  static async updateProfile(userId: string, dto: updateProfileDTO) {
+
+  async updateProfile(userId: string, dto: updateProfileDTO) {
     const allowedKeys: (keyof updateProfileDTO)[] = [
       "firstName",
       "lastName",
@@ -31,6 +42,7 @@ export class UserService {
       "dateOfBirth",
       "address",
     ];
+
     const cleanDTO = Object.fromEntries(
       Object.entries(dto)
         .filter(([key]) => allowedKeys.includes(key as keyof updateProfileDTO))
@@ -39,22 +51,24 @@ export class UserService {
           if (typeof value === "string") {
             return value.trim() !== "";
           }
-
           return true;
         }),
     ) as updateProfileDTO;
 
-    return await UserRepository.updateProfile(userId, cleanDTO);
+    return await this.userRepository.updateProfile(userId, cleanDTO);
   }
-  static async searchUsers(query: string, limit: string, page: string) {
+
+  async searchUsers(query: string, limit: string, page: string) {
     const take = Math.min(100, Math.max(1, Number(limit) || 50));
     const pageNum = Math.max(1, Number(page) || 1);
     const skip = (pageNum - 1) * take;
 
+    // FIXED: Now accurately counts filtered rows rather than global records
     const [users, totalUsers] = await Promise.all([
-      UserRepository.searchUser(query, skip, take),
-      UserRepository.countUsers(),
+      this.userRepository.searchUser(query, skip, take),
+      this.userRepository.countSearchUsers(query),
     ]);
+
     return {
       users,
       pagination: {

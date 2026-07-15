@@ -1,6 +1,7 @@
 import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { registry } from "./registry.js";
 import "../model/Authentication/authentication.doc.js";
+import "../model/order/order.docs.js";
 import "../model/user/user.doc.js";
 import "../model/station/station.doc.js";
 const generator = new OpenApiGeneratorV3(registry.definitions);

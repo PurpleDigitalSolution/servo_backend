@@ -15,6 +15,17 @@ interface Config {
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_SECRET_KEY: string;
   ENCRYPTION_KEY: string;
+  PAYSTACK_SECRET_KEY: string;
+  PAYSTACK_BASE_URL: string;
+  EMAIL_HOST: string;
+  EMAIL_USER: string;
+  EMAIL_PASS: string;
+  EMAIL_PORT: number;
+  EMAIL_SERVICE: string;
+
+  RESEND_API_KEY: string;
+  RESEND_USER: string;
+
   seed: {
     adminPassword: string;
     superAdminPassword: string;
@@ -36,10 +47,19 @@ export const config: Config = {
   CLOUDINARY_API_KEY: env.CLOUDINARY_API_KEY,
   CLOUDINARY_SECRET_KEY: env.CLOUDINARY_SECRET_KEY,
   ENCRYPTION_KEY: env.ENCRYPTION_KEY,
+  PAYSTACK_SECRET_KEY: env.PAYSTACK_SECRET_KEY,
+  PAYSTACK_BASE_URL: env.PAYSTACK_BASE_URL,
   seed: {
     adminPassword: env.ADMIN_PASSWORD,
     superAdminPassword: env.SUPER_ADMIN_PASSWORD,
   },
+  EMAIL_HOST: env.EMAIL_HOST,
+  EMAIL_USER: env.EMAIL_USER,
+  EMAIL_PASS: env.EMAIL_PASS,
+  EMAIL_PORT: Number(env.EMAIL_PORT),
+  EMAIL_SERVICE: env.EMAIL_SERVICE,
+  RESEND_API_KEY: env.RESEND_API_KEY,
+  RESEND_USER: env.RESEND_USER,
 };
 
 export type { Config };

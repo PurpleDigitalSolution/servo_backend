@@ -76,9 +76,28 @@ export const loginBodySchema = z.object({
   password: PasswordSchema,
 });
 
+export const verifyOtpBodySchema = z.object({
+  email: EmailSchema,
+  otp: z.string().min(1, { message: "OTP is required" }),
+  purpose: z.enum(["FORGET_PASSWORD", "EMAIL_VERIFICATION"], {
+    message: "Purpose must be either 'FORGET_PASSWORD' or 'EMAIL_VERIFICATION'",
+  }),
+});
+
 export const createUserSchema = z.object({ body: createUserBodySchema });
 export const loginRequestSchema = z.object({ body: loginBodySchema });
-
+export const requestOtpSchema = z.object({
+  body: z.object({ email: EmailSchema }),
+});
+export const verifyOtpSchema = z.object({
+  body: verifyOtpBodySchema,
+});
+export const resetPasswordSchema = z.object({
+  body: z.object({
+    newPassword: PasswordSchema,
+    token: z.string().min(1, { message: "token is required" }),
+  }),
+});
 // ==========================================
 // 3. RESPONSE SCHEMAS
 // ==========================================
@@ -124,3 +143,5 @@ registry.register("CreateUserRequest", createUserBodySchema);
 registry.register("RegistrationResponse", registrationResponseSchema);
 registry.register("LoginRequest", loginBodySchema);
 registry.register("LoginResponse", userLoginResponse);
+registry.register("RequestOtpRequest", requestOtpSchema);
+registry.register("VerifyOtpRequest", verifyOtpSchema);
