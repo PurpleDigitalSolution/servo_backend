@@ -101,6 +101,18 @@ export const updateProfileResponseSchema = z.object({
     .optional()
     .openapi({ description: "User's date of birth" }),
 });
+export const usersSchema = z.object({
+  id: z.string().uuid(),
+  email: z.email(),
+  role: z.enum(["USER", "DRIVER", "ADMIN", "AGENT", "SUPER_ADMIN"]),
+  accountStatus: z.enum(["ACTIVE", "SUSPENDED", "BANNED"]),
+  userProfile: z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    phoneNumber: z.string(),
+    createdAt: z.iso.datetime(),
+  }),
+});
 
 export const userIdParamSchema = z.object({
   id: z.string().uuid().openapi({
@@ -110,7 +122,7 @@ export const userIdParamSchema = z.object({
 });
 
 // Request wrapper schemas (Used by your Zod Express Validation Middleware)
-export const getUsersRequestSchema = z.object({ query: getUsersSchema });
+export const getCustomerRequestSchema = z.object({ query: getUsersSchema });
 export const updateProfileRequestSchema = z.object({
   body: updateProfileBodySchema,
 });
@@ -118,5 +130,5 @@ export const searchRequestSchema = z.object({
   query: searchUserSchema,
 });
 export const findUserRequestSchema = z.object({
-  query: userIdParamSchema,
+  params: userIdParamSchema,
 });

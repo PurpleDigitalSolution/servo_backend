@@ -1,71 +1,98 @@
 import { prisma } from "../../config/database.js";
 import { updateProfileDTO } from "../../interface/user.interface.js";
 
-export class UserRepository {
-  static async findUsersPaginated(skip: number, take: number) {
-    return prisma.user.findMany({
-      skip,
-      take,
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        accountStatus: true,
-        userProfile: true,
-        createdAt: true,
-      },
-    });
+export interface IUserRepository {
+  findCustomersPaginated(skip: number, take: number): Promise<any[]>;
+  countUsers(): Promise<number>;
+  countCustomers(): Promise<number>;
+  countSearchUsers(query: string): Promise<number>;
+  searchUser(query: string, skip: number, take: number): Promise<any[]>;
+  findUserById(id: string): Promise<any | null>;
+  updateProfile(userId: string, profileData: updateProfileDTO): Promise<any>;
+  getProfileByUserId(userId: string): Promise<any | null>;
+}
+
+export class UserRepository implements IUserRepository {
+  private readonly defaultSelect = {
+    id: true,
+    email: true,
+    role: true,
+    accountStatus: true,
+    userProfile: true,
+    createdAt: true,
+  };
+
+  private buildSearchWhereClause(query: string) {
+    return {
+      OR: [
+        { email: { contains: query, mode: "insensitive" as const } },
+        {
+          userProfile: {
+            firstName: { contains: query, mode: "insensitive" as const },
+          },
+        },
+        {
+          userProfile: {
+            lastName: { contains: query, mode: "insensitive" as const },
+          },
+        },
+      ],
+    };
   }
-  static async countUsers() {
-    return prisma.user.count();
-  }
-  static async searchUser(query: string, skip: number, take: number) {
+
+  async findCustomersPaginated(skip: number, take: number) {
     return prisma.user.findMany({
       skip,
       take,
       where: {
-        OR: [
-          { email: { contains: query, mode: "insensitive" } },
-          {
-            userProfile: {
-              firstName: { contains: query, mode: "insensitive" },
-            },
-          },
-          {
-            userProfile: { lastName: { contains: query, mode: "insensitive" } },
-          },
-        ],
+        role: "USER",
       },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        accountStatus: true,
-        userProfile: true,
-        createdAt: true,
+      select: this.defaultSelect,
+    });
+  }
+
+  async countUsers() {
+    return prisma.user.count();
+  }
+  async countCustomers() {
+    return prisma.user.count({
+      where: {
+        role: "USER",
       },
     });
   }
-  static async findUserById(id: string) {
+
+  // FIXED: Added count method specifically targeting search sets
+  async countSearchUsers(query: string) {
+    return prisma.user.count({
+      where: this.buildSearchWhereClause(query),
+    });
+  }
+
+  async searchUser(query: string, skip: number, take: number) {
+    return prisma.user.findMany({
+      skip,
+      take,
+      where: this.buildSearchWhereClause(query),
+      select: this.defaultSelect,
+    });
+  }
+
+  async findUserById(id: string) {
     return prisma.user.findUnique({
       where: { id },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        accountStatus: true,
-        userProfile: true,
-        createdAt: true,
-      },
+      select: this.defaultSelect,
     });
   }
-  static async updateProfile(userId: string, profileData: updateProfileDTO) {
+
+  async updateProfile(userId: string, profileData: updateProfileDTO) {
     return prisma.userProfile.update({
       where: { userId },
       data: profileData,
     });
   }
-  static async getProfileByUserId(userId: string) {
+
+  async getProfileByUserId(userId: string) {
     return prisma.userProfile.findUnique({
       where: { userId },
     });

@@ -38,6 +38,7 @@ export class StationRepository {
         addressCity: true,
         fuelTypes: true,
         isAvailable: true,
+        prices: true,
         is24h: true,
         createdAt: true,
       },
@@ -77,6 +78,7 @@ export class StationRepository {
         addressState: true,
         addressCity: true,
         fuelTypes: true,
+        prices: true,
       },
     });
   }

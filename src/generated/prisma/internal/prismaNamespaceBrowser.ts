@@ -58,6 +58,8 @@ export const ModelName = {
   UserProfile: "UserProfile",
   Station: "Station",
   SessionToken: "SessionToken",
+  Order: "Order",
+  Transaction: "Transaction",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -84,6 +86,10 @@ export const UserScalarFieldEnum = {
   role: "role",
   accountStatus: "accountStatus",
   verificationStatus: "verificationStatus",
+  token: "token",
+  tokenExpiry: "tokenExpiry",
+  otp: "otp",
+  otpExpiry: "otpExpiry",
   createdAt: "createdAt",
   updatedAt: "updatedAt",
 } as const;
@@ -141,6 +147,42 @@ export const SessionTokenScalarFieldEnum = {
 export type SessionTokenScalarFieldEnum =
   (typeof SessionTokenScalarFieldEnum)[keyof typeof SessionTokenScalarFieldEnum];
 
+export const OrderScalarFieldEnum = {
+  id: "id",
+  userId: "userId",
+  stationId: "stationId",
+  status: "status",
+  fuelType: "fuelType",
+  quantity: "quantity",
+  price: "price",
+  deliveryAddress: "deliveryAddress",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type OrderScalarFieldEnum =
+  (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum];
+
+export const TransactionScalarFieldEnum = {
+  id: "id",
+  orderId: "orderId",
+  amount: "amount",
+  currency: "currency",
+  paymentMethod: "paymentMethod",
+  status: "status",
+  reference: "reference",
+  gatewayReference: "gatewayReference",
+  authorizationUrl: "authorizationUrl",
+  accessCode: "accessCode",
+  paidAt: "paidAt",
+  gatewayResponse: "gatewayResponse",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type TransactionScalarFieldEnum =
+  (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum];
+
 export const SortOrder = {
   asc: "asc",
   desc: "desc",
@@ -155,12 +197,27 @@ export const JsonNullValueInput = {
 export type JsonNullValueInput =
   (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+} as const;
+
+export type NullableJsonNullValueInput =
+  (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
+
 export const QueryMode = {
   default: "default",
   insensitive: "insensitive",
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+export const NullsOrder = {
+  first: "first",
+  last: "last",
+} as const;
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
 
 export const JsonNullValueFilter = {
   DbNull: DbNull,
@@ -170,10 +227,3 @@ export const JsonNullValueFilter = {
 
 export type JsonNullValueFilter =
   (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
-
-export const NullsOrder = {
-  first: "first",
-  last: "last",
-} as const;
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];

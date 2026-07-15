@@ -314,6 +314,7 @@ export type StationWhereInput = {
   prices?: Prisma.JsonFilter<"Station">;
   createdAt?: Prisma.DateTimeFilter<"Station"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"Station"> | Date | string;
+  orders?: Prisma.OrderListRelationFilter;
 };
 
 export type StationOrderByWithRelationInput = {
@@ -333,6 +334,7 @@ export type StationOrderByWithRelationInput = {
   prices?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
+  orders?: Prisma.OrderOrderByRelationAggregateInput;
 };
 
 export type StationWhereUniqueInput = Prisma.AtLeast<
@@ -367,6 +369,7 @@ export type StationWhereUniqueInput = Prisma.AtLeast<
     prices?: Prisma.JsonFilter<"Station">;
     createdAt?: Prisma.DateTimeFilter<"Station"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Station"> | Date | string;
+    orders?: Prisma.OrderListRelationFilter;
   },
   "id" | "name_addressStreet_addressCity"
 >;
@@ -456,6 +459,7 @@ export type StationCreateInput = {
   prices: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+  orders?: Prisma.OrderCreateNestedManyWithoutStationInput;
 };
 
 export type StationUncheckedCreateInput = {
@@ -475,6 +479,7 @@ export type StationUncheckedCreateInput = {
   prices: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStationInput;
 };
 
 export type StationUpdateInput = {
@@ -506,6 +511,7 @@ export type StationUpdateInput = {
   prices?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  orders?: Prisma.OrderUpdateManyWithoutStationNestedInput;
 };
 
 export type StationUncheckedUpdateInput = {
@@ -537,6 +543,7 @@ export type StationUncheckedUpdateInput = {
   prices?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutStationNestedInput;
 };
 
 export type StationCreateManyInput = {
@@ -702,6 +709,11 @@ export type StationSumOrderByAggregateInput = {
   longitude?: Prisma.SortOrder;
 };
 
+export type StationScalarRelationFilter = {
+  is?: Prisma.StationWhereInput;
+  isNot?: Prisma.StationWhereInput;
+};
+
 export type StationCreatefuelTypesInput = {
   set: $Enums.FuelType[];
 };
@@ -710,13 +722,201 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean;
 };
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null;
-};
-
 export type StationUpdatefuelTypesInput = {
   set?: $Enums.FuelType[];
   push?: $Enums.FuelType | $Enums.FuelType[];
+};
+
+export type StationCreateNestedOneWithoutOrdersInput = {
+  create?: Prisma.XOR<
+    Prisma.StationCreateWithoutOrdersInput,
+    Prisma.StationUncheckedCreateWithoutOrdersInput
+  >;
+  connectOrCreate?: Prisma.StationCreateOrConnectWithoutOrdersInput;
+  connect?: Prisma.StationWhereUniqueInput;
+};
+
+export type StationUpdateOneRequiredWithoutOrdersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.StationCreateWithoutOrdersInput,
+    Prisma.StationUncheckedCreateWithoutOrdersInput
+  >;
+  connectOrCreate?: Prisma.StationCreateOrConnectWithoutOrdersInput;
+  upsert?: Prisma.StationUpsertWithoutOrdersInput;
+  connect?: Prisma.StationWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.StationUpdateToOneWithWhereWithoutOrdersInput,
+      Prisma.StationUpdateWithoutOrdersInput
+    >,
+    Prisma.StationUncheckedUpdateWithoutOrdersInput
+  >;
+};
+
+export type StationCreateWithoutOrdersInput = {
+  id?: string;
+  name: string;
+  addressState: string;
+  addressStreet: string;
+  addressCity: string;
+  addressCountry?: string;
+  isAvailable?: boolean;
+  latitude: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  longitude: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  openTime?: Date | string | null;
+  closeTime?: Date | string | null;
+  is24h?: boolean;
+  fuelTypes?: Prisma.StationCreatefuelTypesInput | $Enums.FuelType[];
+  prices: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
+
+export type StationUncheckedCreateWithoutOrdersInput = {
+  id?: string;
+  name: string;
+  addressState: string;
+  addressStreet: string;
+  addressCity: string;
+  addressCountry?: string;
+  isAvailable?: boolean;
+  latitude: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  longitude: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  openTime?: Date | string | null;
+  closeTime?: Date | string | null;
+  is24h?: boolean;
+  fuelTypes?: Prisma.StationCreatefuelTypesInput | $Enums.FuelType[];
+  prices: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
+
+export type StationCreateOrConnectWithoutOrdersInput = {
+  where: Prisma.StationWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.StationCreateWithoutOrdersInput,
+    Prisma.StationUncheckedCreateWithoutOrdersInput
+  >;
+};
+
+export type StationUpsertWithoutOrdersInput = {
+  update: Prisma.XOR<
+    Prisma.StationUpdateWithoutOrdersInput,
+    Prisma.StationUncheckedUpdateWithoutOrdersInput
+  >;
+  create: Prisma.XOR<
+    Prisma.StationCreateWithoutOrdersInput,
+    Prisma.StationUncheckedCreateWithoutOrdersInput
+  >;
+  where?: Prisma.StationWhereInput;
+};
+
+export type StationUpdateToOneWithWhereWithoutOrdersInput = {
+  where?: Prisma.StationWhereInput;
+  data: Prisma.XOR<
+    Prisma.StationUpdateWithoutOrdersInput,
+    Prisma.StationUncheckedUpdateWithoutOrdersInput
+  >;
+};
+
+export type StationUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressState?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressStreet?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressCity?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressCountry?: Prisma.StringFieldUpdateOperationsInput | string;
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  latitude?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  longitude?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  openTime?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  closeTime?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  is24h?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  fuelTypes?: Prisma.StationUpdatefuelTypesInput | $Enums.FuelType[];
+  prices?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+
+export type StationUncheckedUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressState?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressStreet?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressCity?: Prisma.StringFieldUpdateOperationsInput | string;
+  addressCountry?: Prisma.StringFieldUpdateOperationsInput | string;
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  latitude?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  longitude?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  openTime?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  closeTime?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  is24h?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  fuelTypes?: Prisma.StationUpdatefuelTypesInput | $Enums.FuelType[];
+  prices?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+
+/**
+ * Count Type StationCountOutputType
+ */
+
+export type StationCountOutputType = {
+  orders: number;
+};
+
+export type StationCountOutputTypeSelect<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  orders?: boolean | StationCountOutputTypeCountOrdersArgs;
+};
+
+/**
+ * StationCountOutputType without action
+ */
+export type StationCountOutputTypeDefaultArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the StationCountOutputType
+   */
+  select?: Prisma.StationCountOutputTypeSelect<ExtArgs> | null;
+};
+
+/**
+ * StationCountOutputType without action
+ */
+export type StationCountOutputTypeCountOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.OrderWhereInput;
 };
 
 export type StationSelect<
@@ -740,6 +940,8 @@ export type StationSelect<
     prices?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    orders?: boolean | Prisma.Station$ordersArgs<ExtArgs>;
+    _count?: boolean | Prisma.StationCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["station"]
 >;
@@ -835,13 +1037,30 @@ export type StationOmit<
   | "updatedAt",
   ExtArgs["result"]["station"]
 >;
+export type StationInclude<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  orders?: boolean | Prisma.Station$ordersArgs<ExtArgs>;
+  _count?: boolean | Prisma.StationCountOutputTypeDefaultArgs<ExtArgs>;
+};
+export type StationIncludeCreateManyAndReturn<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {};
+export type StationIncludeUpdateManyAndReturn<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {};
 
 export type $StationPayload<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
   name: "Station";
-  objects: {};
+  objects: {
+    orders: Prisma.$OrderPayload<ExtArgs>[];
+  };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
@@ -1410,6 +1629,17 @@ export interface Prisma__StationClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
+  orders<T extends Prisma.Station$ordersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Station$ordersArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$OrderPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1481,6 +1711,10 @@ export type StationFindUniqueArgs<
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  /**
    * Filter, which Station to fetch.
    */
   where: Prisma.StationWhereUniqueInput;
@@ -1502,6 +1736,10 @@ export type StationFindUniqueOrThrowArgs<
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  /**
    * Filter, which Station to fetch.
    */
   where: Prisma.StationWhereUniqueInput;
@@ -1522,6 +1760,10 @@ export type StationFindFirstArgs<
    * Omit specific fields from the Station
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
   /**
    * Filter, which Station to fetch.
    */
@@ -1576,6 +1818,10 @@ export type StationFindFirstOrThrowArgs<
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  /**
    * Filter, which Station to fetch.
    */
   where?: Prisma.StationWhereInput;
@@ -1629,6 +1875,10 @@ export type StationFindManyArgs<
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  /**
    * Filter, which Stations to fetch.
    */
   where?: Prisma.StationWhereInput;
@@ -1681,6 +1931,10 @@ export type StationCreateArgs<
    * Omit specific fields from the Station
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
   /**
    * The data needed to create a Station.
    */
@@ -1741,6 +1995,10 @@ export type StationUpdateArgs<
    * Omit specific fields from the Station
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
   /**
    * The data needed to update a Station.
    */
@@ -1826,6 +2084,10 @@ export type StationUpsertArgs<
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  /**
    * The filter to search for the Station to update in case it exists.
    */
   where: Prisma.StationWhereUniqueInput;
@@ -1861,6 +2123,10 @@ export type StationDeleteArgs<
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  /**
    * Filter which Station to delete.
    */
   where: Prisma.StationWhereUniqueInput;
@@ -1884,6 +2150,35 @@ export type StationDeleteManyArgs<
 };
 
 /**
+ * Station.orders
+ */
+export type Station$ordersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null;
+  where?: Prisma.OrderWhereInput;
+  orderBy?:
+    | Prisma.OrderOrderByWithRelationInput
+    | Prisma.OrderOrderByWithRelationInput[];
+  cursor?: Prisma.OrderWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
+};
+
+/**
  * Station without action
  */
 export type StationDefaultArgs<
@@ -1898,4 +2193,8 @@ export type StationDefaultArgs<
    * Omit specific fields from the Station
    */
   omit?: Prisma.StationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
 };
