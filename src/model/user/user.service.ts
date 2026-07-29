@@ -25,6 +25,25 @@ export class UserService {
       },
     };
   }
+  async getAgents(limit: string, page: string) {
+    const take = Math.min(100, Math.max(1, Number(limit) || 50));
+    const pageNum = Math.max(1, Number(page) || 1);
+    const skip = (pageNum - 1) * take;
+
+    const [users, totalAgents] = await Promise.all([
+      this.userRepository.findAgentsPaginated(skip, take),
+      this.userRepository.countAgents(),
+    ]);
+
+    return {
+      users,
+      pagination: {
+        totalAgents,
+        totalPages: Math.ceil(totalAgents / take),
+        currentPage: pageNum,
+      },
+    };
+  }
 
   async getProfile(userId: string) {
     const result = await this.userRepository.getProfileByUserId(userId);

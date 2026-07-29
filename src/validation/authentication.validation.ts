@@ -24,13 +24,13 @@ const PasswordSchema = z
   });
 
 const RoleSchema = z
-  .enum(["ADMIN", "USER"], {
-    message: "Role must be either 'ADMIN' or 'USER'",
+  .enum(["ADMIN", "CUSTOMER", "AGENT"], {
+    message: "Role must be either 'ADMIN', 'CUSTOMER', or 'AGENT'",
   })
   .openapi({
     type: "string",
     description: "User access control role",
-    example: "USER",
+    example: "CUSTOMER",
   });
 
 const DateOfBirthSchema = z
@@ -70,6 +70,27 @@ export const createUserBodySchema = z.object({
     .min(1, { message: "Address is required" })
     .openapi({ description: "Physical residential address" }),
 });
+export const createAgentBodySchema = z.object({
+  email: EmailSchema,
+  role: RoleSchema,
+  firstName: z
+    .string()
+    .min(1, { message: "First name is required" })
+    .openapi({ description: "User's given first name" }),
+  lastName: z
+    .string()
+    .min(1, { message: "Last name is required" })
+    .openapi({ description: "User's family name" }),
+  phoneNumber: z
+    .string()
+    .min(1, { message: "Phone number is required" })
+    .openapi({ description: "Contact phone number" }),
+  dateOfBirth: DateOfBirthSchema,
+  address: z
+    .string()
+    .min(1, { message: "Address is required" })
+    .openapi({ description: "Physical residential address" }),
+});
 
 export const loginBodySchema = z.object({
   email: EmailSchema,
@@ -85,6 +106,7 @@ export const verifyOtpBodySchema = z.object({
 });
 
 export const createUserSchema = z.object({ body: createUserBodySchema });
+export const createAgentSchema = z.object({ body: createAgentBodySchema });
 export const loginRequestSchema = z.object({ body: loginBodySchema });
 export const requestOtpSchema = z.object({
   body: z.object({ email: EmailSchema }),
@@ -98,6 +120,17 @@ export const resetPasswordSchema = z.object({
     token: z.string().min(1, { message: "token is required" }),
   }),
 });
+export const changePasswordSchema = z.object({
+  body: z.object({
+    currentPassword: PasswordSchema,
+    newPassword: PasswordSchema,
+  }),
+});
+export const changeDefaultPasswordSchema = z.object({
+  body: z.object({
+    newPassword: PasswordSchema,
+  }),
+});
 // ==========================================
 // 3. RESPONSE SCHEMAS
 // ==========================================
@@ -106,7 +139,11 @@ export const registrationResponseSchema = createUserBodySchema.omit({
 });
 
 export const userLoginResponse = z.object({
-  token: z.string().openapi({
+  accessToken: z.string().openapi({
+    type: "string",
+    description: "JWT authorization token for authenticated requests",
+  }),
+  refreshToken: z.string().openapi({
     type: "string",
     description: "JWT authorization token for authenticated requests",
   }),

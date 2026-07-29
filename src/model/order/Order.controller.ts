@@ -8,18 +8,27 @@ import { UserRepository } from "../user/user.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
 import { TransactionRepo } from "../Transaction/Transaction.repository.js";
 import { PayStack } from "../../config/paystack.config.js";
+import { prisma } from "../../config/database.js";
+import { StationRepository } from "../station/Station.repository.js";
 
 const orderRepository = new OrderRepository();
 const userRepository = new UserRepository();
 const transactionRepo = new TransactionRepo();
 const payStack = new PayStack();
+const stationRepo = new StationRepository();
 
-const transactionService = new TransactionService(transactionRepo, payStack);
+const transactionService = new TransactionService(
+  transactionRepo,
+  payStack,
+  orderRepository,
+);
 
 const orderService = new OrderService(
   orderRepository,
   userRepository,
   transactionService,
+  stationRepo,
+  prisma,
 );
 export class OrderController {
   private static handleGetOrderPipeline = (clientSource: string) => {
@@ -37,25 +46,22 @@ export class OrderController {
       res.json(new ApiResponse(200, orders, "Orders retrieved successfully"));
     });
   };
-  private static handleUpdateOrderPipeline = (clientSource: string) => {
-    return asyncHandler(async (req: Request, res: Response) => {
-      const userId =
-        clientSource === "MOBILE" ? req.user?.userId : req.params.userId;
+  static handleUpdateOrderPipeline = asyncHandler(
+    async (req: Request, res: Response) => {
+      const userId = req.user?.userId;
       const orderId = req.params.orderId;
-      const adminId = clientSource === "ADMIN" ? req.user?.userId : undefined;
       const { status } = req.body;
 
       const updatedOrder = await orderService.updateOrderStatus(
-        userId as string,
         orderId as string,
         status,
-        adminId as string,
+        { id: userId as string, role: req.user?.role as any },
       );
       res.json(
         new ApiResponse(200, updatedOrder, "Order status updated successfully"),
       );
-    });
-  };
+    },
+  );
   static createOrder = asyncHandler(async (req: Request, res: Response) => {
     const orderData: OrderDTO = req.body;
     const order = await orderService.createOrder(orderData);

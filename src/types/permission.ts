@@ -25,6 +25,7 @@ export const PERMISSIONS = {
   },
 
   ORDER: {
+    CREATE: Permission.ORDER_CREATE,
     READ: Permission.ORDER_READ,
     UPDATE: Permission.ORDER_UPDATE,
     CANCEL: Permission.ORDER_CANCEL,
@@ -50,8 +51,10 @@ export const PERMISSIONS = {
  * Customer/User permissions
  */
 export const USER_PERMISSIONS: Permission[] = [
+  Permission.ORDER_CREATE,
   Permission.ORDER_READ,
   Permission.ORDER_CANCEL,
+  Permission.STATION_READ,
 ];
 
 /**
@@ -80,6 +83,10 @@ export const ADMIN_PERMISSIONS: Permission[] = [
   Permission.PAYMENT_READ,
   Permission.PAYMENT_VERIFY,
 ];
+export const AGENT_PERMISSIONS: Permission[] = [
+  Permission.ORDER_APPROVE,
+  Permission.ORDER_CANCEL,
+] as Permission[];
 
 /**
  * Super Admin permissions
@@ -95,5 +102,6 @@ export const SUPER_ADMIN_PERMISSIONS: Permission[] = Object.values(
 export const ROLE_PERMISSIONS = {
   USER: USER_PERMISSIONS,
   ADMIN: ADMIN_PERMISSIONS,
+  AGENT: AGENT_PERMISSIONS,
   SUPER_ADMIN: SUPER_ADMIN_PERMISSIONS,
 } as const;

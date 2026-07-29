@@ -16,6 +16,7 @@ export class AuthRepository implements IAuthRepository {
     role: true,
     accountStatus: true,
     userProfile: true,
+    mustChangePassword: true,
     createdAt: true,
   };
 
@@ -25,6 +26,7 @@ export class AuthRepository implements IAuthRepository {
         email: dto.email.toLowerCase().trim(),
         passwordHash: dto.password,
         role: dto.role,
+        mustChangePassword: dto.mustAddPassword,
         userProfile: {
           create: {
             firstName: dto.firstName,
@@ -38,7 +40,12 @@ export class AuthRepository implements IAuthRepository {
       select: this.defaultUserSelect,
     });
   }
-
+  async findUserByPhone(phoneNumber: string): Promise<any | null> {
+    return await this.prismaClient.user.findFirst({
+      where: { userProfile: { phoneNumber } },
+      select: this.defaultUserSelect,
+    });
+  }
   async findUserByEmail(email: string): Promise<any | null> {
     return await this.prismaClient.user.findUnique({
       where: { email: email.toLowerCase().trim() },
@@ -127,6 +134,16 @@ export class AuthRepository implements IAuthRepository {
         id: true,
         email: true,
         tokenExpiry: true, // Added tokenExpiry to support expirations check in service
+      },
+    });
+  }
+  async updatePasswordAndClearFlag(userId: string, hashedPassword: string) {
+    return await this.prismaClient.user.update({
+      where: { id: userId },
+      data: {
+        passwordHash: hashedPassword,
+        mustChangePassword: false,
+        passwordChangedAt: new Date(),
       },
     });
   }

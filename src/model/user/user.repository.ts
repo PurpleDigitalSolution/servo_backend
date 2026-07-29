@@ -5,6 +5,8 @@ export interface IUserRepository {
   findCustomersPaginated(skip: number, take: number): Promise<any[]>;
   countUsers(): Promise<number>;
   countCustomers(): Promise<number>;
+  countAgents(): Promise<number>;
+  findAgentsPaginated(skip: number, take: number): Promise<any[]>;
   countSearchUsers(query: string): Promise<number>;
   searchUser(query: string, skip: number, take: number): Promise<any[]>;
   findUserById(id: string): Promise<any | null>;
@@ -45,7 +47,17 @@ export class UserRepository implements IUserRepository {
       skip,
       take,
       where: {
-        role: "USER",
+        role: "CUSTOMER",
+      },
+      select: this.defaultSelect,
+    });
+  }
+  async findAgentsPaginated(skip: number, take: number) {
+    return prisma.user.findMany({
+      skip,
+      take,
+      where: {
+        role: "AGENT",
       },
       select: this.defaultSelect,
     });
@@ -57,7 +69,14 @@ export class UserRepository implements IUserRepository {
   async countCustomers() {
     return prisma.user.count({
       where: {
-        role: "USER",
+        role: "CUSTOMER",
+      },
+    });
+  }
+  async countAgents() {
+    return prisma.user.count({
+      where: {
+        role: "AGENT",
       },
     });
   }

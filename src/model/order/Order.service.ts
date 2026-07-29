@@ -1,6 +1,13 @@
+import { PrismaClient } from "../../generated/prisma/client.js";
 import { OrderDTO, OrderResponseDTO } from "../../interface/dto/order.dto.js";
 import { OrderStatus } from "../../types/general.js";
 import { ApiError } from "../../utils/errorHandler.js";
+import {
+  canTransition,
+  isRoleAllowedToSetStatus,
+  UserRole,
+} from "../../utils/status.js";
+import { IStationRepository } from "../station/Station.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
 import { IOrderRepository } from "./Order.repository.js";
 
@@ -8,47 +15,105 @@ import { IOrderRepository } from "./Order.repository.js";
 export interface IUserRepository {
   findUserById(userId: string): Promise<any | null>;
 }
+export interface ActorContext {
+  id: string;
+  role: UserRole;
+}
 
 export class OrderService {
   constructor(
     private readonly orderRepository: IOrderRepository,
     private readonly userRepository: IUserRepository,
     private readonly transactionService: TransactionService,
+    private readonly stationRepository: IStationRepository,
+    private readonly prisma: PrismaClient, // Replace 'any' with the actual type of your Prisma client
   ) {}
 
   /**
    * Orchestrates the verification of users, persistence of orders, and down-stream checkout payment linkages.
    */
   async createOrder(orderData: OrderDTO): Promise<OrderResponseDTO> {
-    try {
-      const user = await this.userRepository.findUserById(orderData.userId);
-      if (!user) {
-        throw new ApiError(404, "User not found");
-      }
+    const { customerId, stationId, quantity, unitPrice } = orderData;
 
-      const order = await this.orderRepository.createOrder(orderData);
-
-      const transaction = await this.transactionService.initialize(
-        order.id,
-        Number(order.price),
-        user.email,
+    // 1. Structural Input Assertions
+    if (quantity <= 0 || unitPrice <= 0) {
+      throw new ApiError(
+        400,
+        "Quantity and unit price must be positive numbers.",
       );
+    }
 
-      const payResponse = {
-        orderId: order.id,
-        authorizationUrl: transaction.authorizationUrl,
-        reference: transaction.reference,
-      };
-      return { ...order, payResponse };
+    // 2. Parallel Dependency Check (Fast-Fail Layer)
+    const [user, station] = await Promise.all([
+      this.userRepository.findUserById(customerId),
+      this.stationRepository.findStationById(stationId),
+    ]);
+
+    if (!user) throw new ApiError(404, "Target customer profile not found.");
+    if (!station) throw new ApiError(404, "Target filling station not found.");
+
+    // 3. Server-Controlled Calculations (Mitigates Client-Side Pricing Manipulation)
+    // TODO: Pull these rules dynamically from a config service table mapped to the station location
+    const vatRate = 0.075; // Example: 7.5% baseline tax
+    const baselineDeliveryFee = 15.0;
+
+    const fuelSubtotal = quantity * unitPrice;
+    const calculatedVat = Number((fuelSubtotal * vatRate).toFixed(2));
+    const totalAmount = Number(
+      (fuelSubtotal + calculatedVat + baselineDeliveryFee).toFixed(2),
+    );
+
+    // 4. Atomic Execution Block (Protects Against Orphaned Records)
+    try {
+      return await this.prisma.$transaction(async (tx: any) => {
+        // Save order using transactional context
+        const order = await this.orderRepository.createOrder(
+          {
+            ...orderData,
+            fuelSubtotal,
+            VAT: calculatedVat,
+            deliveryFee: baselineDeliveryFee,
+            totalAmount,
+          },
+          tx,
+        );
+
+        // Remote financial initialization gate
+        const transaction = await this.transactionService.initialize(
+          order.id,
+          totalAmount,
+          user.email,
+          tx,
+        );
+
+        return {
+          ...order,
+          payResponse: {
+            orderId: order.id,
+            authorizationUrl: transaction.authorizationUrl,
+            reference: transaction.reference,
+          },
+        };
+      });
     } catch (error: any) {
-      // Intercept and translate standard relational database engine Foreign Key errors
+      // Clean handling of explicit engine exceptions
+      if (error instanceof ApiError) throw error;
+
       if (
+        error.code === "P2003" ||
         error.code === "23503" ||
-        error.message?.includes("foreign key constraint")
+        error.message?.includes("foreign key")
       ) {
-        throw new ApiError(404, "User not found");
+        throw new ApiError(
+          400,
+          "Order creation aborted: Invalid relational reference keys supplied.",
+        );
       }
-      throw error;
+
+      throw new ApiError(
+        500,
+        `Order processing critical error: ${error.message || error}`,
+      );
     }
   }
 
@@ -87,38 +152,50 @@ export class OrderService {
   }
 
   async findOrderById(orderId: string): Promise<any | null> {
-    return await this.orderRepository.findOrderById(orderId);
+    return this.orderRepository.findOrderById(orderId);
   }
 
   async updateOrderStatus(
-    userId: string,
     orderId: string,
-    status: OrderStatus,
-    adminId?: string,
-  ): Promise<void> {
-    try {
-      const res = await this.orderRepository.updateOrderStatus(
-        userId,
-        orderId,
-        status,
-      );
-      if (!res) {
-        throw new ApiError(404, "Order not found");
-      }
-      if (adminId) {
-        console.log(
-          `Admin ${adminId} updated status to ${status} for order ${orderId}`,
-        );
-      }
-    } catch (error: any) {
-      if (
-        error.code === "23503" ||
-        error.message?.includes("foreign key constraint")
-      ) {
-        throw new ApiError(404, "User not found");
-      }
-      throw error;
+    newStatus: OrderStatus,
+    actor: ActorContext,
+  ): Promise<any> {
+    const order = await this.orderRepository.findOrderById(orderId);
+    if (!order) {
+      throw new ApiError(404, "Order not found");
     }
+
+    // 2. Ownership / Assignment Access Guard
+    if (actor.role === "CUSTOMER" && order.customerId !== actor.id) {
+      throw new ApiError(403, "Forbidden: You can only manage your own orders");
+    }
+
+    if (actor.role === "AGENT" && order.agentId !== actor.id) {
+      throw new ApiError(403, "Forbidden: You are not assigned to this order");
+    }
+
+    // 3. Check State Machine Validity (Can the state transition from A -> B?)
+    if (!canTransition(order.status, newStatus)) {
+      throw new ApiError(
+        400,
+        `Invalid status transition from '${order.status}' to '${newStatus}'`,
+      );
+    }
+
+    // 4. Check Role Permission (Is this actor allowed to set this target status?)
+    if (!isRoleAllowedToSetStatus(actor.role, newStatus)) {
+      throw new ApiError(
+        403,
+        `Forbidden: '${actor.role}' role is not authorized to transition orders to '${newStatus}'`,
+      );
+    }
+
+    // 5. Execute Update
+    return await this.orderRepository.updateOrderStatus(
+      order.customerId,
+      orderId,
+      newStatus,
+    );
   }
 
   async updateOrderStatusByTransaction(

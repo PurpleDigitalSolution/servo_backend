@@ -14,7 +14,7 @@ import { getSessionToken } from "./getToken.js";
 
 declare module "express-serve-static-core" {
   interface Request {
-    user?: SessionPayload;
+    user?: SessionPayload & { sessionId: string };
   }
 }
 
@@ -47,6 +47,7 @@ export class SessionService {
       role: payload.role,
       permissions: payload.permissions,
       client: client,
+      mustChangePassword: payload.mustChangePassword,
     };
 
     const payloadWithSessionId = { ...cleanPayload, sessionId };
@@ -82,7 +83,7 @@ export class SessionService {
   }
 
   /**
-   * Validates refresh token state and issues a fresh session chain.
+   * Validates refresh token state, rotates session, and issues a fresh session chain.
    */
   static async autoRefresh(
     req: Request,
@@ -93,8 +94,11 @@ export class SessionService {
     const refreshToken =
       req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME] ||
       getSessionToken(req);
+
     if (!refreshToken) {
-      return next(new ApiError(401, "Unauthorized: Session cookie missing"));
+      return next(
+        new ApiError(401, "Unauthorized: Session credentials missing"),
+      );
     }
 
     try {
@@ -107,35 +111,38 @@ export class SessionService {
         decoded.userId,
         decoded.sessionId,
       );
+
       if (!isActive) {
         await this.clearFrom(res, decoded.userId, decoded.sessionId);
-        return next(new ApiError(403, "Session expired. Please login again."));
+        return next(new ApiError(401, "Session expired. Please login again."));
       }
-      const decodedClient = client || decoded.client;
-      // Re-sign using cleaned up properties
-      await this.signTo(res, decoded, decodedClient);
 
-      // Rotate the existing session to prevent refresh-token replay, then issue a fresh session chain
+      const decodedClient = client || decoded.client;
+
+      // 1. Invalidate old session in storage
       await TokenService.rotateSession(decoded.userId, decoded.sessionId);
+
+      // 2. Issue single new session chain
       const { accessToken } = await this.signTo(res, decoded, decodedClient);
-      // Attach the freshly issued session payload (including the new sessionId) to the request
+
+      // 3. Attach fresh session payload to request
       req.user = jwt.verify(
         accessToken,
         config.JWT_SECRET,
-      ) as SessionPayload & {
-        sessionId: string;
-      };
+      ) as SessionPayload & { sessionId: string };
 
       return next();
     } catch (error: unknown) {
-      const _e = error;
-      // Catch token modifications or expiration events safely
+      console.log("SessionService.autoRefresh error:", error);
       return next(
         new ApiError(401, "Unauthorized: Invalid or expired refresh token."),
       );
     }
   }
 
+  /**
+   * Verifies access token and falls back to autoRefresh if expired.
+   */
   static async verifySession(
     req: Request,
     res: Response,
@@ -144,7 +151,10 @@ export class SessionService {
     const accessToken =
       req.cookies[config.SERVO_SESSION_ACCESS_TOKEN_NAME] ||
       getSessionToken(req);
-    const refreshToken = req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME];
+
+    const refreshToken =
+      req.cookies[config.SERVO_SESSION_REFRESH_TOKEN_NAME] ||
+      req.headers["x-refresh-token"]; // Added header support for non-cookie clients
 
     if (!accessToken && !refreshToken) {
       return next(
@@ -158,7 +168,7 @@ export class SessionService {
       }
 
       const decoded = jwt.verify(
-        accessToken,
+        accessToken!,
         config.JWT_SECRET,
       ) as SessionPayload & { sessionId: string };
 
@@ -166,6 +176,7 @@ export class SessionService {
         decoded.userId,
         decoded.sessionId,
       );
+
       if (!isActive) {
         await this.clearFrom(res, decoded.userId, decoded.sessionId);
         return next(new ApiError(403, "Session invalid or revoked."));
@@ -174,7 +185,6 @@ export class SessionService {
       req.user = decoded;
       return next();
     } catch (error: unknown) {
-      // Gracefully shift execution downstream if access token expired but refresh token remains present
       if (error instanceof jwt.TokenExpiredError && refreshToken) {
         return this.autoRefresh(req, res, next);
       }
@@ -186,6 +196,10 @@ export class SessionService {
       );
     }
   }
+
+  /**
+   * Manual refresh endpoint handler (includes strict token rotation).
+   */
   static async refreshSession(
     req: Request,
     res: Response,
@@ -197,22 +211,30 @@ export class SessionService {
     if (!refreshToken) {
       throw new ApiError(401, "Unauthorized: Missing refresh token");
     }
+
     try {
       const decoded = jwt.verify(
         refreshToken,
         config.JWT_SECRET,
       ) as SessionPayload & { sessionId: string };
+
       const isActive = await TokenService.isActiveToken(
         decoded.userId,
         decoded.sessionId,
       );
+
       if (!isActive) {
         await this.clearFrom(res, decoded.userId, decoded.sessionId);
         throw new ApiError(403, "Session invalid or revoked.");
       }
-      const decodedClient = decoded.client;
-      return this.signTo(res, decoded, decodedClient);
-    } catch {
+
+      // Rotate session before signing a new one
+      await TokenService.rotateSession(decoded.userId, decoded.sessionId);
+
+      return this.signTo(res, decoded, decoded.client);
+    } catch (error: unknown) {
+      if (error instanceof ApiError) throw error;
+      console.log("SessionService.refreshSession error:", error);
       throw new ApiError(
         401,
         "Unauthorized: Invalid or expired refresh token.",
@@ -228,7 +250,7 @@ export class SessionService {
     try {
       await TokenService.invalidateToken(userId, sessionId);
     } catch {
-      // Suppress or log internal database validation errors to guarantee cookie clearing executes
+      // Suppress or log internal database errors to guarantee cookie clearing executes
     }
 
     const clearOptions = {

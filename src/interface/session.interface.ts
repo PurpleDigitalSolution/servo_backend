@@ -6,6 +6,7 @@ export interface SessionPayload {
   role: UserRole;
   permissions?: Permission[];
   client: "MOBILE" | "ADMIN";
+  mustChangePassword?: boolean;
 }
 export interface jwtSignReturnType {
   accessToken: string;

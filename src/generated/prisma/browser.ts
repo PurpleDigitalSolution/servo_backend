@@ -46,3 +46,8 @@ export type Order = Prisma.OrderModel;
  *
  */
 export type Transaction = Prisma.TransactionModel;
+/**
+ * Model IdempotencyRequest
+ *
+ */
+export type IdempotencyRequest = Prisma.IdempotencyRequestModel;

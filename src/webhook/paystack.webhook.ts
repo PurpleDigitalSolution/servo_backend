@@ -72,7 +72,7 @@ export const webhook = async (
 
         await orderService.updateOrderStatusByTransaction(
           transaction.orderId as string,
-          "CONFIRMED",
+          "PENDING_CONFIRMATION",
         );
 
         break;

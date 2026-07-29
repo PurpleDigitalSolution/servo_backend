@@ -7,6 +7,7 @@ import { SessionPayload } from "../../interface/session.interface.js";
 import { ROLE_PERMISSIONS } from "../../types/permission.js";
 import { UserRole } from "../../types/general.js";
 import { ClientType } from "../../utils/getClient.js";
+import { ApiError } from "../../utils/errorHandler.js";
 
 export class AuthController {
   // Inject AuthenticationService dependency through constructor
@@ -26,7 +27,8 @@ export class AuthController {
 
       const expectedClient =
         userWithoutPassword.role === "ADMIN" ||
-        userWithoutPassword.role === "SUPER_ADMIN"
+        userWithoutPassword.role === "SUPER_ADMIN" ||
+        userWithoutPassword.role === "AGENT"
           ? "ADMIN"
           : "MOBILE";
 
@@ -51,17 +53,26 @@ export class AuthController {
             ? ROLE_PERMISSIONS.ADMIN
             : userWithoutPassword.role === "SUPER_ADMIN"
               ? ROLE_PERMISSIONS.SUPER_ADMIN
-              : ROLE_PERMISSIONS.USER,
+              : userWithoutPassword.role === "AGENT"
+                ? ROLE_PERMISSIONS.AGENT
+                : ROLE_PERMISSIONS.USER,
         client: clientSource,
+        mustChangePassword:
+          (userWithoutPassword as any).mustChangePassword || false,
       };
 
-      const { accessToken } = await this.sessionService.signTo(
+      const { accessToken, refreshToken } = await this.sessionService.signTo(
         res,
         sessionPayload,
         clientSource,
       );
 
-      const result = { accessToken, user: userWithoutPassword };
+      const result = {
+        accessToken,
+        refreshToken,
+        user: userWithoutPassword,
+        mustChangePassword: sessionPayload.mustChangePassword,
+      };
 
       return res
         .status(200)
@@ -75,6 +86,13 @@ export class AuthController {
     return res
       .status(201)
       .json(new ApiResponse(201, response, "User registered successfully"));
+  });
+
+  readonly registerAgent = asyncHandler(async (req: Request, res: Response) => {
+    const response = await this.authService.registerAgent(req.body);
+    return res
+      .status(201)
+      .json(new ApiResponse(201, response, "Agent registered successfully"));
   });
 
   readonly loginMobile = this.handleLoginPipeline("MOBILE");
@@ -166,4 +184,65 @@ export class AuthController {
       .status(202)
       .json(new ApiResponse(202, null, "Password reset successfully"));
   });
+  readonly changeDefaultPassword = asyncHandler(
+    async (req: Request, res: Response) => {
+      const { newPassword } = req.body;
+      const userId = req.user!.userId;
+      const client = req.user!.client;
+
+      if (!newPassword) {
+        throw new ApiError(400, "New password is required");
+      }
+
+      await this.authService.changeDefaultPassword(
+        userId,
+        newPassword,
+        res,
+        client,
+      );
+
+      res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            null,
+            "Password updated successfully. You can now access your account.",
+          ),
+        );
+    },
+  );
+  readonly changePassword = asyncHandler(
+    async (req: Request, res: Response) => {
+      const userId = req.user?.userId;
+      if (!userId) {
+        throw new ApiError(401, "Unauthorized");
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        throw new ApiError(
+          400,
+          "Both current password and new password are required",
+        );
+      }
+
+      await this.authService.changePassword(
+        userId,
+        currentPassword,
+        newPassword,
+      );
+
+      res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            null,
+            "Password changed successfully. Please log in again with your new credentials.",
+          ),
+        );
+    },
+  );
 }

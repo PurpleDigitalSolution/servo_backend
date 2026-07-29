@@ -9,6 +9,7 @@ export interface CreateUserDTO {
   phoneNumber: string;
   dateOfBirth: Date;
   address: string;
+  mustAddPassword?: boolean; // Optional field to indicate if the user must add a password
 }
 export interface userWithoutPassword {
   id: string;

@@ -1,7 +1,7 @@
 export const ROLE_ALLOWED_CLIENTS = {
-  USER: ["MOBILE"],
+  CUSTOMER: ["MOBILE"],
   DRIVER: ["MOBILE"],
-  AGENT: ["MOBILE"],
+  AGENT: ["ADMIN"],
   ADMIN: ["ADMIN"],
   SUPER_ADMIN: ["ADMIN"],
 } as const;

@@ -1,11 +1,12 @@
 import { prisma } from "../config/database.js";
 import { seedAdminUser } from "./admin.seed.js";
+import { seedUsersData } from "./user.seed.js";
 
 const runSeeds = async (): Promise<void> => {
   try {
     console.log("⏳ Initializing primary database seed orchestration...");
 
-    await Promise.all([seedAdminUser()]);
+    await Promise.all([seedAdminUser(), seedUsersData()]);
 
     console.log("🎉 All seeds executed and finalized without errors.");
     process.exit(0);

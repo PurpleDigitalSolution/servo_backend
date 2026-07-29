@@ -6,6 +6,7 @@ import userRoute from "./user.route.js";
 import stationRouter from "./station.route.js";
 import OrderRouter from "./order.route.js";
 import WebHookRouter from "./webhook.route.js";
+import transactionRouter from "./transaction.route.js";
 
 const router = express.Router();
 router.use(sanitizeBodyMiddleware);
@@ -14,6 +15,7 @@ router.use("/auth", authenticationRouter);
 router.use("/users", userRoute);
 router.use("/stations", stationRouter);
 router.use("/orders", OrderRouter);
+router.use("/transactions", transactionRouter);
 
 router.use("/webhooks", WebHookRouter);
 export default router;

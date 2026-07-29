@@ -38,13 +38,13 @@ const adminUsers: AdminSeedData[] = [
     address: "456 Super Admin Ave",
   },
 ];
-
+const authRepository = new AuthRepository();
 export const seedAdminUser = async (): Promise<void> => {
   console.log("🚀 Starting database seeding sequence...");
 
   const seedingPromises = adminUsers.map(async (admin) => {
     try {
-      const existingUser = await AuthRepository.findUserByEmail(admin.email);
+      const existingUser = await authRepository.findUserByEmail(admin.email);
 
       if (existingUser) {
         console.log(`ℹ️ Admin user ${admin.email} already exists. Skipping.`);
@@ -53,8 +53,9 @@ export const seedAdminUser = async (): Promise<void> => {
 
       const hashedPassword = await bcrypt.hash(admin.password, 10);
 
-      await AuthRepository.createUserAccount({
+      await authRepository.createUserAccount({
         ...admin,
+        mustAddPassword: true,
         password: hashedPassword,
       });
 

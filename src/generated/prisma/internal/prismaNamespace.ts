@@ -417,6 +417,7 @@ export const ModelName = {
   SessionToken: "SessionToken",
   Order: "Order",
   Transaction: "Transaction",
+  IdempotencyRequest: "IdempotencyRequest",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -444,7 +445,8 @@ export type TypeMap<
       | "station"
       | "sessionToken"
       | "order"
-      | "transaction";
+      | "transaction"
+      | "idempotencyRequest";
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -904,6 +906,82 @@ export type TypeMap<
         };
       };
     };
+    IdempotencyRequest: {
+      payload: Prisma.$IdempotencyRequestPayload<ExtArgs>;
+      fields: Prisma.IdempotencyRequestFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.IdempotencyRequestFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.IdempotencyRequestFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>;
+        };
+        findFirst: {
+          args: Prisma.IdempotencyRequestFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.IdempotencyRequestFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>;
+        };
+        findMany: {
+          args: Prisma.IdempotencyRequestFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>[];
+        };
+        create: {
+          args: Prisma.IdempotencyRequestCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>;
+        };
+        createMany: {
+          args: Prisma.IdempotencyRequestCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.IdempotencyRequestCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>[];
+        };
+        delete: {
+          args: Prisma.IdempotencyRequestDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>;
+        };
+        update: {
+          args: Prisma.IdempotencyRequestUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>;
+        };
+        deleteMany: {
+          args: Prisma.IdempotencyRequestDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.IdempotencyRequestUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.IdempotencyRequestUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>[];
+        };
+        upsert: {
+          args: Prisma.IdempotencyRequestUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IdempotencyRequestPayload>;
+        };
+        aggregate: {
+          args: Prisma.IdempotencyRequestAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIdempotencyRequest>;
+        };
+        groupBy: {
+          args: Prisma.IdempotencyRequestGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.IdempotencyRequestGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.IdempotencyRequestCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.IdempotencyRequestCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -955,7 +1033,9 @@ export const UserScalarFieldEnum = {
   tokenExpiry: "tokenExpiry",
   otp: "otp",
   otpExpiry: "otpExpiry",
+  mustChangePassword: "mustChangePassword",
   createdAt: "createdAt",
+  passwordChangedAt: "passwordChangedAt",
   updatedAt: "updatedAt",
 } as const;
 
@@ -1014,13 +1094,20 @@ export type SessionTokenScalarFieldEnum =
 
 export const OrderScalarFieldEnum = {
   id: "id",
-  userId: "userId",
+  customerId: "customerId",
+  assignedAgentId: "assignedAgentId",
   stationId: "stationId",
   status: "status",
   fuelType: "fuelType",
   quantity: "quantity",
-  price: "price",
+  unitPrice: "unitPrice",
+  fuelSubtotal: "fuelSubtotal",
+  totalAmount: "totalAmount",
+  deliveryFee: "deliveryFee",
+  VAT: "VAT",
   deliveryAddress: "deliveryAddress",
+  completedById: "completedById",
+  cancelledById: "cancelledById",
   createdAt: "createdAt",
   updatedAt: "updatedAt",
 } as const;
@@ -1047,6 +1134,25 @@ export const TransactionScalarFieldEnum = {
 
 export type TransactionScalarFieldEnum =
   (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum];
+
+export const IdempotencyRequestScalarFieldEnum = {
+  id: "id",
+  key: "key",
+  route: "route",
+  userId: "userId",
+  status: "status",
+  requestHash: "requestHash",
+  response: "response",
+  error: "error",
+  lockedAt: "lockedAt",
+  completedAt: "completedAt",
+  expiresAt: "expiresAt",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type IdempotencyRequestScalarFieldEnum =
+  (typeof IdempotencyRequestScalarFieldEnum)[keyof typeof IdempotencyRequestScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",
@@ -1272,6 +1378,18 @@ export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> =
   FieldRefInputType<$PrismaModel, "PaymentStatus[]">;
 
 /**
+ * Reference to a field of type 'IdempotencyStatus'
+ */
+export type EnumIdempotencyStatusFieldRefInput<$PrismaModel> =
+  FieldRefInputType<$PrismaModel, "IdempotencyStatus">;
+
+/**
+ * Reference to a field of type 'IdempotencyStatus[]'
+ */
+export type ListEnumIdempotencyStatusFieldRefInput<$PrismaModel> =
+  FieldRefInputType<$PrismaModel, "IdempotencyStatus[]">;
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
@@ -1411,6 +1529,7 @@ export type GlobalOmitConfig = {
   sessionToken?: Prisma.SessionTokenOmit;
   order?: Prisma.OrderOmit;
   transaction?: Prisma.TransactionOmit;
+  idempotencyRequest?: Prisma.IdempotencyRequestOmit;
 };
 
 /* Types for Logging */

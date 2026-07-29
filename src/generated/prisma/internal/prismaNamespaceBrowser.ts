@@ -60,6 +60,7 @@ export const ModelName = {
   SessionToken: "SessionToken",
   Order: "Order",
   Transaction: "Transaction",
+  IdempotencyRequest: "IdempotencyRequest",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -90,7 +91,9 @@ export const UserScalarFieldEnum = {
   tokenExpiry: "tokenExpiry",
   otp: "otp",
   otpExpiry: "otpExpiry",
+  mustChangePassword: "mustChangePassword",
   createdAt: "createdAt",
+  passwordChangedAt: "passwordChangedAt",
   updatedAt: "updatedAt",
 } as const;
 
@@ -149,13 +152,20 @@ export type SessionTokenScalarFieldEnum =
 
 export const OrderScalarFieldEnum = {
   id: "id",
-  userId: "userId",
+  customerId: "customerId",
+  assignedAgentId: "assignedAgentId",
   stationId: "stationId",
   status: "status",
   fuelType: "fuelType",
   quantity: "quantity",
-  price: "price",
+  unitPrice: "unitPrice",
+  fuelSubtotal: "fuelSubtotal",
+  totalAmount: "totalAmount",
+  deliveryFee: "deliveryFee",
+  VAT: "VAT",
   deliveryAddress: "deliveryAddress",
+  completedById: "completedById",
+  cancelledById: "cancelledById",
   createdAt: "createdAt",
   updatedAt: "updatedAt",
 } as const;
@@ -182,6 +192,25 @@ export const TransactionScalarFieldEnum = {
 
 export type TransactionScalarFieldEnum =
   (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum];
+
+export const IdempotencyRequestScalarFieldEnum = {
+  id: "id",
+  key: "key",
+  route: "route",
+  userId: "userId",
+  status: "status",
+  requestHash: "requestHash",
+  response: "response",
+  error: "error",
+  lockedAt: "lockedAt",
+  completedAt: "completedAt",
+  expiresAt: "expiresAt",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type IdempotencyRequestScalarFieldEnum =
+  (typeof IdempotencyRequestScalarFieldEnum)[keyof typeof IdempotencyRequestScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",

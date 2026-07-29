@@ -718,10 +718,6 @@ export type StationCreatefuelTypesInput = {
   set: $Enums.FuelType[];
 };
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean;
-};
-
 export type StationUpdatefuelTypesInput = {
   set?: $Enums.FuelType[];
   push?: $Enums.FuelType | $Enums.FuelType[];

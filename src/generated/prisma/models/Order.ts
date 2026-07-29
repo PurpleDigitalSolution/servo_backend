@@ -28,49 +28,78 @@ export type AggregateOrder = {
 
 export type OrderAvgAggregateOutputType = {
   quantity: runtime.Decimal | null;
-  price: runtime.Decimal | null;
+  unitPrice: runtime.Decimal | null;
+  fuelSubtotal: runtime.Decimal | null;
+  totalAmount: runtime.Decimal | null;
+  deliveryFee: runtime.Decimal | null;
+  VAT: runtime.Decimal | null;
 };
 
 export type OrderSumAggregateOutputType = {
   quantity: runtime.Decimal | null;
-  price: runtime.Decimal | null;
+  unitPrice: runtime.Decimal | null;
+  fuelSubtotal: runtime.Decimal | null;
+  totalAmount: runtime.Decimal | null;
+  deliveryFee: runtime.Decimal | null;
+  VAT: runtime.Decimal | null;
 };
 
 export type OrderMinAggregateOutputType = {
   id: string | null;
-  userId: string | null;
+  customerId: string | null;
+  assignedAgentId: string | null;
   stationId: string | null;
   status: $Enums.OrderStatus | null;
   fuelType: $Enums.FuelType | null;
   quantity: runtime.Decimal | null;
-  price: runtime.Decimal | null;
+  unitPrice: runtime.Decimal | null;
+  fuelSubtotal: runtime.Decimal | null;
+  totalAmount: runtime.Decimal | null;
+  deliveryFee: runtime.Decimal | null;
+  VAT: runtime.Decimal | null;
   deliveryAddress: string | null;
+  completedById: string | null;
+  cancelledById: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 };
 
 export type OrderMaxAggregateOutputType = {
   id: string | null;
-  userId: string | null;
+  customerId: string | null;
+  assignedAgentId: string | null;
   stationId: string | null;
   status: $Enums.OrderStatus | null;
   fuelType: $Enums.FuelType | null;
   quantity: runtime.Decimal | null;
-  price: runtime.Decimal | null;
+  unitPrice: runtime.Decimal | null;
+  fuelSubtotal: runtime.Decimal | null;
+  totalAmount: runtime.Decimal | null;
+  deliveryFee: runtime.Decimal | null;
+  VAT: runtime.Decimal | null;
   deliveryAddress: string | null;
+  completedById: string | null;
+  cancelledById: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
 };
 
 export type OrderCountAggregateOutputType = {
   id: number;
-  userId: number;
+  customerId: number;
+  assignedAgentId: number;
   stationId: number;
   status: number;
   fuelType: number;
   quantity: number;
-  price: number;
+  unitPrice: number;
+  fuelSubtotal: number;
+  totalAmount: number;
+  deliveryFee: number;
+  VAT: number;
   deliveryAddress: number;
+  completedById: number;
+  cancelledById: number;
   createdAt: number;
   updatedAt: number;
   _all: number;
@@ -78,49 +107,78 @@ export type OrderCountAggregateOutputType = {
 
 export type OrderAvgAggregateInputType = {
   quantity?: true;
-  price?: true;
+  unitPrice?: true;
+  fuelSubtotal?: true;
+  totalAmount?: true;
+  deliveryFee?: true;
+  VAT?: true;
 };
 
 export type OrderSumAggregateInputType = {
   quantity?: true;
-  price?: true;
+  unitPrice?: true;
+  fuelSubtotal?: true;
+  totalAmount?: true;
+  deliveryFee?: true;
+  VAT?: true;
 };
 
 export type OrderMinAggregateInputType = {
   id?: true;
-  userId?: true;
+  customerId?: true;
+  assignedAgentId?: true;
   stationId?: true;
   status?: true;
   fuelType?: true;
   quantity?: true;
-  price?: true;
+  unitPrice?: true;
+  fuelSubtotal?: true;
+  totalAmount?: true;
+  deliveryFee?: true;
+  VAT?: true;
   deliveryAddress?: true;
+  completedById?: true;
+  cancelledById?: true;
   createdAt?: true;
   updatedAt?: true;
 };
 
 export type OrderMaxAggregateInputType = {
   id?: true;
-  userId?: true;
+  customerId?: true;
+  assignedAgentId?: true;
   stationId?: true;
   status?: true;
   fuelType?: true;
   quantity?: true;
-  price?: true;
+  unitPrice?: true;
+  fuelSubtotal?: true;
+  totalAmount?: true;
+  deliveryFee?: true;
+  VAT?: true;
   deliveryAddress?: true;
+  completedById?: true;
+  cancelledById?: true;
   createdAt?: true;
   updatedAt?: true;
 };
 
 export type OrderCountAggregateInputType = {
   id?: true;
-  userId?: true;
+  customerId?: true;
+  assignedAgentId?: true;
   stationId?: true;
   status?: true;
   fuelType?: true;
   quantity?: true;
-  price?: true;
+  unitPrice?: true;
+  fuelSubtotal?: true;
+  totalAmount?: true;
+  deliveryFee?: true;
+  VAT?: true;
   deliveryAddress?: true;
+  completedById?: true;
+  cancelledById?: true;
   createdAt?: true;
   updatedAt?: true;
   _all?: true;
@@ -221,13 +279,20 @@ export type OrderGroupByArgs<
 
 export type OrderGroupByOutputType = {
   id: string;
-  userId: string;
+  customerId: string;
+  assignedAgentId: string | null;
   stationId: string;
   status: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal;
-  price: runtime.Decimal;
+  unitPrice: runtime.Decimal;
+  fuelSubtotal: runtime.Decimal;
+  totalAmount: runtime.Decimal;
+  deliveryFee: runtime.Decimal;
+  VAT: runtime.Decimal;
   deliveryAddress: string;
+  completedById: string | null;
+  cancelledById: string | null;
   createdAt: Date;
   updatedAt: Date;
   _count: OrderCountAggregateOutputType | null;
@@ -255,7 +320,8 @@ export type OrderWhereInput = {
   OR?: Prisma.OrderWhereInput[];
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[];
   id?: Prisma.StringFilter<"Order"> | string;
-  userId?: Prisma.StringFilter<"Order"> | string;
+  customerId?: Prisma.StringFilter<"Order"> | string;
+  assignedAgentId?: Prisma.StringNullableFilter<"Order"> | string | null;
   stationId?: Prisma.StringFilter<"Order"> | string;
   status?: Prisma.EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus;
   fuelType?: Prisma.EnumFuelTypeFilter<"Order"> | $Enums.FuelType;
@@ -265,37 +331,85 @@ export type OrderWhereInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFilter<"Order">
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFilter<"Order"> | string;
+  completedById?: Prisma.StringNullableFilter<"Order"> | string | null;
+  cancelledById?: Prisma.StringNullableFilter<"Order"> | string | null;
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
+  customer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
+  assignedAgent?: Prisma.XOR<
+    Prisma.UserNullableScalarRelationFilter,
+    Prisma.UserWhereInput
+  > | null;
   station?: Prisma.XOR<
     Prisma.StationScalarRelationFilter,
     Prisma.StationWhereInput
   >;
   transactions?: Prisma.TransactionListRelationFilter;
+  completedBy?: Prisma.XOR<
+    Prisma.UserNullableScalarRelationFilter,
+    Prisma.UserWhereInput
+  > | null;
+  cancelledBy?: Prisma.XOR<
+    Prisma.UserNullableScalarRelationFilter,
+    Prisma.UserWhereInput
+  > | null;
 };
 
 export type OrderOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
-  userId?: Prisma.SortOrder;
+  customerId?: Prisma.SortOrder;
+  assignedAgentId?: Prisma.SortOrderInput | Prisma.SortOrder;
   stationId?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   fuelType?: Prisma.SortOrder;
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
   deliveryAddress?: Prisma.SortOrder;
+  completedById?: Prisma.SortOrderInput | Prisma.SortOrder;
+  cancelledById?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  user?: Prisma.UserOrderByWithRelationInput;
+  customer?: Prisma.UserOrderByWithRelationInput;
+  assignedAgent?: Prisma.UserOrderByWithRelationInput;
   station?: Prisma.StationOrderByWithRelationInput;
   transactions?: Prisma.TransactionOrderByRelationAggregateInput;
+  completedBy?: Prisma.UserOrderByWithRelationInput;
+  cancelledBy?: Prisma.UserOrderByWithRelationInput;
 };
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<
@@ -304,7 +418,8 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[];
     OR?: Prisma.OrderWhereInput[];
     NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[];
-    userId?: Prisma.StringFilter<"Order"> | string;
+    customerId?: Prisma.StringFilter<"Order"> | string;
+    assignedAgentId?: Prisma.StringNullableFilter<"Order"> | string | null;
     stationId?: Prisma.StringFilter<"Order"> | string;
     status?: Prisma.EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus;
     fuelType?: Prisma.EnumFuelTypeFilter<"Order"> | $Enums.FuelType;
@@ -314,34 +429,82 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<
       | runtime.DecimalJsLike
       | number
       | string;
-    price?:
+    unitPrice?:
+      | Prisma.DecimalFilter<"Order">
+      | runtime.Decimal
+      | runtime.DecimalJsLike
+      | number
+      | string;
+    fuelSubtotal?:
+      | Prisma.DecimalFilter<"Order">
+      | runtime.Decimal
+      | runtime.DecimalJsLike
+      | number
+      | string;
+    totalAmount?:
+      | Prisma.DecimalFilter<"Order">
+      | runtime.Decimal
+      | runtime.DecimalJsLike
+      | number
+      | string;
+    deliveryFee?:
+      | Prisma.DecimalFilter<"Order">
+      | runtime.Decimal
+      | runtime.DecimalJsLike
+      | number
+      | string;
+    VAT?:
       | Prisma.DecimalFilter<"Order">
       | runtime.Decimal
       | runtime.DecimalJsLike
       | number
       | string;
     deliveryAddress?: Prisma.StringFilter<"Order"> | string;
+    completedById?: Prisma.StringNullableFilter<"Order"> | string | null;
+    cancelledById?: Prisma.StringNullableFilter<"Order"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
-    user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
+    customer?: Prisma.XOR<
+      Prisma.UserScalarRelationFilter,
+      Prisma.UserWhereInput
+    >;
+    assignedAgent?: Prisma.XOR<
+      Prisma.UserNullableScalarRelationFilter,
+      Prisma.UserWhereInput
+    > | null;
     station?: Prisma.XOR<
       Prisma.StationScalarRelationFilter,
       Prisma.StationWhereInput
     >;
     transactions?: Prisma.TransactionListRelationFilter;
+    completedBy?: Prisma.XOR<
+      Prisma.UserNullableScalarRelationFilter,
+      Prisma.UserWhereInput
+    > | null;
+    cancelledBy?: Prisma.XOR<
+      Prisma.UserNullableScalarRelationFilter,
+      Prisma.UserWhereInput
+    > | null;
   },
   "id"
 >;
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
-  userId?: Prisma.SortOrder;
+  customerId?: Prisma.SortOrder;
+  assignedAgentId?: Prisma.SortOrderInput | Prisma.SortOrder;
   stationId?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   fuelType?: Prisma.SortOrder;
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
   deliveryAddress?: Prisma.SortOrder;
+  completedById?: Prisma.SortOrderInput | Prisma.SortOrder;
+  cancelledById?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   _count?: Prisma.OrderCountOrderByAggregateInput;
@@ -360,7 +523,9 @@ export type OrderScalarWhereWithAggregatesInput = {
     | Prisma.OrderScalarWhereWithAggregatesInput
     | Prisma.OrderScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<"Order"> | string;
-  userId?: Prisma.StringWithAggregatesFilter<"Order"> | string;
+  customerId?: Prisma.StringWithAggregatesFilter<"Order"> | string;
+  assignedAgentId?:
+    Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
   stationId?: Prisma.StringWithAggregatesFilter<"Order"> | string;
   status?:
     Prisma.EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus;
@@ -371,13 +536,41 @@ export type OrderScalarWhereWithAggregatesInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalWithAggregatesFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalWithAggregatesFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalWithAggregatesFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalWithAggregatesFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalWithAggregatesFilter<"Order">
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringWithAggregatesFilter<"Order"> | string;
+  completedById?:
+    Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
+  cancelledById?:
+    Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string;
 };
@@ -387,24 +580,38 @@ export type OrderCreateInput = {
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  user: Prisma.UserCreateNestedOneWithoutOrdersInput;
+  customer: Prisma.UserCreateNestedOneWithoutCustomerOrdersInput;
+  assignedAgent?: Prisma.UserCreateNestedOneWithoutAssignedOrdersInput;
   station: Prisma.StationCreateNestedOneWithoutOrdersInput;
   transactions?: Prisma.TransactionCreateNestedManyWithoutOrderInput;
+  completedBy?: Prisma.UserCreateNestedOneWithoutCompletedOrdersInput;
+  cancelledBy?: Prisma.UserCreateNestedOneWithoutCancelledOrdersInput;
 };
 
 export type OrderUncheckedCreateInput = {
   id?: string;
-  userId: string;
+  customerId: string;
+  assignedAgentId?: string | null;
   stationId: string;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutOrderInput;
@@ -421,7 +628,31 @@ export type OrderUpdateInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
@@ -430,14 +661,19 @@ export type OrderUpdateInput = {
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput;
+  customer?: Prisma.UserUpdateOneRequiredWithoutCustomerOrdersNestedInput;
+  assignedAgent?: Prisma.UserUpdateOneWithoutAssignedOrdersNestedInput;
   station?: Prisma.StationUpdateOneRequiredWithoutOrdersNestedInput;
   transactions?: Prisma.TransactionUpdateManyWithoutOrderNestedInput;
+  completedBy?: Prisma.UserUpdateOneWithoutCompletedOrdersNestedInput;
+  cancelledBy?: Prisma.UserUpdateOneWithoutCancelledOrdersNestedInput;
 };
 
 export type OrderUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stationId?: Prisma.StringFieldUpdateOperationsInput | string;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
@@ -448,13 +684,41 @@ export type OrderUncheckedUpdateInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutOrderNestedInput;
@@ -462,13 +726,20 @@ export type OrderUncheckedUpdateInput = {
 
 export type OrderCreateManyInput = {
   id?: string;
-  userId: string;
+  customerId: string;
+  assignedAgentId?: string | null;
   stationId: string;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -484,7 +755,31 @@ export type OrderUpdateManyMutationInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
@@ -497,7 +792,9 @@ export type OrderUpdateManyMutationInput = {
 
 export type OrderUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stationId?: Prisma.StringFieldUpdateOperationsInput | string;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
@@ -508,13 +805,41 @@ export type OrderUncheckedUpdateManyInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -531,51 +856,80 @@ export type OrderOrderByRelationAggregateInput = {
 
 export type OrderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
-  userId?: Prisma.SortOrder;
+  customerId?: Prisma.SortOrder;
+  assignedAgentId?: Prisma.SortOrder;
   stationId?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   fuelType?: Prisma.SortOrder;
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
   deliveryAddress?: Prisma.SortOrder;
+  completedById?: Prisma.SortOrder;
+  cancelledById?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
 
 export type OrderAvgOrderByAggregateInput = {
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
 };
 
 export type OrderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
-  userId?: Prisma.SortOrder;
+  customerId?: Prisma.SortOrder;
+  assignedAgentId?: Prisma.SortOrder;
   stationId?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   fuelType?: Prisma.SortOrder;
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
   deliveryAddress?: Prisma.SortOrder;
+  completedById?: Prisma.SortOrder;
+  cancelledById?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
 
 export type OrderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
-  userId?: Prisma.SortOrder;
+  customerId?: Prisma.SortOrder;
+  assignedAgentId?: Prisma.SortOrder;
   stationId?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   fuelType?: Prisma.SortOrder;
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
   deliveryAddress?: Prisma.SortOrder;
+  completedById?: Prisma.SortOrder;
+  cancelledById?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
 
 export type OrderSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder;
-  price?: Prisma.SortOrder;
+  unitPrice?: Prisma.SortOrder;
+  fuelSubtotal?: Prisma.SortOrder;
+  totalAmount?: Prisma.SortOrder;
+  deliveryFee?: Prisma.SortOrder;
+  VAT?: Prisma.SortOrder;
 };
 
 export type OrderScalarRelationFilter = {
@@ -583,89 +937,347 @@ export type OrderScalarRelationFilter = {
   isNot?: Prisma.OrderWhereInput;
 };
 
-export type OrderCreateNestedManyWithoutUserInput = {
+export type OrderCreateNestedManyWithoutCustomerInput = {
   create?:
     | Prisma.XOR<
-        Prisma.OrderCreateWithoutUserInput,
-        Prisma.OrderUncheckedCreateWithoutUserInput
+        Prisma.OrderCreateWithoutCustomerInput,
+        Prisma.OrderUncheckedCreateWithoutCustomerInput
       >
-    | Prisma.OrderCreateWithoutUserInput[]
-    | Prisma.OrderUncheckedCreateWithoutUserInput[];
+    | Prisma.OrderCreateWithoutCustomerInput[]
+    | Prisma.OrderUncheckedCreateWithoutCustomerInput[];
   connectOrCreate?:
-    | Prisma.OrderCreateOrConnectWithoutUserInput
-    | Prisma.OrderCreateOrConnectWithoutUserInput[];
-  createMany?: Prisma.OrderCreateManyUserInputEnvelope;
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput[];
+  createMany?: Prisma.OrderCreateManyCustomerInputEnvelope;
   connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
 };
 
-export type OrderUncheckedCreateNestedManyWithoutUserInput = {
+export type OrderCreateNestedManyWithoutAssignedAgentInput = {
   create?:
     | Prisma.XOR<
-        Prisma.OrderCreateWithoutUserInput,
-        Prisma.OrderUncheckedCreateWithoutUserInput
+        Prisma.OrderCreateWithoutAssignedAgentInput,
+        Prisma.OrderUncheckedCreateWithoutAssignedAgentInput
       >
-    | Prisma.OrderCreateWithoutUserInput[]
-    | Prisma.OrderUncheckedCreateWithoutUserInput[];
+    | Prisma.OrderCreateWithoutAssignedAgentInput[]
+    | Prisma.OrderUncheckedCreateWithoutAssignedAgentInput[];
   connectOrCreate?:
-    | Prisma.OrderCreateOrConnectWithoutUserInput
-    | Prisma.OrderCreateOrConnectWithoutUserInput[];
-  createMany?: Prisma.OrderCreateManyUserInputEnvelope;
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput[];
+  createMany?: Prisma.OrderCreateManyAssignedAgentInputEnvelope;
   connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
 };
 
-export type OrderUpdateManyWithoutUserNestedInput = {
+export type OrderCreateNestedManyWithoutCompletedByInput = {
   create?:
     | Prisma.XOR<
-        Prisma.OrderCreateWithoutUserInput,
-        Prisma.OrderUncheckedCreateWithoutUserInput
+        Prisma.OrderCreateWithoutCompletedByInput,
+        Prisma.OrderUncheckedCreateWithoutCompletedByInput
       >
-    | Prisma.OrderCreateWithoutUserInput[]
-    | Prisma.OrderUncheckedCreateWithoutUserInput[];
+    | Prisma.OrderCreateWithoutCompletedByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCompletedByInput[];
   connectOrCreate?:
-    | Prisma.OrderCreateOrConnectWithoutUserInput
-    | Prisma.OrderCreateOrConnectWithoutUserInput[];
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput[];
+  createMany?: Prisma.OrderCreateManyCompletedByInputEnvelope;
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+};
+
+export type OrderCreateNestedManyWithoutCancelledByInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCancelledByInput,
+        Prisma.OrderUncheckedCreateWithoutCancelledByInput
+      >
+    | Prisma.OrderCreateWithoutCancelledByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCancelledByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput[];
+  createMany?: Prisma.OrderCreateManyCancelledByInputEnvelope;
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+};
+
+export type OrderUncheckedCreateNestedManyWithoutCustomerInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCustomerInput,
+        Prisma.OrderUncheckedCreateWithoutCustomerInput
+      >
+    | Prisma.OrderCreateWithoutCustomerInput[]
+    | Prisma.OrderUncheckedCreateWithoutCustomerInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput[];
+  createMany?: Prisma.OrderCreateManyCustomerInputEnvelope;
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+};
+
+export type OrderUncheckedCreateNestedManyWithoutAssignedAgentInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutAssignedAgentInput,
+        Prisma.OrderUncheckedCreateWithoutAssignedAgentInput
+      >
+    | Prisma.OrderCreateWithoutAssignedAgentInput[]
+    | Prisma.OrderUncheckedCreateWithoutAssignedAgentInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput[];
+  createMany?: Prisma.OrderCreateManyAssignedAgentInputEnvelope;
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+};
+
+export type OrderUncheckedCreateNestedManyWithoutCompletedByInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCompletedByInput,
+        Prisma.OrderUncheckedCreateWithoutCompletedByInput
+      >
+    | Prisma.OrderCreateWithoutCompletedByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCompletedByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput[];
+  createMany?: Prisma.OrderCreateManyCompletedByInputEnvelope;
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+};
+
+export type OrderUncheckedCreateNestedManyWithoutCancelledByInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCancelledByInput,
+        Prisma.OrderUncheckedCreateWithoutCancelledByInput
+      >
+    | Prisma.OrderCreateWithoutCancelledByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCancelledByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput[];
+  createMany?: Prisma.OrderCreateManyCancelledByInputEnvelope;
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+};
+
+export type OrderUpdateManyWithoutCustomerNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCustomerInput,
+        Prisma.OrderUncheckedCreateWithoutCustomerInput
+      >
+    | Prisma.OrderCreateWithoutCustomerInput[]
+    | Prisma.OrderUncheckedCreateWithoutCustomerInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput[];
   upsert?:
-    | Prisma.OrderUpsertWithWhereUniqueWithoutUserInput
-    | Prisma.OrderUpsertWithWhereUniqueWithoutUserInput[];
-  createMany?: Prisma.OrderCreateManyUserInputEnvelope;
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCustomerInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCustomerInput[];
+  createMany?: Prisma.OrderCreateManyCustomerInputEnvelope;
   set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   update?:
-    | Prisma.OrderUpdateWithWhereUniqueWithoutUserInput
-    | Prisma.OrderUpdateWithWhereUniqueWithoutUserInput[];
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCustomerInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCustomerInput[];
   updateMany?:
-    | Prisma.OrderUpdateManyWithWhereWithoutUserInput
-    | Prisma.OrderUpdateManyWithWhereWithoutUserInput[];
+    | Prisma.OrderUpdateManyWithWhereWithoutCustomerInput
+    | Prisma.OrderUpdateManyWithWhereWithoutCustomerInput[];
   deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
 };
 
-export type OrderUncheckedUpdateManyWithoutUserNestedInput = {
+export type OrderUpdateManyWithoutAssignedAgentNestedInput = {
   create?:
     | Prisma.XOR<
-        Prisma.OrderCreateWithoutUserInput,
-        Prisma.OrderUncheckedCreateWithoutUserInput
+        Prisma.OrderCreateWithoutAssignedAgentInput,
+        Prisma.OrderUncheckedCreateWithoutAssignedAgentInput
       >
-    | Prisma.OrderCreateWithoutUserInput[]
-    | Prisma.OrderUncheckedCreateWithoutUserInput[];
+    | Prisma.OrderCreateWithoutAssignedAgentInput[]
+    | Prisma.OrderUncheckedCreateWithoutAssignedAgentInput[];
   connectOrCreate?:
-    | Prisma.OrderCreateOrConnectWithoutUserInput
-    | Prisma.OrderCreateOrConnectWithoutUserInput[];
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput[];
   upsert?:
-    | Prisma.OrderUpsertWithWhereUniqueWithoutUserInput
-    | Prisma.OrderUpsertWithWhereUniqueWithoutUserInput[];
-  createMany?: Prisma.OrderCreateManyUserInputEnvelope;
+    | Prisma.OrderUpsertWithWhereUniqueWithoutAssignedAgentInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutAssignedAgentInput[];
+  createMany?: Prisma.OrderCreateManyAssignedAgentInputEnvelope;
   set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
   update?:
-    | Prisma.OrderUpdateWithWhereUniqueWithoutUserInput
-    | Prisma.OrderUpdateWithWhereUniqueWithoutUserInput[];
+    | Prisma.OrderUpdateWithWhereUniqueWithoutAssignedAgentInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutAssignedAgentInput[];
   updateMany?:
-    | Prisma.OrderUpdateManyWithWhereWithoutUserInput
-    | Prisma.OrderUpdateManyWithWhereWithoutUserInput[];
+    | Prisma.OrderUpdateManyWithWhereWithoutAssignedAgentInput
+    | Prisma.OrderUpdateManyWithWhereWithoutAssignedAgentInput[];
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
+};
+
+export type OrderUpdateManyWithoutCompletedByNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCompletedByInput,
+        Prisma.OrderUncheckedCreateWithoutCompletedByInput
+      >
+    | Prisma.OrderCreateWithoutCompletedByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCompletedByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput[];
+  upsert?:
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCompletedByInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCompletedByInput[];
+  createMany?: Prisma.OrderCreateManyCompletedByInputEnvelope;
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  update?:
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCompletedByInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCompletedByInput[];
+  updateMany?:
+    | Prisma.OrderUpdateManyWithWhereWithoutCompletedByInput
+    | Prisma.OrderUpdateManyWithWhereWithoutCompletedByInput[];
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
+};
+
+export type OrderUpdateManyWithoutCancelledByNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCancelledByInput,
+        Prisma.OrderUncheckedCreateWithoutCancelledByInput
+      >
+    | Prisma.OrderCreateWithoutCancelledByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCancelledByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput[];
+  upsert?:
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCancelledByInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCancelledByInput[];
+  createMany?: Prisma.OrderCreateManyCancelledByInputEnvelope;
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  update?:
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCancelledByInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCancelledByInput[];
+  updateMany?:
+    | Prisma.OrderUpdateManyWithWhereWithoutCancelledByInput
+    | Prisma.OrderUpdateManyWithWhereWithoutCancelledByInput[];
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
+};
+
+export type OrderUncheckedUpdateManyWithoutCustomerNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCustomerInput,
+        Prisma.OrderUncheckedCreateWithoutCustomerInput
+      >
+    | Prisma.OrderCreateWithoutCustomerInput[]
+    | Prisma.OrderUncheckedCreateWithoutCustomerInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput
+    | Prisma.OrderCreateOrConnectWithoutCustomerInput[];
+  upsert?:
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCustomerInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCustomerInput[];
+  createMany?: Prisma.OrderCreateManyCustomerInputEnvelope;
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  update?:
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCustomerInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCustomerInput[];
+  updateMany?:
+    | Prisma.OrderUpdateManyWithWhereWithoutCustomerInput
+    | Prisma.OrderUpdateManyWithWhereWithoutCustomerInput[];
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
+};
+
+export type OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutAssignedAgentInput,
+        Prisma.OrderUncheckedCreateWithoutAssignedAgentInput
+      >
+    | Prisma.OrderCreateWithoutAssignedAgentInput[]
+    | Prisma.OrderUncheckedCreateWithoutAssignedAgentInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput
+    | Prisma.OrderCreateOrConnectWithoutAssignedAgentInput[];
+  upsert?:
+    | Prisma.OrderUpsertWithWhereUniqueWithoutAssignedAgentInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutAssignedAgentInput[];
+  createMany?: Prisma.OrderCreateManyAssignedAgentInputEnvelope;
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  update?:
+    | Prisma.OrderUpdateWithWhereUniqueWithoutAssignedAgentInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutAssignedAgentInput[];
+  updateMany?:
+    | Prisma.OrderUpdateManyWithWhereWithoutAssignedAgentInput
+    | Prisma.OrderUpdateManyWithWhereWithoutAssignedAgentInput[];
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
+};
+
+export type OrderUncheckedUpdateManyWithoutCompletedByNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCompletedByInput,
+        Prisma.OrderUncheckedCreateWithoutCompletedByInput
+      >
+    | Prisma.OrderCreateWithoutCompletedByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCompletedByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput
+    | Prisma.OrderCreateOrConnectWithoutCompletedByInput[];
+  upsert?:
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCompletedByInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCompletedByInput[];
+  createMany?: Prisma.OrderCreateManyCompletedByInputEnvelope;
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  update?:
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCompletedByInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCompletedByInput[];
+  updateMany?:
+    | Prisma.OrderUpdateManyWithWhereWithoutCompletedByInput
+    | Prisma.OrderUpdateManyWithWhereWithoutCompletedByInput[];
+  deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
+};
+
+export type OrderUncheckedUpdateManyWithoutCancelledByNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.OrderCreateWithoutCancelledByInput,
+        Prisma.OrderUncheckedCreateWithoutCancelledByInput
+      >
+    | Prisma.OrderCreateWithoutCancelledByInput[]
+    | Prisma.OrderUncheckedCreateWithoutCancelledByInput[];
+  connectOrCreate?:
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput
+    | Prisma.OrderCreateOrConnectWithoutCancelledByInput[];
+  upsert?:
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCancelledByInput
+    | Prisma.OrderUpsertWithWhereUniqueWithoutCancelledByInput[];
+  createMany?: Prisma.OrderCreateManyCancelledByInputEnvelope;
+  set?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  disconnect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  delete?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  connect?: Prisma.OrderWhereUniqueInput | Prisma.OrderWhereUniqueInput[];
+  update?:
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCancelledByInput
+    | Prisma.OrderUpdateWithWhereUniqueWithoutCancelledByInput[];
+  updateMany?:
+    | Prisma.OrderUpdateManyWithWhereWithoutCancelledByInput
+    | Prisma.OrderUpdateManyWithWhereWithoutCancelledByInput[];
   deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
 };
 
@@ -789,70 +1401,250 @@ export type OrderUpdateOneRequiredWithoutTransactionsNestedInput = {
   >;
 };
 
-export type OrderCreateWithoutUserInput = {
+export type OrderCreateWithoutCustomerInput = {
   id?: string;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+  assignedAgent?: Prisma.UserCreateNestedOneWithoutAssignedOrdersInput;
   station: Prisma.StationCreateNestedOneWithoutOrdersInput;
   transactions?: Prisma.TransactionCreateNestedManyWithoutOrderInput;
+  completedBy?: Prisma.UserCreateNestedOneWithoutCompletedOrdersInput;
+  cancelledBy?: Prisma.UserCreateNestedOneWithoutCancelledOrdersInput;
 };
 
-export type OrderUncheckedCreateWithoutUserInput = {
+export type OrderUncheckedCreateWithoutCustomerInput = {
   id?: string;
+  assignedAgentId?: string | null;
   stationId: string;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutOrderInput;
 };
 
-export type OrderCreateOrConnectWithoutUserInput = {
+export type OrderCreateOrConnectWithoutCustomerInput = {
   where: Prisma.OrderWhereUniqueInput;
   create: Prisma.XOR<
-    Prisma.OrderCreateWithoutUserInput,
-    Prisma.OrderUncheckedCreateWithoutUserInput
+    Prisma.OrderCreateWithoutCustomerInput,
+    Prisma.OrderUncheckedCreateWithoutCustomerInput
   >;
 };
 
-export type OrderCreateManyUserInputEnvelope = {
-  data: Prisma.OrderCreateManyUserInput | Prisma.OrderCreateManyUserInput[];
+export type OrderCreateManyCustomerInputEnvelope = {
+  data:
+    Prisma.OrderCreateManyCustomerInput | Prisma.OrderCreateManyCustomerInput[];
   skipDuplicates?: boolean;
 };
 
-export type OrderUpsertWithWhereUniqueWithoutUserInput = {
+export type OrderCreateWithoutAssignedAgentInput = {
+  id?: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  customer: Prisma.UserCreateNestedOneWithoutCustomerOrdersInput;
+  station: Prisma.StationCreateNestedOneWithoutOrdersInput;
+  transactions?: Prisma.TransactionCreateNestedManyWithoutOrderInput;
+  completedBy?: Prisma.UserCreateNestedOneWithoutCompletedOrdersInput;
+  cancelledBy?: Prisma.UserCreateNestedOneWithoutCancelledOrdersInput;
+};
+
+export type OrderUncheckedCreateWithoutAssignedAgentInput = {
+  id?: string;
+  customerId: string;
+  stationId: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutOrderInput;
+};
+
+export type OrderCreateOrConnectWithoutAssignedAgentInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.OrderCreateWithoutAssignedAgentInput,
+    Prisma.OrderUncheckedCreateWithoutAssignedAgentInput
+  >;
+};
+
+export type OrderCreateManyAssignedAgentInputEnvelope = {
+  data:
+    | Prisma.OrderCreateManyAssignedAgentInput
+    | Prisma.OrderCreateManyAssignedAgentInput[];
+  skipDuplicates?: boolean;
+};
+
+export type OrderCreateWithoutCompletedByInput = {
+  id?: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  customer: Prisma.UserCreateNestedOneWithoutCustomerOrdersInput;
+  assignedAgent?: Prisma.UserCreateNestedOneWithoutAssignedOrdersInput;
+  station: Prisma.StationCreateNestedOneWithoutOrdersInput;
+  transactions?: Prisma.TransactionCreateNestedManyWithoutOrderInput;
+  cancelledBy?: Prisma.UserCreateNestedOneWithoutCancelledOrdersInput;
+};
+
+export type OrderUncheckedCreateWithoutCompletedByInput = {
+  id?: string;
+  customerId: string;
+  assignedAgentId?: string | null;
+  stationId: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  cancelledById?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutOrderInput;
+};
+
+export type OrderCreateOrConnectWithoutCompletedByInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.OrderCreateWithoutCompletedByInput,
+    Prisma.OrderUncheckedCreateWithoutCompletedByInput
+  >;
+};
+
+export type OrderCreateManyCompletedByInputEnvelope = {
+  data:
+    | Prisma.OrderCreateManyCompletedByInput
+    | Prisma.OrderCreateManyCompletedByInput[];
+  skipDuplicates?: boolean;
+};
+
+export type OrderCreateWithoutCancelledByInput = {
+  id?: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  customer: Prisma.UserCreateNestedOneWithoutCustomerOrdersInput;
+  assignedAgent?: Prisma.UserCreateNestedOneWithoutAssignedOrdersInput;
+  station: Prisma.StationCreateNestedOneWithoutOrdersInput;
+  transactions?: Prisma.TransactionCreateNestedManyWithoutOrderInput;
+  completedBy?: Prisma.UserCreateNestedOneWithoutCompletedOrdersInput;
+};
+
+export type OrderUncheckedCreateWithoutCancelledByInput = {
+  id?: string;
+  customerId: string;
+  assignedAgentId?: string | null;
+  stationId: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  completedById?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutOrderInput;
+};
+
+export type OrderCreateOrConnectWithoutCancelledByInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.OrderCreateWithoutCancelledByInput,
+    Prisma.OrderUncheckedCreateWithoutCancelledByInput
+  >;
+};
+
+export type OrderCreateManyCancelledByInputEnvelope = {
+  data:
+    | Prisma.OrderCreateManyCancelledByInput
+    | Prisma.OrderCreateManyCancelledByInput[];
+  skipDuplicates?: boolean;
+};
+
+export type OrderUpsertWithWhereUniqueWithoutCustomerInput = {
   where: Prisma.OrderWhereUniqueInput;
   update: Prisma.XOR<
-    Prisma.OrderUpdateWithoutUserInput,
-    Prisma.OrderUncheckedUpdateWithoutUserInput
+    Prisma.OrderUpdateWithoutCustomerInput,
+    Prisma.OrderUncheckedUpdateWithoutCustomerInput
   >;
   create: Prisma.XOR<
-    Prisma.OrderCreateWithoutUserInput,
-    Prisma.OrderUncheckedCreateWithoutUserInput
+    Prisma.OrderCreateWithoutCustomerInput,
+    Prisma.OrderUncheckedCreateWithoutCustomerInput
   >;
 };
 
-export type OrderUpdateWithWhereUniqueWithoutUserInput = {
+export type OrderUpdateWithWhereUniqueWithoutCustomerInput = {
   where: Prisma.OrderWhereUniqueInput;
   data: Prisma.XOR<
-    Prisma.OrderUpdateWithoutUserInput,
-    Prisma.OrderUncheckedUpdateWithoutUserInput
+    Prisma.OrderUpdateWithoutCustomerInput,
+    Prisma.OrderUncheckedUpdateWithoutCustomerInput
   >;
 };
 
-export type OrderUpdateManyWithWhereWithoutUserInput = {
+export type OrderUpdateManyWithWhereWithoutCustomerInput = {
   where: Prisma.OrderScalarWhereInput;
   data: Prisma.XOR<
     Prisma.OrderUpdateManyMutationInput,
-    Prisma.OrderUncheckedUpdateManyWithoutUserInput
+    Prisma.OrderUncheckedUpdateManyWithoutCustomerInput
   >;
 };
 
@@ -861,7 +1653,8 @@ export type OrderScalarWhereInput = {
   OR?: Prisma.OrderScalarWhereInput[];
   NOT?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[];
   id?: Prisma.StringFilter<"Order"> | string;
-  userId?: Prisma.StringFilter<"Order"> | string;
+  customerId?: Prisma.StringFilter<"Order"> | string;
+  assignedAgentId?: Prisma.StringNullableFilter<"Order"> | string | null;
   stationId?: Prisma.StringFilter<"Order"> | string;
   status?: Prisma.EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus;
   fuelType?: Prisma.EnumFuelTypeFilter<"Order"> | $Enums.FuelType;
@@ -871,15 +1664,125 @@ export type OrderScalarWhereInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFilter<"Order">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFilter<"Order">
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFilter<"Order"> | string;
+  completedById?: Prisma.StringNullableFilter<"Order"> | string | null;
+  cancelledById?: Prisma.StringNullableFilter<"Order"> | string | null;
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
+};
+
+export type OrderUpsertWithWhereUniqueWithoutAssignedAgentInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.OrderUpdateWithoutAssignedAgentInput,
+    Prisma.OrderUncheckedUpdateWithoutAssignedAgentInput
+  >;
+  create: Prisma.XOR<
+    Prisma.OrderCreateWithoutAssignedAgentInput,
+    Prisma.OrderUncheckedCreateWithoutAssignedAgentInput
+  >;
+};
+
+export type OrderUpdateWithWhereUniqueWithoutAssignedAgentInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.OrderUpdateWithoutAssignedAgentInput,
+    Prisma.OrderUncheckedUpdateWithoutAssignedAgentInput
+  >;
+};
+
+export type OrderUpdateManyWithWhereWithoutAssignedAgentInput = {
+  where: Prisma.OrderScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.OrderUpdateManyMutationInput,
+    Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentInput
+  >;
+};
+
+export type OrderUpsertWithWhereUniqueWithoutCompletedByInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.OrderUpdateWithoutCompletedByInput,
+    Prisma.OrderUncheckedUpdateWithoutCompletedByInput
+  >;
+  create: Prisma.XOR<
+    Prisma.OrderCreateWithoutCompletedByInput,
+    Prisma.OrderUncheckedCreateWithoutCompletedByInput
+  >;
+};
+
+export type OrderUpdateWithWhereUniqueWithoutCompletedByInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.OrderUpdateWithoutCompletedByInput,
+    Prisma.OrderUncheckedUpdateWithoutCompletedByInput
+  >;
+};
+
+export type OrderUpdateManyWithWhereWithoutCompletedByInput = {
+  where: Prisma.OrderScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.OrderUpdateManyMutationInput,
+    Prisma.OrderUncheckedUpdateManyWithoutCompletedByInput
+  >;
+};
+
+export type OrderUpsertWithWhereUniqueWithoutCancelledByInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.OrderUpdateWithoutCancelledByInput,
+    Prisma.OrderUncheckedUpdateWithoutCancelledByInput
+  >;
+  create: Prisma.XOR<
+    Prisma.OrderCreateWithoutCancelledByInput,
+    Prisma.OrderUncheckedCreateWithoutCancelledByInput
+  >;
+};
+
+export type OrderUpdateWithWhereUniqueWithoutCancelledByInput = {
+  where: Prisma.OrderWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.OrderUpdateWithoutCancelledByInput,
+    Prisma.OrderUncheckedUpdateWithoutCancelledByInput
+  >;
+};
+
+export type OrderUpdateManyWithWhereWithoutCancelledByInput = {
+  where: Prisma.OrderScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.OrderUpdateManyMutationInput,
+    Prisma.OrderUncheckedUpdateManyWithoutCancelledByInput
+  >;
 };
 
 export type OrderCreateWithoutStationInput = {
@@ -887,22 +1790,36 @@ export type OrderCreateWithoutStationInput = {
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  user: Prisma.UserCreateNestedOneWithoutOrdersInput;
+  customer: Prisma.UserCreateNestedOneWithoutCustomerOrdersInput;
+  assignedAgent?: Prisma.UserCreateNestedOneWithoutAssignedOrdersInput;
   transactions?: Prisma.TransactionCreateNestedManyWithoutOrderInput;
+  completedBy?: Prisma.UserCreateNestedOneWithoutCompletedOrdersInput;
+  cancelledBy?: Prisma.UserCreateNestedOneWithoutCancelledOrdersInput;
 };
 
 export type OrderUncheckedCreateWithoutStationInput = {
   id?: string;
-  userId: string;
+  customerId: string;
+  assignedAgentId?: string | null;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutOrderInput;
@@ -955,23 +1872,37 @@ export type OrderCreateWithoutTransactionsInput = {
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  user: Prisma.UserCreateNestedOneWithoutOrdersInput;
+  customer: Prisma.UserCreateNestedOneWithoutCustomerOrdersInput;
+  assignedAgent?: Prisma.UserCreateNestedOneWithoutAssignedOrdersInput;
   station: Prisma.StationCreateNestedOneWithoutOrdersInput;
+  completedBy?: Prisma.UserCreateNestedOneWithoutCompletedOrdersInput;
+  cancelledBy?: Prisma.UserCreateNestedOneWithoutCancelledOrdersInput;
 };
 
 export type OrderUncheckedCreateWithoutTransactionsInput = {
   id?: string;
-  userId: string;
+  customerId: string;
+  assignedAgentId?: string | null;
   stationId: string;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -1015,7 +1946,31 @@ export type OrderUpdateWithoutTransactionsInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
@@ -1024,13 +1979,18 @@ export type OrderUpdateWithoutTransactionsInput = {
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput;
+  customer?: Prisma.UserUpdateOneRequiredWithoutCustomerOrdersNestedInput;
+  assignedAgent?: Prisma.UserUpdateOneWithoutAssignedOrdersNestedInput;
   station?: Prisma.StationUpdateOneRequiredWithoutOrdersNestedInput;
+  completedBy?: Prisma.UserUpdateOneWithoutCompletedOrdersNestedInput;
+  cancelledBy?: Prisma.UserUpdateOneWithoutCancelledOrdersNestedInput;
 };
 
 export type OrderUncheckedUpdateWithoutTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stationId?: Prisma.StringFieldUpdateOperationsInput | string;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
@@ -1041,30 +2001,122 @@ export type OrderUncheckedUpdateWithoutTransactionsInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
-export type OrderCreateManyUserInput = {
+export type OrderCreateManyCustomerInput = {
   id?: string;
+  assignedAgentId?: string | null;
   stationId: string;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
 
-export type OrderUpdateWithoutUserInput = {
+export type OrderCreateManyAssignedAgentInput = {
+  id?: string;
+  customerId: string;
+  stationId: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
+
+export type OrderCreateManyCompletedByInput = {
+  id?: string;
+  customerId: string;
+  assignedAgentId?: string | null;
+  stationId: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  cancelledById?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
+
+export type OrderCreateManyCancelledByInput = {
+  id?: string;
+  customerId: string;
+  assignedAgentId?: string | null;
+  stationId: string;
+  status?: $Enums.OrderStatus;
+  fuelType: $Enums.FuelType;
+  quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryAddress: string;
+  completedById?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+};
+
+export type OrderUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
@@ -1075,7 +2127,31 @@ export type OrderUpdateWithoutUserInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
@@ -1084,12 +2160,17 @@ export type OrderUpdateWithoutUserInput = {
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  assignedAgent?: Prisma.UserUpdateOneWithoutAssignedOrdersNestedInput;
   station?: Prisma.StationUpdateOneRequiredWithoutOrdersNestedInput;
   transactions?: Prisma.TransactionUpdateManyWithoutOrderNestedInput;
+  completedBy?: Prisma.UserUpdateOneWithoutCompletedOrdersNestedInput;
+  cancelledBy?: Prisma.UserUpdateOneWithoutCancelledOrdersNestedInput;
 };
 
-export type OrderUncheckedUpdateWithoutUserInput = {
+export type OrderUncheckedUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stationId?: Prisma.StringFieldUpdateOperationsInput | string;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
@@ -1100,20 +2181,50 @@ export type OrderUncheckedUpdateWithoutUserInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutOrderNestedInput;
 };
 
-export type OrderUncheckedUpdateManyWithoutUserInput = {
+export type OrderUncheckedUpdateManyWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stationId?: Prisma.StringFieldUpdateOperationsInput | string;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
@@ -1124,25 +2235,528 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+
+export type OrderUpdateWithoutAssignedAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  customer?: Prisma.UserUpdateOneRequiredWithoutCustomerOrdersNestedInput;
+  station?: Prisma.StationUpdateOneRequiredWithoutOrdersNestedInput;
+  transactions?: Prisma.TransactionUpdateManyWithoutOrderNestedInput;
+  completedBy?: Prisma.UserUpdateOneWithoutCompletedOrdersNestedInput;
+  cancelledBy?: Prisma.UserUpdateOneWithoutCancelledOrdersNestedInput;
+};
+
+export type OrderUncheckedUpdateWithoutAssignedAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutOrderNestedInput;
+};
+
+export type OrderUncheckedUpdateManyWithoutAssignedAgentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+
+export type OrderUpdateWithoutCompletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  customer?: Prisma.UserUpdateOneRequiredWithoutCustomerOrdersNestedInput;
+  assignedAgent?: Prisma.UserUpdateOneWithoutAssignedOrdersNestedInput;
+  station?: Prisma.StationUpdateOneRequiredWithoutOrdersNestedInput;
+  transactions?: Prisma.TransactionUpdateManyWithoutOrderNestedInput;
+  cancelledBy?: Prisma.UserUpdateOneWithoutCancelledOrdersNestedInput;
+};
+
+export type OrderUncheckedUpdateWithoutCompletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stationId?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutOrderNestedInput;
+};
+
+export type OrderUncheckedUpdateManyWithoutCompletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stationId?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+
+export type OrderUpdateWithoutCancelledByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  customer?: Prisma.UserUpdateOneRequiredWithoutCustomerOrdersNestedInput;
+  assignedAgent?: Prisma.UserUpdateOneWithoutAssignedOrdersNestedInput;
+  station?: Prisma.StationUpdateOneRequiredWithoutOrdersNestedInput;
+  transactions?: Prisma.TransactionUpdateManyWithoutOrderNestedInput;
+  completedBy?: Prisma.UserUpdateOneWithoutCompletedOrdersNestedInput;
+};
+
+export type OrderUncheckedUpdateWithoutCancelledByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stationId?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutOrderNestedInput;
+};
+
+export type OrderUncheckedUpdateManyWithoutCancelledByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stationId?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
+  fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
+  quantity?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type OrderCreateManyStationInput = {
   id?: string;
-  userId: string;
+  customerId: string;
+  assignedAgentId?: string | null;
   status?: $Enums.OrderStatus;
   fuelType: $Enums.FuelType;
   quantity: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  fuelSubtotal: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  deliveryFee: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  VAT: runtime.Decimal | runtime.DecimalJsLike | number | string;
   deliveryAddress: string;
+  completedById?: string | null;
+  cancelledById?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -1158,7 +2772,31 @@ export type OrderUpdateWithoutStationInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
@@ -1167,13 +2805,18 @@ export type OrderUpdateWithoutStationInput = {
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput;
+  customer?: Prisma.UserUpdateOneRequiredWithoutCustomerOrdersNestedInput;
+  assignedAgent?: Prisma.UserUpdateOneWithoutAssignedOrdersNestedInput;
   transactions?: Prisma.TransactionUpdateManyWithoutOrderNestedInput;
+  completedBy?: Prisma.UserUpdateOneWithoutCompletedOrdersNestedInput;
+  cancelledBy?: Prisma.UserUpdateOneWithoutCancelledOrdersNestedInput;
 };
 
 export type OrderUncheckedUpdateWithoutStationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
   fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
@@ -1183,13 +2826,41 @@ export type OrderUncheckedUpdateWithoutStationInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutOrderNestedInput;
@@ -1197,7 +2868,9 @@ export type OrderUncheckedUpdateWithoutStationInput = {
 
 export type OrderUncheckedUpdateManyWithoutStationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  customerId?: Prisma.StringFieldUpdateOperationsInput | string;
+  assignedAgentId?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?:
     Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus;
   fuelType?: Prisma.EnumFuelTypeFieldUpdateOperationsInput | $Enums.FuelType;
@@ -1207,13 +2880,41 @@ export type OrderUncheckedUpdateManyWithoutStationInput = {
     | runtime.DecimalJsLike
     | number
     | string;
-  price?:
+  unitPrice?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  fuelSubtotal?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  totalAmount?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  deliveryFee?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  VAT?:
     | Prisma.DecimalFieldUpdateOperationsInput
     | runtime.Decimal
     | runtime.DecimalJsLike
     | number
     | string;
   deliveryAddress?: Prisma.StringFieldUpdateOperationsInput | string;
+  completedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cancelledById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -1262,18 +2963,28 @@ export type OrderSelect<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
-    userId?: boolean;
+    customerId?: boolean;
+    assignedAgentId?: boolean;
     stationId?: boolean;
     status?: boolean;
     fuelType?: boolean;
     quantity?: boolean;
-    price?: boolean;
+    unitPrice?: boolean;
+    fuelSubtotal?: boolean;
+    totalAmount?: boolean;
+    deliveryFee?: boolean;
+    VAT?: boolean;
     deliveryAddress?: boolean;
+    completedById?: boolean;
+    cancelledById?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+    customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+    assignedAgent?: boolean | Prisma.Order$assignedAgentArgs<ExtArgs>;
     station?: boolean | Prisma.StationDefaultArgs<ExtArgs>;
     transactions?: boolean | Prisma.Order$transactionsArgs<ExtArgs>;
+    completedBy?: boolean | Prisma.Order$completedByArgs<ExtArgs>;
+    cancelledBy?: boolean | Prisma.Order$cancelledByArgs<ExtArgs>;
     _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["order"]
@@ -1285,17 +2996,27 @@ export type OrderSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
-    userId?: boolean;
+    customerId?: boolean;
+    assignedAgentId?: boolean;
     stationId?: boolean;
     status?: boolean;
     fuelType?: boolean;
     quantity?: boolean;
-    price?: boolean;
+    unitPrice?: boolean;
+    fuelSubtotal?: boolean;
+    totalAmount?: boolean;
+    deliveryFee?: boolean;
+    VAT?: boolean;
     deliveryAddress?: boolean;
+    completedById?: boolean;
+    cancelledById?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+    customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+    assignedAgent?: boolean | Prisma.Order$assignedAgentArgs<ExtArgs>;
     station?: boolean | Prisma.StationDefaultArgs<ExtArgs>;
+    completedBy?: boolean | Prisma.Order$completedByArgs<ExtArgs>;
+    cancelledBy?: boolean | Prisma.Order$cancelledByArgs<ExtArgs>;
   },
   ExtArgs["result"]["order"]
 >;
@@ -1306,30 +3027,47 @@ export type OrderSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
-    userId?: boolean;
+    customerId?: boolean;
+    assignedAgentId?: boolean;
     stationId?: boolean;
     status?: boolean;
     fuelType?: boolean;
     quantity?: boolean;
-    price?: boolean;
+    unitPrice?: boolean;
+    fuelSubtotal?: boolean;
+    totalAmount?: boolean;
+    deliveryFee?: boolean;
+    VAT?: boolean;
     deliveryAddress?: boolean;
+    completedById?: boolean;
+    cancelledById?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+    customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+    assignedAgent?: boolean | Prisma.Order$assignedAgentArgs<ExtArgs>;
     station?: boolean | Prisma.StationDefaultArgs<ExtArgs>;
+    completedBy?: boolean | Prisma.Order$completedByArgs<ExtArgs>;
+    cancelledBy?: boolean | Prisma.Order$cancelledByArgs<ExtArgs>;
   },
   ExtArgs["result"]["order"]
 >;
 
 export type OrderSelectScalar = {
   id?: boolean;
-  userId?: boolean;
+  customerId?: boolean;
+  assignedAgentId?: boolean;
   stationId?: boolean;
   status?: boolean;
   fuelType?: boolean;
   quantity?: boolean;
-  price?: boolean;
+  unitPrice?: boolean;
+  fuelSubtotal?: boolean;
+  totalAmount?: boolean;
+  deliveryFee?: boolean;
+  VAT?: boolean;
   deliveryAddress?: boolean;
+  completedById?: boolean;
+  cancelledById?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
 };
@@ -1339,13 +3077,20 @@ export type OrderOmit<
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
   | "id"
-  | "userId"
+  | "customerId"
+  | "assignedAgentId"
   | "stationId"
   | "status"
   | "fuelType"
   | "quantity"
-  | "price"
+  | "unitPrice"
+  | "fuelSubtotal"
+  | "totalAmount"
+  | "deliveryFee"
+  | "VAT"
   | "deliveryAddress"
+  | "completedById"
+  | "cancelledById"
   | "createdAt"
   | "updatedAt",
   ExtArgs["result"]["order"]
@@ -1354,24 +3099,33 @@ export type OrderInclude<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+  customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+  assignedAgent?: boolean | Prisma.Order$assignedAgentArgs<ExtArgs>;
   station?: boolean | Prisma.StationDefaultArgs<ExtArgs>;
   transactions?: boolean | Prisma.Order$transactionsArgs<ExtArgs>;
+  completedBy?: boolean | Prisma.Order$completedByArgs<ExtArgs>;
+  cancelledBy?: boolean | Prisma.Order$cancelledByArgs<ExtArgs>;
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type OrderIncludeCreateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+  customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+  assignedAgent?: boolean | Prisma.Order$assignedAgentArgs<ExtArgs>;
   station?: boolean | Prisma.StationDefaultArgs<ExtArgs>;
+  completedBy?: boolean | Prisma.Order$completedByArgs<ExtArgs>;
+  cancelledBy?: boolean | Prisma.Order$cancelledByArgs<ExtArgs>;
 };
 export type OrderIncludeUpdateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+  customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
+  assignedAgent?: boolean | Prisma.Order$assignedAgentArgs<ExtArgs>;
   station?: boolean | Prisma.StationDefaultArgs<ExtArgs>;
+  completedBy?: boolean | Prisma.Order$completedByArgs<ExtArgs>;
+  cancelledBy?: boolean | Prisma.Order$cancelledByArgs<ExtArgs>;
 };
 
 export type $OrderPayload<
@@ -1380,20 +3134,30 @@ export type $OrderPayload<
 > = {
   name: "Order";
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>;
+    customer: Prisma.$UserPayload<ExtArgs>;
+    assignedAgent: Prisma.$UserPayload<ExtArgs> | null;
     station: Prisma.$StationPayload<ExtArgs>;
     transactions: Prisma.$TransactionPayload<ExtArgs>[];
+    completedBy: Prisma.$UserPayload<ExtArgs> | null;
+    cancelledBy: Prisma.$UserPayload<ExtArgs> | null;
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
-      userId: string;
+      customerId: string;
+      assignedAgentId: string | null;
       stationId: string;
       status: $Enums.OrderStatus;
       fuelType: $Enums.FuelType;
       quantity: runtime.Decimal;
-      price: runtime.Decimal;
+      unitPrice: runtime.Decimal;
+      fuelSubtotal: runtime.Decimal;
+      totalAmount: runtime.Decimal;
+      deliveryFee: runtime.Decimal;
+      VAT: runtime.Decimal;
       deliveryAddress: string;
+      completedById: string | null;
+      cancelledById: string | null;
       createdAt: Date;
       updatedAt: Date;
     },
@@ -1946,7 +3710,7 @@ export interface Prisma__OrderClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(
+  customer<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(
     args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>,
   ): Prisma.Prisma__UserClient<
     | runtime.Types.Result.GetResult<
@@ -1957,6 +3721,19 @@ export interface Prisma__OrderClient<
       >
     | Null,
     Null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
+  assignedAgent<T extends Prisma.Order$assignedAgentArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Order$assignedAgentArgs<ExtArgs>>,
+  ): Prisma.Prisma__UserClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$UserPayload<ExtArgs>,
+      T,
+      "findUniqueOrThrow",
+      GlobalOmitOptions
+    > | null,
+    null,
     ExtArgs,
     GlobalOmitOptions
   >;
@@ -1984,6 +3761,32 @@ export interface Prisma__OrderClient<
         GlobalOmitOptions
       >
     | Null
+  >;
+  completedBy<T extends Prisma.Order$completedByArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Order$completedByArgs<ExtArgs>>,
+  ): Prisma.Prisma__UserClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$UserPayload<ExtArgs>,
+      T,
+      "findUniqueOrThrow",
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
+  cancelledBy<T extends Prisma.Order$cancelledByArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Order$cancelledByArgs<ExtArgs>>,
+  ): Prisma.Prisma__UserClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$UserPayload<ExtArgs>,
+      T,
+      "findUniqueOrThrow",
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
   >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2022,13 +3825,20 @@ export interface Prisma__OrderClient<
  */
 export interface OrderFieldRefs {
   readonly id: Prisma.FieldRef<"Order", "String">;
-  readonly userId: Prisma.FieldRef<"Order", "String">;
+  readonly customerId: Prisma.FieldRef<"Order", "String">;
+  readonly assignedAgentId: Prisma.FieldRef<"Order", "String">;
   readonly stationId: Prisma.FieldRef<"Order", "String">;
   readonly status: Prisma.FieldRef<"Order", "OrderStatus">;
   readonly fuelType: Prisma.FieldRef<"Order", "FuelType">;
   readonly quantity: Prisma.FieldRef<"Order", "Decimal">;
-  readonly price: Prisma.FieldRef<"Order", "Decimal">;
+  readonly unitPrice: Prisma.FieldRef<"Order", "Decimal">;
+  readonly fuelSubtotal: Prisma.FieldRef<"Order", "Decimal">;
+  readonly totalAmount: Prisma.FieldRef<"Order", "Decimal">;
+  readonly deliveryFee: Prisma.FieldRef<"Order", "Decimal">;
+  readonly VAT: Prisma.FieldRef<"Order", "Decimal">;
   readonly deliveryAddress: Prisma.FieldRef<"Order", "String">;
+  readonly completedById: Prisma.FieldRef<"Order", "String">;
+  readonly cancelledById: Prisma.FieldRef<"Order", "String">;
   readonly createdAt: Prisma.FieldRef<"Order", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"Order", "DateTime">;
 }
@@ -2485,6 +4295,28 @@ export type OrderDeleteManyArgs<
 };
 
 /**
+ * Order.assignedAgent
+ */
+export type Order$assignedAgentArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null;
+  where?: Prisma.UserWhereInput;
+};
+
+/**
  * Order.transactions
  */
 export type Order$transactionsArgs<
@@ -2512,6 +4344,50 @@ export type Order$transactionsArgs<
   skip?: number;
   distinct?:
     Prisma.TransactionScalarFieldEnum | Prisma.TransactionScalarFieldEnum[];
+};
+
+/**
+ * Order.completedBy
+ */
+export type Order$completedByArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null;
+  where?: Prisma.UserWhereInput;
+};
+
+/**
+ * Order.cancelledBy
+ */
+export type Order$cancelledByArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null;
+  where?: Prisma.UserWhereInput;
 };
 
 /**

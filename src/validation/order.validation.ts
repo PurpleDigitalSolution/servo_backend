@@ -24,8 +24,8 @@ export const FuelTypeSchema = z
   });
 
 export const orderSchema = z.object({
-  userId: z.string().min(1, "User ID is required").openapi({
-    description: "The ID of the user placing the order",
+  customerId: z.string().min(1, "Customer ID is required").openapi({
+    description: "The ID of the customer placing the order",
   }),
   stationId: z.string().min(1, "Station ID is required").openapi({
     description: "The ID of the station where the order is placed",
@@ -36,7 +36,7 @@ export const orderSchema = z.object({
     description: "The quantity of fuel ordered",
     example: 10,
   }),
-  price: z.number().min(0, "Price must be a positive number").openapi({
+  totalPrice: z.number().min(0, "Price must be a positive number").openapi({
     description: "The total price of the order",
     example: 50.0,
   }),
@@ -44,15 +44,26 @@ export const orderSchema = z.object({
     description: "The address where the fuel should be delivered",
     example: "123 Main Street, City, State, ZIP",
   }),
+  VAT: z.number().min(0, "VAT must be a positive number").openapi({
+    description: "The VAT amount for the order",
+    example: 5.0,
+  }),
+  deliveryFee: z
+    .number()
+    .min(0, "Delivery fee must be a positive number")
+    .openapi({
+      description: "The delivery fee for the order",
+      example: 2.5,
+    }),
 });
 export const orderResponseSchema = z.object({
   id: z.string().uuid().openapi({
     description: "The unique identifier of the order",
     example: "123e4567-e89b-12d3-a456-426614174000",
   }),
-  userId: z.string().min(1).openapi({
-    description: "The ID of the user who placed the order",
-    example: "user123",
+  customerId: z.string().min(1).openapi({
+    description: "The ID of the customer who placed the order",
+    example: "customer123",
   }),
   stationId: z.string().uuid().openapi({
     description: "The ID of the station where the order is placed",
@@ -64,7 +75,7 @@ export const orderResponseSchema = z.object({
     description: "The quantity of fuel ordered",
     example: 10,
   }),
-  price: z.number().min(0).openapi({
+  totalPrice: z.number().min(0).openapi({
     description: "The total price of the order",
     example: 50.0,
   }),

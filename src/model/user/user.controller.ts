@@ -11,6 +11,13 @@ export const getCustomer = asyncHandler(async (req: Request, res: Response) => {
     .status(200)
     .json(new ApiResponse(200, result, "Customers fetched successfully"));
 });
+export const getAgent = asyncHandler(async (req: Request, res: Response) => {
+  const { limit, page } = req.query as { limit?: string; page?: string };
+  const result = await userService.getAgents(limit || "50", page || "1");
+  res
+    .status(200)
+    .json(new ApiResponse(200, result, "Agents fetched successfully"));
+});
 export const getProfile = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   if (!userId) {

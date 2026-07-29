@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/async.js";
 import { StationService } from "./Station.service.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-
+import { StationRepository } from "./Station.repository.js";
+const stationRepo = new StationRepository();
+const stationService = new StationService(stationRepo);
 export const createStation = asyncHandler(
   async (req: Request, res: Response) => {
     const stationData = req.body;
-    const result = await StationService.createStation(stationData);
+    const result = await stationService.createStation(stationData);
     res
       .status(201)
       .json(new ApiResponse(201, result, "Station created successfully"));
@@ -14,7 +16,7 @@ export const createStation = asyncHandler(
 );
 export const getStations = asyncHandler(async (req: Request, res: Response) => {
   const { limit, page } = req.query;
-  const result = await StationService.getStations(
+  const result = await stationService.getStations(
     limit as string,
     page as string,
   );
@@ -25,7 +27,7 @@ export const getStations = asyncHandler(async (req: Request, res: Response) => {
 export const getStationById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await StationService.getStationById(id as string);
+    const result = await stationService.getStationById(id as string);
     res
       .status(200)
       .json(new ApiResponse(200, result, "Station retrieved successfully"));
@@ -35,7 +37,7 @@ export const updateAvailability = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const { isAvailable } = req.body;
-    const result = await StationService.updateAvailability(
+    const result = await stationService.updateAvailability(
       id as string,
       isAvailable as boolean,
     );
@@ -53,7 +55,7 @@ export const updateAvailability = asyncHandler(
 export const getAvailableStations = asyncHandler(
   async (req: Request, res: Response) => {
     const { limit, page } = req.query;
-    const result = await StationService.getAvailableStations(
+    const result = await stationService.getAvailableStations(
       limit as string,
       page as string,
     );

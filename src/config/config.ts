@@ -25,10 +25,14 @@ interface Config {
 
   RESEND_API_KEY: string;
   RESEND_USER: string;
+  OTP_HMAC_SECRET: string;
+  DEFAULT_AGENT_PASSWORD: string;
 
   seed: {
     adminPassword: string;
     superAdminPassword: string;
+    agentPassword?: string;
+    customerPassword?: string;
   };
 }
 
@@ -52,6 +56,8 @@ export const config: Config = {
   seed: {
     adminPassword: env.ADMIN_PASSWORD,
     superAdminPassword: env.SUPER_ADMIN_PASSWORD,
+    agentPassword: env.AGENT_PASSWORD,
+    customerPassword: env.CUSTOMER_PASSWORD,
   },
   EMAIL_HOST: env.EMAIL_HOST,
   EMAIL_USER: env.EMAIL_USER,
@@ -60,6 +66,8 @@ export const config: Config = {
   EMAIL_SERVICE: env.EMAIL_SERVICE,
   RESEND_API_KEY: env.RESEND_API_KEY,
   RESEND_USER: env.RESEND_USER,
+  OTP_HMAC_SECRET: env.OTP_HMAC_SECRET,
+  DEFAULT_AGENT_PASSWORD: env.DEFAULT_AGENT_PASSWORD,
 };
 
 export type { Config };

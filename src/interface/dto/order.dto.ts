@@ -1,22 +1,26 @@
 import { FuelType, OrderStatus } from "../../types/general.js";
 
 export interface OrderDTO {
-  userId: string;
+  customerId: string;
+  unitPrice: number;
   stationId: string;
   status: OrderStatus;
   fuelType: FuelType;
   quantity: number;
-  price: number;
+  fuelSubtotal: number;
+  totalAmount: number;
+  VAT: number;
+  deliveryFee: number;
   deliveryAddress: string;
 }
 export interface OrderResponseDTO {
   id: string;
-  userId: string;
+  customerId: string;
   stationId: string;
   status: OrderStatus;
   fuelType: FuelType;
   quantity: number;
-  price: number;
+  totalPrice: number;
   deliveryAddress: string;
   createdAt: string;
   updatedAt: string;

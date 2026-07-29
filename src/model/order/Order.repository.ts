@@ -1,9 +1,9 @@
 import { prisma } from "../../config/database.js";
 import { OrderDTO } from "../../interface/dto/order.dto.js";
-import { OrderStatus } from "../../types/general.js";
+import { OrderStatus, PrismaTx } from "../../types/general.js";
 
 export interface IOrderRepository {
-  createOrder(orderData: OrderDTO): Promise<any>;
+  createOrder(orderData: OrderDTO, tx?: PrismaTx): Promise<any>;
   getOrders(skip: number, take: number): Promise<any[]>;
   getUserOrders(userId: string, skip: number, take: number): Promise<any[]>;
   countOrders(): Promise<number>;
@@ -18,13 +18,26 @@ export interface IOrderRepository {
     orderId: string,
     status: OrderStatus,
   ): Promise<any>;
+  getOrderStatus(orderId: string): Promise<OrderStatus | null>;
   deleteOrder(orderId: string): Promise<any>;
 }
 
 export class OrderRepository implements IOrderRepository {
-  async createOrder(orderData: OrderDTO) {
-    return await prisma.order.create({
-      data: orderData,
+  async createOrder(orderData: OrderDTO, tx: PrismaTx = prisma) {
+    return await tx.order.create({
+      data: {
+        customerId: orderData.customerId,
+        unitPrice: orderData.unitPrice,
+        stationId: orderData.stationId,
+        status: orderData.status,
+        fuelType: orderData.fuelType,
+        quantity: orderData.quantity,
+        VAT: orderData.VAT,
+        deliveryFee: orderData.deliveryFee,
+        fuelSubtotal: orderData.fuelSubtotal,
+        totalAmount: orderData.totalAmount,
+        deliveryAddress: orderData.deliveryAddress,
+      },
       include: {
         station: {
           select: {
@@ -41,7 +54,7 @@ export class OrderRepository implements IOrderRepository {
       skip,
       take,
       include: {
-        user: {
+        customer: {
           select: {
             id: true,
             email: true,
@@ -68,7 +81,7 @@ export class OrderRepository implements IOrderRepository {
 
   async getUserOrders(userId: string, skip: number, take: number) {
     return await prisma.order.findMany({
-      where: { userId },
+      where: { customerId: userId },
       skip,
       take,
       include: {
@@ -96,6 +109,12 @@ export class OrderRepository implements IOrderRepository {
             addressState: true,
           },
         },
+        customer: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
       },
     });
   }
@@ -113,7 +132,7 @@ export class OrderRepository implements IOrderRepository {
     status: OrderStatus,
   ) {
     return await prisma.order.update({
-      where: { id: orderId, userId },
+      where: { id: orderId, customerId: userId },
       data: { status },
     });
   }
@@ -124,7 +143,13 @@ export class OrderRepository implements IOrderRepository {
       data: { status },
     });
   }
-
+  async getOrderStatus(orderId: string): Promise<OrderStatus | null> {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { status: true },
+    });
+    return order ? (order.status as unknown as OrderStatus) : null;
+  }
   async deleteOrder(orderId: string) {
     return await prisma.order.delete({
       where: { id: orderId },

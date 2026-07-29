@@ -1,4 +1,5 @@
 import {
+  createAgentSchema,
   createUserSchema,
   loginBodySchema,
   registrationResponseSchema,
@@ -32,6 +33,50 @@ registry.registerPath({
   responses: {
     201: {
       description: "User created successfully",
+
+      content: {
+        "application/json": {
+          schema: registrationResponseSchema,
+        },
+      },
+    },
+
+    400: {
+      description: "Validation Error",
+
+      content: {
+        "application/json": {
+          schema: errorSchema,
+        },
+      },
+    },
+  },
+});
+registry.registerPath({
+  method: "post",
+
+  path: "/auth/admin/register",
+
+  tags: ["Authentication"],
+
+  summary: "Register a new agent",
+
+  description: "Creates a new agent account.",
+
+  request: {
+    body: {
+      required: true,
+      content: {
+        "application/json": {
+          schema: createAgentSchema.shape.body,
+        },
+      },
+    },
+  },
+
+  responses: {
+    201: {
+      description: "Agent created successfully",
 
       content: {
         "application/json": {

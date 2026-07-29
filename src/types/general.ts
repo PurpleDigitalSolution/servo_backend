@@ -1,5 +1,7 @@
-export type UserType = "USER" | "ADMIN" | "AGENT" | "DRIVER";
-export type UserRole = "USER" | "DRIVER" | "ADMIN" | "AGENT" | "SUPER_ADMIN";
+import { Prisma } from "../generated/prisma/client.js";
+export type UserType = "CUSTOMER" | "ADMIN" | "AGENT" | "DRIVER";
+export type UserRole =
+  "CUSTOMER" | "DRIVER" | "ADMIN" | "AGENT" | "SUPER_ADMIN";
 
 export type AccountStatus = "ACTIVE" | "SUSPENDED" | "BANNED";
 
@@ -9,7 +11,7 @@ export type FuelType = "PETROL" | "DIESEL" | "COOKING_GAS";
 export type OrderStatus =
   | "PENDING_PAYMENT"
   | "PENDING_CONFIRMATION"
-  | "CONFIRMED"
+  | "PROCESSING"
   | "COMPLETED"
   | "CANCELLED"
   | "ASSIGNED"
@@ -17,3 +19,4 @@ export type OrderStatus =
   | "IN_TRANSIT";
 export type PaymentMethod = "PAYSTACK";
 export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
+export type PrismaTx = Prisma.TransactionClient;

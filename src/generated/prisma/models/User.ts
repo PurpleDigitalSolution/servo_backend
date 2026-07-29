@@ -46,7 +46,9 @@ export type UserMinAggregateOutputType = {
   tokenExpiry: Date | null;
   otp: string | null;
   otpExpiry: Date | null;
+  mustChangePassword: boolean | null;
   createdAt: Date | null;
+  passwordChangedAt: Date | null;
   updatedAt: Date | null;
 };
 
@@ -62,7 +64,9 @@ export type UserMaxAggregateOutputType = {
   tokenExpiry: Date | null;
   otp: string | null;
   otpExpiry: Date | null;
+  mustChangePassword: boolean | null;
   createdAt: Date | null;
+  passwordChangedAt: Date | null;
   updatedAt: Date | null;
 };
 
@@ -78,7 +82,9 @@ export type UserCountAggregateOutputType = {
   tokenExpiry: number;
   otp: number;
   otpExpiry: number;
+  mustChangePassword: number;
   createdAt: number;
+  passwordChangedAt: number;
   updatedAt: number;
   _all: number;
 };
@@ -103,7 +109,9 @@ export type UserMinAggregateInputType = {
   tokenExpiry?: true;
   otp?: true;
   otpExpiry?: true;
+  mustChangePassword?: true;
   createdAt?: true;
+  passwordChangedAt?: true;
   updatedAt?: true;
 };
 
@@ -119,7 +127,9 @@ export type UserMaxAggregateInputType = {
   tokenExpiry?: true;
   otp?: true;
   otpExpiry?: true;
+  mustChangePassword?: true;
   createdAt?: true;
+  passwordChangedAt?: true;
   updatedAt?: true;
 };
 
@@ -135,7 +145,9 @@ export type UserCountAggregateInputType = {
   tokenExpiry?: true;
   otp?: true;
   otpExpiry?: true;
+  mustChangePassword?: true;
   createdAt?: true;
+  passwordChangedAt?: true;
   updatedAt?: true;
   _all?: true;
 };
@@ -244,7 +256,9 @@ export type UserGroupByOutputType = {
   tokenExpiry: Date | null;
   otp: string | null;
   otpExpiry: Date | null;
+  mustChangePassword: boolean;
   createdAt: Date;
+  passwordChangedAt: Date | null;
   updatedAt: Date;
   _count: UserCountAggregateOutputType | null;
   _avg: UserAvgAggregateOutputType | null;
@@ -287,14 +301,20 @@ export type UserWhereInput = {
   tokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
   otp?: Prisma.StringNullableFilter<"User"> | string | null;
   otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  mustChangePassword?: Prisma.BoolFilter<"User"> | boolean;
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
+  passwordChangedAt?:
+    Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   userProfile?: Prisma.XOR<
     Prisma.UserProfileNullableScalarRelationFilter,
     Prisma.UserProfileWhereInput
   > | null;
   sessionTokens?: Prisma.SessionTokenListRelationFilter;
-  orders?: Prisma.OrderListRelationFilter;
+  customerOrders?: Prisma.OrderListRelationFilter;
+  assignedOrders?: Prisma.OrderListRelationFilter;
+  completedOrders?: Prisma.OrderListRelationFilter;
+  cancelledOrders?: Prisma.OrderListRelationFilter;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -309,11 +329,16 @@ export type UserOrderByWithRelationInput = {
   tokenExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
   otp?: Prisma.SortOrderInput | Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
+  mustChangePassword?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  passwordChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   userProfile?: Prisma.UserProfileOrderByWithRelationInput;
   sessionTokens?: Prisma.SessionTokenOrderByRelationAggregateInput;
-  orders?: Prisma.OrderOrderByRelationAggregateInput;
+  customerOrders?: Prisma.OrderOrderByRelationAggregateInput;
+  assignedOrders?: Prisma.OrderOrderByRelationAggregateInput;
+  completedOrders?: Prisma.OrderOrderByRelationAggregateInput;
+  cancelledOrders?: Prisma.OrderOrderByRelationAggregateInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -339,14 +364,20 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
       Prisma.EnumVerificationStatusFilter<"User"> | $Enums.VerificationStatus;
     tokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
     otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+    mustChangePassword?: Prisma.BoolFilter<"User"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
+    passwordChangedAt?:
+      Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
     updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     userProfile?: Prisma.XOR<
       Prisma.UserProfileNullableScalarRelationFilter,
       Prisma.UserProfileWhereInput
     > | null;
     sessionTokens?: Prisma.SessionTokenListRelationFilter;
-    orders?: Prisma.OrderListRelationFilter;
+    customerOrders?: Prisma.OrderListRelationFilter;
+    assignedOrders?: Prisma.OrderListRelationFilter;
+    completedOrders?: Prisma.OrderListRelationFilter;
+    cancelledOrders?: Prisma.OrderListRelationFilter;
   },
   "id" | "email" | "token" | "otp"
 >;
@@ -363,7 +394,9 @@ export type UserOrderByWithAggregationInput = {
   tokenExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
   otp?: Prisma.SortOrderInput | Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
+  mustChangePassword?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  passwordChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
   _avg?: Prisma.UserAvgOrderByAggregateInput;
@@ -401,7 +434,10 @@ export type UserScalarWhereWithAggregatesInput = {
   otp?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
   otpExpiry?:
     Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
+  mustChangePassword?: Prisma.BoolWithAggregatesFilter<"User"> | boolean;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string;
+  passwordChangedAt?:
+    Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string;
 };
 
@@ -417,11 +453,16 @@ export type UserCreateInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
 };
 
 export type UserUncheckedCreateInput = {
@@ -436,11 +477,16 @@ export type UserUncheckedCreateInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
 };
 
 export type UserUpdateInput = {
@@ -465,11 +511,17 @@ export type UserUpdateInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
@@ -494,11 +546,17 @@ export type UserUncheckedUpdateInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
 };
 
 export type UserCreateManyInput = {
@@ -513,7 +571,9 @@ export type UserCreateManyInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
 };
 
@@ -539,7 +599,10 @@ export type UserUpdateManyMutationInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
@@ -565,7 +628,10 @@ export type UserUncheckedUpdateManyInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
@@ -581,7 +647,9 @@ export type UserCountOrderByAggregateInput = {
   tokenExpiry?: Prisma.SortOrder;
   otp?: Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrder;
+  mustChangePassword?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  passwordChangedAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
 
@@ -601,7 +669,9 @@ export type UserMaxOrderByAggregateInput = {
   tokenExpiry?: Prisma.SortOrder;
   otp?: Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrder;
+  mustChangePassword?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  passwordChangedAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
 
@@ -617,7 +687,9 @@ export type UserMinOrderByAggregateInput = {
   tokenExpiry?: Prisma.SortOrder;
   otp?: Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrder;
+  mustChangePassword?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
+  passwordChangedAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
 
@@ -628,6 +700,11 @@ export type UserSumOrderByAggregateInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput;
   isNot?: Prisma.UserWhereInput;
+};
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null;
+  isNot?: Prisma.UserWhereInput | null;
 };
 
 export type StringFieldUpdateOperationsInput = {
@@ -660,6 +737,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null;
+};
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean;
 };
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -718,29 +799,113 @@ export type UserUpdateOneRequiredWithoutSessionTokensNestedInput = {
   >;
 };
 
-export type UserCreateNestedOneWithoutOrdersInput = {
+export type UserCreateNestedOneWithoutCustomerOrdersInput = {
   create?: Prisma.XOR<
-    Prisma.UserCreateWithoutOrdersInput,
-    Prisma.UserUncheckedCreateWithoutOrdersInput
+    Prisma.UserCreateWithoutCustomerOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCustomerOrdersInput
   >;
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrdersInput;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerOrdersInput;
   connect?: Prisma.UserWhereUniqueInput;
 };
 
-export type UserUpdateOneRequiredWithoutOrdersNestedInput = {
+export type UserCreateNestedOneWithoutAssignedOrdersInput = {
   create?: Prisma.XOR<
-    Prisma.UserCreateWithoutOrdersInput,
-    Prisma.UserUncheckedCreateWithoutOrdersInput
+    Prisma.UserCreateWithoutAssignedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutAssignedOrdersInput
   >;
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrdersInput;
-  upsert?: Prisma.UserUpsertWithoutOrdersInput;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedOrdersInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserCreateNestedOneWithoutCompletedOrdersInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutCompletedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCompletedOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompletedOrdersInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserCreateNestedOneWithoutCancelledOrdersInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutCancelledOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCancelledOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCancelledOrdersInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserUpdateOneRequiredWithoutCustomerOrdersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutCustomerOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCustomerOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerOrdersInput;
+  upsert?: Prisma.UserUpsertWithoutCustomerOrdersInput;
   connect?: Prisma.UserWhereUniqueInput;
   update?: Prisma.XOR<
     Prisma.XOR<
-      Prisma.UserUpdateToOneWithWhereWithoutOrdersInput,
-      Prisma.UserUpdateWithoutOrdersInput
+      Prisma.UserUpdateToOneWithWhereWithoutCustomerOrdersInput,
+      Prisma.UserUpdateWithoutCustomerOrdersInput
     >,
-    Prisma.UserUncheckedUpdateWithoutOrdersInput
+    Prisma.UserUncheckedUpdateWithoutCustomerOrdersInput
+  >;
+};
+
+export type UserUpdateOneWithoutAssignedOrdersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutAssignedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutAssignedOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedOrdersInput;
+  upsert?: Prisma.UserUpsertWithoutAssignedOrdersInput;
+  disconnect?: Prisma.UserWhereInput | boolean;
+  delete?: Prisma.UserWhereInput | boolean;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutAssignedOrdersInput,
+      Prisma.UserUpdateWithoutAssignedOrdersInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutAssignedOrdersInput
+  >;
+};
+
+export type UserUpdateOneWithoutCompletedOrdersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutCompletedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCompletedOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompletedOrdersInput;
+  upsert?: Prisma.UserUpsertWithoutCompletedOrdersInput;
+  disconnect?: Prisma.UserWhereInput | boolean;
+  delete?: Prisma.UserWhereInput | boolean;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutCompletedOrdersInput,
+      Prisma.UserUpdateWithoutCompletedOrdersInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutCompletedOrdersInput
+  >;
+};
+
+export type UserUpdateOneWithoutCancelledOrdersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutCancelledOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCancelledOrdersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCancelledOrdersInput;
+  upsert?: Prisma.UserUpsertWithoutCancelledOrdersInput;
+  disconnect?: Prisma.UserWhereInput | boolean;
+  delete?: Prisma.UserWhereInput | boolean;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutCancelledOrdersInput,
+      Prisma.UserUpdateWithoutCancelledOrdersInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutCancelledOrdersInput
   >;
 };
 
@@ -756,10 +921,15 @@ export type UserCreateWithoutUserProfileInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
 };
 
 export type UserUncheckedCreateWithoutUserProfileInput = {
@@ -774,10 +944,15 @@ export type UserUncheckedCreateWithoutUserProfileInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
 };
 
 export type UserCreateOrConnectWithoutUserProfileInput = {
@@ -830,10 +1005,16 @@ export type UserUpdateWithoutUserProfileInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutUserProfileInput = {
@@ -858,10 +1039,16 @@ export type UserUncheckedUpdateWithoutUserProfileInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
 };
 
 export type UserCreateWithoutSessionTokensInput = {
@@ -876,10 +1063,15 @@ export type UserCreateWithoutSessionTokensInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
 };
 
 export type UserUncheckedCreateWithoutSessionTokensInput = {
@@ -894,10 +1086,15 @@ export type UserUncheckedCreateWithoutSessionTokensInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
 };
 
 export type UserCreateOrConnectWithoutSessionTokensInput = {
@@ -950,10 +1147,16 @@ export type UserUpdateWithoutSessionTokensInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutSessionTokensInput = {
@@ -978,13 +1181,19 @@ export type UserUncheckedUpdateWithoutSessionTokensInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
 };
 
-export type UserCreateWithoutOrdersInput = {
+export type UserCreateWithoutCustomerOrdersInput = {
   id?: string;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
@@ -996,13 +1205,18 @@ export type UserCreateWithoutOrdersInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
 };
 
-export type UserUncheckedCreateWithoutOrdersInput = {
+export type UserUncheckedCreateWithoutCustomerOrdersInput = {
   id?: string;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
@@ -1014,41 +1228,208 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   tokenExpiry?: Date | string | null;
   otp?: string | null;
   otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
   createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
   userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
 };
 
-export type UserCreateOrConnectWithoutOrdersInput = {
+export type UserCreateOrConnectWithoutCustomerOrdersInput = {
   where: Prisma.UserWhereUniqueInput;
   create: Prisma.XOR<
-    Prisma.UserCreateWithoutOrdersInput,
-    Prisma.UserUncheckedCreateWithoutOrdersInput
+    Prisma.UserCreateWithoutCustomerOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCustomerOrdersInput
   >;
 };
 
-export type UserUpsertWithoutOrdersInput = {
+export type UserCreateWithoutAssignedOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
+};
+
+export type UserUncheckedCreateWithoutAssignedOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
+};
+
+export type UserCreateOrConnectWithoutAssignedOrdersInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutAssignedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutAssignedOrdersInput
+  >;
+};
+
+export type UserCreateWithoutCompletedOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
+};
+
+export type UserUncheckedCreateWithoutCompletedOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
+};
+
+export type UserCreateOrConnectWithoutCompletedOrdersInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutCompletedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCompletedOrdersInput
+  >;
+};
+
+export type UserCreateWithoutCancelledOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+};
+
+export type UserUncheckedCreateWithoutCancelledOrdersInput = {
+  id?: string;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+};
+
+export type UserCreateOrConnectWithoutCancelledOrdersInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutCancelledOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCancelledOrdersInput
+  >;
+};
+
+export type UserUpsertWithoutCustomerOrdersInput = {
   update: Prisma.XOR<
-    Prisma.UserUpdateWithoutOrdersInput,
-    Prisma.UserUncheckedUpdateWithoutOrdersInput
+    Prisma.UserUpdateWithoutCustomerOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutCustomerOrdersInput
   >;
   create: Prisma.XOR<
-    Prisma.UserCreateWithoutOrdersInput,
-    Prisma.UserUncheckedCreateWithoutOrdersInput
+    Prisma.UserCreateWithoutCustomerOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCustomerOrdersInput
   >;
   where?: Prisma.UserWhereInput;
 };
 
-export type UserUpdateToOneWithWhereWithoutOrdersInput = {
+export type UserUpdateToOneWithWhereWithoutCustomerOrdersInput = {
   where?: Prisma.UserWhereInput;
   data: Prisma.XOR<
-    Prisma.UserUpdateWithoutOrdersInput,
-    Prisma.UserUncheckedUpdateWithoutOrdersInput
+    Prisma.UserUpdateWithoutCustomerOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutCustomerOrdersInput
   >;
 };
 
-export type UserUpdateWithoutOrdersInput = {
+export type UserUpdateWithoutCustomerOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
@@ -1070,13 +1451,19 @@ export type UserUpdateWithoutOrdersInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
 };
 
-export type UserUncheckedUpdateWithoutOrdersInput = {
+export type UserUncheckedUpdateWithoutCustomerOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
@@ -1098,10 +1485,280 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+};
+
+export type UserUpsertWithoutAssignedOrdersInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutAssignedOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutAssignedOrdersInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutAssignedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutAssignedOrdersInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutAssignedOrdersInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutAssignedOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutAssignedOrdersInput
+  >;
+};
+
+export type UserUpdateWithoutAssignedOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+};
+
+export type UserUpsertWithoutCompletedOrdersInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutCompletedOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutCompletedOrdersInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutCompletedOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCompletedOrdersInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutCompletedOrdersInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutCompletedOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutCompletedOrdersInput
+  >;
+};
+
+export type UserUpdateWithoutCompletedOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutCompletedOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+};
+
+export type UserUpsertWithoutCancelledOrdersInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutCancelledOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutCancelledOrdersInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutCancelledOrdersInput,
+    Prisma.UserUncheckedCreateWithoutCancelledOrdersInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutCancelledOrdersInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutCancelledOrdersInput,
+    Prisma.UserUncheckedUpdateWithoutCancelledOrdersInput
+  >;
+};
+
+export type UserUpdateWithoutCancelledOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutCancelledOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
 };
 
 /**
@@ -1110,7 +1767,10 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
 
 export type UserCountOutputType = {
   sessionTokens: number;
-  orders: number;
+  customerOrders: number;
+  assignedOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
 };
 
 export type UserCountOutputTypeSelect<
@@ -1118,7 +1778,10 @@ export type UserCountOutputTypeSelect<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   sessionTokens?: boolean | UserCountOutputTypeCountSessionTokensArgs;
-  orders?: boolean | UserCountOutputTypeCountOrdersArgs;
+  customerOrders?: boolean | UserCountOutputTypeCountCustomerOrdersArgs;
+  assignedOrders?: boolean | UserCountOutputTypeCountAssignedOrdersArgs;
+  completedOrders?: boolean | UserCountOutputTypeCountCompletedOrdersArgs;
+  cancelledOrders?: boolean | UserCountOutputTypeCountCancelledOrdersArgs;
 };
 
 /**
@@ -1147,7 +1810,37 @@ export type UserCountOutputTypeCountSessionTokensArgs<
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountOrdersArgs<
+export type UserCountOutputTypeCountCustomerOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.OrderWhereInput;
+};
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAssignedOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.OrderWhereInput;
+};
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCompletedOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.OrderWhereInput;
+};
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCancelledOrdersArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
@@ -1170,11 +1863,16 @@ export type UserSelect<
     tokenExpiry?: boolean;
     otp?: boolean;
     otpExpiry?: boolean;
+    mustChangePassword?: boolean;
     createdAt?: boolean;
+    passwordChangedAt?: boolean;
     updatedAt?: boolean;
     userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
     sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
-    orders?: boolean | Prisma.User$ordersArgs<ExtArgs>;
+    customerOrders?: boolean | Prisma.User$customerOrdersArgs<ExtArgs>;
+    assignedOrders?: boolean | Prisma.User$assignedOrdersArgs<ExtArgs>;
+    completedOrders?: boolean | Prisma.User$completedOrdersArgs<ExtArgs>;
+    cancelledOrders?: boolean | Prisma.User$cancelledOrdersArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
@@ -1196,7 +1894,9 @@ export type UserSelectCreateManyAndReturn<
     tokenExpiry?: boolean;
     otp?: boolean;
     otpExpiry?: boolean;
+    mustChangePassword?: boolean;
     createdAt?: boolean;
+    passwordChangedAt?: boolean;
     updatedAt?: boolean;
   },
   ExtArgs["result"]["user"]
@@ -1218,7 +1918,9 @@ export type UserSelectUpdateManyAndReturn<
     tokenExpiry?: boolean;
     otp?: boolean;
     otpExpiry?: boolean;
+    mustChangePassword?: boolean;
     createdAt?: boolean;
+    passwordChangedAt?: boolean;
     updatedAt?: boolean;
   },
   ExtArgs["result"]["user"]
@@ -1236,7 +1938,9 @@ export type UserSelectScalar = {
   tokenExpiry?: boolean;
   otp?: boolean;
   otpExpiry?: boolean;
+  mustChangePassword?: boolean;
   createdAt?: boolean;
+  passwordChangedAt?: boolean;
   updatedAt?: boolean;
 };
 
@@ -1255,7 +1959,9 @@ export type UserOmit<
   | "tokenExpiry"
   | "otp"
   | "otpExpiry"
+  | "mustChangePassword"
   | "createdAt"
+  | "passwordChangedAt"
   | "updatedAt",
   ExtArgs["result"]["user"]
 >;
@@ -1265,7 +1971,10 @@ export type UserInclude<
 > = {
   userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
   sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
-  orders?: boolean | Prisma.User$ordersArgs<ExtArgs>;
+  customerOrders?: boolean | Prisma.User$customerOrdersArgs<ExtArgs>;
+  assignedOrders?: boolean | Prisma.User$assignedOrdersArgs<ExtArgs>;
+  completedOrders?: boolean | Prisma.User$completedOrdersArgs<ExtArgs>;
+  cancelledOrders?: boolean | Prisma.User$cancelledOrdersArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
@@ -1285,7 +1994,10 @@ export type $UserPayload<
   objects: {
     userProfile: Prisma.$UserProfilePayload<ExtArgs> | null;
     sessionTokens: Prisma.$SessionTokenPayload<ExtArgs>[];
-    orders: Prisma.$OrderPayload<ExtArgs>[];
+    customerOrders: Prisma.$OrderPayload<ExtArgs>[];
+    assignedOrders: Prisma.$OrderPayload<ExtArgs>[];
+    completedOrders: Prisma.$OrderPayload<ExtArgs>[];
+    cancelledOrders: Prisma.$OrderPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1300,7 +2012,9 @@ export type $UserPayload<
       tokenExpiry: Date | null;
       otp: string | null;
       otpExpiry: Date | null;
+      mustChangePassword: boolean;
       createdAt: Date;
+      passwordChangedAt: Date | null;
       updatedAt: Date;
     },
     ExtArgs["result"]["user"]
@@ -1876,8 +2590,41 @@ export interface Prisma__UserClient<
       >
     | Null
   >;
-  orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>,
+  customerOrders<T extends Prisma.User$customerOrdersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$customerOrdersArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$OrderPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  assignedOrders<T extends Prisma.User$assignedOrdersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$assignedOrdersArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$OrderPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  completedOrders<T extends Prisma.User$completedOrdersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$completedOrdersArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$OrderPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  cancelledOrders<T extends Prisma.User$cancelledOrdersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$cancelledOrdersArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     | runtime.Types.Result.GetResult<
         Prisma.$OrderPayload<ExtArgs>,
@@ -1934,7 +2681,9 @@ export interface UserFieldRefs {
   readonly tokenExpiry: Prisma.FieldRef<"User", "DateTime">;
   readonly otp: Prisma.FieldRef<"User", "String">;
   readonly otpExpiry: Prisma.FieldRef<"User", "DateTime">;
+  readonly mustChangePassword: Prisma.FieldRef<"User", "Boolean">;
   readonly createdAt: Prisma.FieldRef<"User", "DateTime">;
+  readonly passwordChangedAt: Prisma.FieldRef<"User", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"User", "DateTime">;
 }
 
@@ -2431,9 +3180,96 @@ export type User$sessionTokensArgs<
 };
 
 /**
- * User.orders
+ * User.customerOrders
  */
-export type User$ordersArgs<
+export type User$customerOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null;
+  where?: Prisma.OrderWhereInput;
+  orderBy?:
+    | Prisma.OrderOrderByWithRelationInput
+    | Prisma.OrderOrderByWithRelationInput[];
+  cursor?: Prisma.OrderWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
+};
+
+/**
+ * User.assignedOrders
+ */
+export type User$assignedOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null;
+  where?: Prisma.OrderWhereInput;
+  orderBy?:
+    | Prisma.OrderOrderByWithRelationInput
+    | Prisma.OrderOrderByWithRelationInput[];
+  cursor?: Prisma.OrderWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
+};
+
+/**
+ * User.completedOrders
+ */
+export type User$completedOrdersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null;
+  where?: Prisma.OrderWhereInput;
+  orderBy?:
+    | Prisma.OrderOrderByWithRelationInput
+    | Prisma.OrderOrderByWithRelationInput[];
+  cursor?: Prisma.OrderWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
+};
+
+/**
+ * User.cancelledOrders
+ */
+export type User$cancelledOrdersArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {

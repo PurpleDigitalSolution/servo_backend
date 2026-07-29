@@ -44,3 +44,35 @@ export const authorizePermission = (requiredPermissions: string | string[]) => {
     next();
   };
 };
+
+export const requirePasswordChange = () => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const user = req.user;
+
+    if (user && user.mustChangePassword) {
+      // Use originalUrl or check trailing paths to ensure sub-routers don't break the check
+      const currentPath = req.originalUrl.split("?")[0]; // Strip query parameters if any
+
+      const allowedPaths = [
+        "/auth/change-password",
+        "/auth/logout",
+        "/api/v1/auth/change-password", // Or check via .endsWith()
+        "/api/v1/auth/logout",
+      ];
+
+      const isAllowedRoute =
+        allowedPaths.some((path) => currentPath === path) ||
+        currentPath.endsWith("/change-password") ||
+        currentPath.endsWith("/logout");
+
+      if (!isAllowedRoute) {
+        throw new ApiError(
+          403,
+          "Forbidden - You must change your password before proceeding",
+        );
+      }
+    }
+
+    next();
+  };
+};

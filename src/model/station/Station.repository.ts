@@ -1,9 +1,31 @@
 import { StationDTO } from "../../interface/dto/station.dto.js";
 import { prisma } from "../../config/database.js";
 
-export class StationRepository {
-  static async createStation(stationData: StationDTO) {
-    return await prisma.station.create({
+export interface IStationRepository {
+  createStation(stationData: StationDTO): Promise<any>;
+  getStations(skip: number, take: number): Promise<any[]>;
+  count(whereClause?: Record<string, any>): Promise<number>;
+  findStationByNameAndAddress(stationData: {
+    name: string;
+    addressStreet: string;
+    addressCity: string;
+  }): Promise<any | null>;
+  findStationById(stationId: string): Promise<any | null>;
+  getAvailableStations(params: { skip: number; take: number }): Promise<any[]>;
+  search(query: string, params: { skip: number; take: number }): Promise<any[]>;
+  updateAvailability(stationId: string, isAvailable: boolean): Promise<any>;
+  updateStation(
+    stationId: string,
+    stationData: Partial<StationDTO>,
+  ): Promise<any>;
+  deleteStation(stationId: string): Promise<any>;
+}
+
+export class StationRepository implements IStationRepository {
+  private readonly prismaClient = prisma;
+
+  async createStation(stationData: StationDTO): Promise<any> {
+    return await this.prismaClient.station.create({
       data: {
         name: stationData.name,
         addressState: stationData.addressState,
@@ -24,13 +46,12 @@ export class StationRepository {
       },
     });
   }
-  static async getStations(skip: number, take: number) {
-    return prisma.station.findMany({
+
+  async getStations(skip: number, take: number): Promise<any[]> {
+    return await this.prismaClient.station.findMany({
       skip,
       take,
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         name: true,
@@ -44,15 +65,17 @@ export class StationRepository {
       },
     });
   }
-  static async count() {
-    return await prisma.station.count();
+
+  async count(whereClause: Record<string, any> = {}): Promise<number> {
+    return await this.prismaClient.station.count({ where: whereClause });
   }
-  static async findStationByNameAndAddress(stationData: {
+
+  async findStationByNameAndAddress(stationData: {
     name: string;
     addressStreet: string;
     addressCity: string;
-  }) {
-    return await prisma.station.findUnique({
+  }): Promise<any | null> {
+    return await this.prismaClient.station.findUnique({
       where: {
         name_addressStreet_addressCity: {
           name: stationData.name,
@@ -62,13 +85,15 @@ export class StationRepository {
       },
     });
   }
-  static async findStationById(stationId: string) {
-    return await prisma.station.findUnique({
+
+  async findStationById(stationId: string): Promise<any | null> {
+    return await this.prismaClient.station.findUnique({
       where: { id: stationId },
     });
   }
-  static async getAvailableStations({ skip = 0, take = 10 } = {}) {
-    return prisma.station.findMany({
+
+  async getAvailableStations({ skip = 0, take = 10 } = {}): Promise<any[]> {
+    return await this.prismaClient.station.findMany({
       skip,
       take,
       where: { isAvailable: true },
@@ -82,8 +107,9 @@ export class StationRepository {
       },
     });
   }
-  static async search(query: string, { skip = 0, take = 10 } = {}) {
-    return await prisma.station.findMany({
+
+  async search(query: string, { skip = 0, take = 10 } = {}): Promise<any[]> {
+    return await this.prismaClient.station.findMany({
       skip,
       take,
       where: {
@@ -97,17 +123,22 @@ export class StationRepository {
       },
     });
   }
-  static async updateAvailability(stationId: string, isAvailable: boolean) {
-    return await prisma.station.update({
+
+  async updateAvailability(
+    stationId: string,
+    isAvailable: boolean,
+  ): Promise<any> {
+    return await this.prismaClient.station.update({
       where: { id: stationId },
       data: { isAvailable, updatedAt: new Date() },
     });
   }
-  static async updateStation(
+
+  async updateStation(
     stationId: string,
     stationData: Partial<StationDTO>,
-  ) {
-    return await prisma.station.update({
+  ): Promise<any> {
+    return await this.prismaClient.station.update({
       where: { id: stationId },
       data: {
         ...stationData,
@@ -120,8 +151,9 @@ export class StationRepository {
       },
     });
   }
-  static async deleteStation(stationId: string) {
-    return await prisma.station.delete({
+
+  async deleteStation(stationId: string): Promise<any> {
+    return await this.prismaClient.station.delete({
       where: { id: stationId },
     });
   }

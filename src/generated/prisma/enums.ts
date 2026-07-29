@@ -9,7 +9,7 @@
  */
 
 export const UserRole = {
-  USER: "USER",
+  CUSTOMER: "CUSTOMER",
   DRIVER: "DRIVER",
   ADMIN: "ADMIN",
   AGENT: "AGENT",
@@ -51,6 +51,7 @@ export const Permission = {
   STATION_READ: "STATION_READ",
   STATION_UPDATE: "STATION_UPDATE",
   STATION_DELETE: "STATION_DELETE",
+  ORDER_CREATE: "ORDER_CREATE",
   ORDER_READ: "ORDER_READ",
   ORDER_UPDATE: "ORDER_UPDATE",
   ORDER_CANCEL: "ORDER_CANCEL",
@@ -75,6 +76,7 @@ export type FuelType = (typeof FuelType)[keyof typeof FuelType];
 export const OrderStatus = {
   PENDING_PAYMENT: "PENDING_PAYMENT",
   PENDING_CONFIRMATION: "PENDING_CONFIRMATION",
+  PROCESSING: "PROCESSING",
   CONFIRMED: "CONFIRMED",
   ASSIGNED: "ASSIGNED",
   IN_TRANSIT: "IN_TRANSIT",
@@ -99,3 +101,13 @@ export const PaymentStatus = {
 } as const;
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+
+export const IdempotencyStatus = {
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+} as const;
+
+export type IdempotencyStatus =
+  (typeof IdempotencyStatus)[keyof typeof IdempotencyStatus];
