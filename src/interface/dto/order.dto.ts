@@ -1,4 +1,4 @@
-import { FuelType, OrderStatus } from "../../types/general.js";
+import { FuelType, OrderStatus, providerType } from "../../types/general.js";
 
 export interface OrderDTO {
   customerId: string;
@@ -12,6 +12,7 @@ export interface OrderDTO {
   VAT: number;
   deliveryFee: number;
   deliveryAddress: string;
+  provider: providerType;
 }
 export interface OrderResponseDTO {
   id: string;

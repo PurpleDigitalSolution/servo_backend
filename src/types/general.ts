@@ -10,6 +10,7 @@ export type VerificationStatus =
 export type FuelType = "PETROL" | "DIESEL" | "COOKING_GAS";
 export type OrderStatus =
   | "PENDING_PAYMENT"
+  | "PAYMENT_FAILED"
   | "PENDING_CONFIRMATION"
   | "PROCESSING"
   | "COMPLETED"
@@ -20,3 +21,4 @@ export type OrderStatus =
 export type PaymentMethod = "PAYSTACK";
 export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
 export type PrismaTx = Prisma.TransactionClient;
+export type providerType = "FLUTTERWAVE" | "PAYSTACK";

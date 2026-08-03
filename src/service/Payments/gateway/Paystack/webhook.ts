@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import crypto from "crypto";
-import config from "../config/config.js";
-import { PaystackWebhookEvent } from "../interface/paystack.interface.js";
-import { TransactionService } from "../model/Transaction/Transaction.service.js";
-import { TransactionRepo } from "../model/Transaction/Transaction.repository.js";
-import { PayStack } from "../config/paystack.config.js";
-import { OrderService } from "../model/order/Order.service.js";
-import { OrderRepository } from "../model/order/Order.repository.js";
-import { UserRepository } from "../model/user/user.repository.js";
-import { prisma } from "../config/database.js";
-import { StationRepository } from "../model/station/Station.repository.js";
+import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
+import { PayStack } from "../../../../config/paystack.config.js";
+import { UserRepository } from "../../../../model/user/user.repository.js";
+import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
+import { OrderRepository } from "../../../../model/order/Order.repository.js";
+import { OrderService } from "../../../../model/order/Order.service.js";
+import { config } from "../../../../config/config.js";
+import { PaystackWebhookEvent } from "../../../../interface/paystack.interface.js";
+import { StationRepository } from "../../../../model/station/Station.repository.js";
+import { prisma } from "../../../../config/database.js";
 
 // Component instantiation
 const transactionRepo = new TransactionRepo();

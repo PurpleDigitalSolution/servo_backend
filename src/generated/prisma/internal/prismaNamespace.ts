@@ -1123,6 +1123,7 @@ export const TransactionScalarFieldEnum = {
   paymentMethod: "paymentMethod",
   status: "status",
   reference: "reference",
+  failureReason: "failureReason",
   gatewayReference: "gatewayReference",
   authorizationUrl: "authorizationUrl",
   accessCode: "accessCode",

@@ -41,7 +41,7 @@ transactionRouter.get(
 );
 
 transactionRouter.get(
-  "/orders/:orderId",
+  "/orders/:orderId/pending",
   authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN"]),
   getOrderPendingTransaction,
 );

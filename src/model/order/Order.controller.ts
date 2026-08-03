@@ -7,19 +7,19 @@ import { OrderRepository } from "./Order.repository.js";
 import { UserRepository } from "../user/user.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
 import { TransactionRepo } from "../Transaction/Transaction.repository.js";
-import { PayStack } from "../../config/paystack.config.js";
 import { prisma } from "../../config/database.js";
 import { StationRepository } from "../station/Station.repository.js";
+import { paymentService } from "../../service/Payments/payment.service.js";
 
 const orderRepository = new OrderRepository();
 const userRepository = new UserRepository();
 const transactionRepo = new TransactionRepo();
-const payStack = new PayStack();
+
 const stationRepo = new StationRepository();
 
 const transactionService = new TransactionService(
   transactionRepo,
-  payStack,
+  paymentService,
   orderRepository,
 );
 

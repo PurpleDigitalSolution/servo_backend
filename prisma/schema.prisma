@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
 }
 
 enum UserRole {
@@ -66,6 +66,9 @@ enum Permission {
 
   // Settings
   SETTINGS_UPDATE
+
+  // Transactions
+  TRANSACTION_READ
 }
 
 enum FuelType {
@@ -75,6 +78,7 @@ enum FuelType {
 }
 
 enum OrderStatus {
+  PAYMENT_FAILED
   PENDING_PAYMENT
   PENDING_CONFIRMATION
   PROCESSING
@@ -88,6 +92,7 @@ enum OrderStatus {
 
 enum PaymentMethod {
   PAYSTACK
+  FLUTTERWAVE
 }
 
 enum PaymentStatus {
@@ -132,7 +137,7 @@ model User {
   cancelledOrders Order[] @relation("CancelledOrders")
 
   createdAt         DateTime  @default(now())
-  passwordChangedAt DateTime? 
+  passwordChangedAt DateTime?
   updatedAt         DateTime  @updatedAt
 
   @@index([role])
@@ -241,6 +246,7 @@ model Transaction {
   paymentMethod    PaymentMethod
   status           PaymentStatus @default(PENDING)
   reference        String        @unique
+  failureReason    String?
   gatewayReference String?
   authorizationUrl String?
   accessCode       String?

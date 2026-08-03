@@ -26,16 +26,12 @@ export class OrderService {
     private readonly userRepository: IUserRepository,
     private readonly transactionService: TransactionService,
     private readonly stationRepository: IStationRepository,
-    private readonly prisma: PrismaClient, // Replace 'any' with the actual type of your Prisma client
+    private readonly prisma: PrismaClient,
   ) {}
 
-  /**
-   * Orchestrates the verification of users, persistence of orders, and down-stream checkout payment linkages.
-   */
   async createOrder(orderData: OrderDTO): Promise<OrderResponseDTO> {
     const { customerId, stationId, quantity, unitPrice } = orderData;
 
-    // 1. Structural Input Assertions
     if (quantity <= 0 || unitPrice <= 0) {
       throw new ApiError(
         400,
@@ -79,12 +75,14 @@ export class OrderService {
         );
 
         // Remote financial initialization gate
-        const transaction = await this.transactionService.initialize(
-          order.id,
-          totalAmount,
-          user.email,
+        const transaction = await this.transactionService.initialize({
+          orderId: order.id,
+          amount: totalAmount,
+          name: user.name,
+          email: user.email,
+          provider: orderData.provider || "PAYSTACK",
           tx,
-        );
+        });
 
         return {
           ...order,

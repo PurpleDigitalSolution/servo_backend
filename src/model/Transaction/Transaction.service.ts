@@ -1,6 +1,7 @@
-import { IPaymentGateway } from "../../config/paystack.config.js";
+import config from "../../config/config.js";
 import { TransactionUpdateDTO } from "../../interface/dto/transaction.dto.js";
-import { PrismaTx } from "../../types/general.js";
+import { IPaymentService } from "../../service/Payments/payment.service.js";
+import { PrismaTx, providerType } from "../../types/general.js";
 import { ApiError } from "../../utils/errorHandler.js";
 import { generateTransactionReference } from "../../utils/generator.js";
 import { IOrderRepository } from "../order/Order.repository.js";
@@ -9,17 +10,19 @@ import { ITransactionRepository } from "./Transaction.repository.js";
 export class TransactionService {
   constructor(
     private readonly transactionRepo: ITransactionRepository,
-    private readonly payStack: IPaymentGateway,
+    private readonly paymentService: IPaymentService,
     private readonly orderRepository: IOrderRepository,
   ) {}
 
-  async initialize(
-    orderId: string,
-    amount: number,
-    email: string,
-    tx?: PrismaTx,
-  ): Promise<{ authorizationUrl: string; reference: string }> {
-    if (!email || !email.includes("@")) {
+  async initialize(payload: {
+    orderId: string;
+    amount: number;
+    email: string;
+    name: string;
+    provider: providerType;
+    tx?: PrismaTx;
+  }): Promise<{ authorizationUrl: string; reference: string }> {
+    if (!payload.email || !payload.email.includes("@")) {
       throw new ApiError(
         400,
         "A valid email address is required for transaction initialization.",
@@ -27,38 +30,48 @@ export class TransactionService {
     }
 
     const reference = generateTransactionReference();
-    const serializedAmount = Math.round(amount * 100);
+    // Do NOT multiply by 100 here! Pass raw amount to paymentService,
+    // let each Gateway handle unit conversions (e.g., Paystack * 100).
+    const amount = payload.amount;
 
     try {
-      // 2. Use the injected instance variable
+      // 1. Record pending transaction locally
       await this.transactionRepo.record(
         {
-          orderId,
+          orderId: payload.orderId,
           reference,
-          amount: serializedAmount,
-          paymentMethod: "PAYSTACK",
+          amount,
+          paymentMethod: payload.provider, // ✅ Dynamic provider
           authorizationUrl: "",
         },
-        tx,
+        payload.tx,
       );
 
-      const _response = await this.payStack.initializeTransaction({
-        amount: serializedAmount,
-        email,
-        reference,
-        metadata: {
-          orderId,
-          reference_id: reference,
+      // 2. Initialize with Payment Gateway
+      const _res = await this.paymentService.initialize(
+        {
+          amount,
+          tx_ref: reference,
+          redirect_url: config.PAYMENT_REDIRECT_URL,
+          customer: {
+            email: payload.email,
+            name: payload.name,
+          },
+          metadata: {
+            orderId: payload.orderId,
+            reference_id: reference,
+          },
         },
-      });
+        payload.provider,
+      );
 
-      const { authorization_url } = _response.data;
+      const { authorization_url } = _res.data;
 
-      // Update local storage record with the definitive payment url returned by Paystack
+      // 3. Update local transaction with payment gateway link
       await this.transactionRepo.updateAuthorizationUrl(
         reference,
         authorization_url,
-        tx,
+        payload.tx,
       );
 
       return {
@@ -66,9 +79,9 @@ export class TransactionService {
         reference,
       };
     } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
+      console.error(error);
+      if (error instanceof ApiError) throw error;
+
       throw new ApiError(
         500,
         "Failed to initialize transaction.",
@@ -83,7 +96,7 @@ export class TransactionService {
     orderId?: string;
   }): Promise<{ status: string; reference: string; message?: string }> {
     let targetReference = params.reference;
-
+    let paymentMethod: providerType = "PAYSTACK";
     if (!targetReference && params.orderId) {
       const transaction = await this.transactionRepo.findPendingByOrderId(
         params.orderId,
@@ -94,6 +107,7 @@ export class TransactionService {
       }
 
       targetReference = transaction.reference;
+      paymentMethod = transaction.paymentMethod;
     }
 
     if (!targetReference) {
@@ -104,9 +118,16 @@ export class TransactionService {
     }
 
     try {
-      const response = await this.payStack.verifyTransaction(targetReference);
+      const response = await this.paymentService.verify(
+        targetReference,
+        paymentMethod,
+      );
 
-      if (response.data.status === "success") {
+      // ✅ Normalize checking status (successful or success)
+      const isSuccessful =
+        response.status === "successful" || response.status === "success";
+
+      if (isSuccessful) {
         await this.updateTransactionByReference(targetReference, {
           paidAt: new Date().toISOString(),
           status: "COMPLETED",
@@ -114,55 +135,64 @@ export class TransactionService {
       }
 
       return {
-        status: response.data.status,
+        status: isSuccessful ? "SUCCESSFUL" : "FAILED",
         reference: targetReference,
-        message: response.status
+        message: isSuccessful
           ? "Transaction verified successfully"
           : "Transaction verification failed",
       };
-    } catch (error) {
+    } catch (error: Error | any) {
       if (error instanceof ApiError) throw error;
-
+      console.log(error);
+      const message =
+        error.message || "An error occurred during transaction verification.";
       throw new ApiError(
         500,
-        "Failed to verify transaction.",
+        message,
         [error],
         error instanceof Error ? error.stack : undefined,
       );
     }
   }
-  /**
-   * Locates a transaction record by its unique reference string.
-   * @throws {Error} If the database query encounters a structural failure.
-   * @returns {Promise<any | null>} The transaction payload data structure, or null if not found.
-   */
+
   async findTransactionByReference(reference: string): Promise<any | null> {
     return await this.transactionRepo.findByReference(reference);
   }
+
   async updateTransactionByReference(
     reference: string,
     data: TransactionUpdateDTO,
   ) {
     return await this.transactionRepo.updateTransaction(reference, data);
   }
+
   async findTransactionByOrderId(orderId: string): Promise<any | null> {
     return await this.transactionRepo.findByOrderId(orderId);
   }
-  async findPendingTransactionByOrderId(orderId: string): Promise<any | null> {
+
+  // ✅ Fixed method
+  async findPendingTransactionByOrderId(
+    orderId: string,
+    provider: providerType = "PAYSTACK",
+  ): Promise<any | null> {
     const order = await this.orderRepository.findOrderById(orderId);
     if (!order) {
       throw new ApiError(404, "Order not found");
     }
+
     const transaction =
       await this.transactionRepo.findPendingByOrderId(orderId);
+
     if (!transaction) {
-      const newTransaction = await this.initialize(
+      return await this.initialize({
         orderId,
-        order.totalAmount,
-        order.customer.email,
-      );
-      return newTransaction;
+        amount: order.totalAmount,
+        email: order.customer.email,
+        name: order.customer.name || order.customer.email, // ✅ Use name if available
+        provider,
+      });
     }
+
     return transaction;
   }
 }

@@ -1,4 +1,5 @@
 export type OrderStatus =
+  | "PAYMENT_FAILED"
   | "PENDING_PAYMENT"
   | "PENDING_CONFIRMATION"
   | "PROCESSING"
@@ -14,11 +15,12 @@ export const ALLOWED_ORDER_TRANSITIONS: Record<
   OrderStatus,
   readonly OrderStatus[]
 > = {
+  PAYMENT_FAILED: ["PENDING_PAYMENT", "CANCELLED"],
   PENDING_PAYMENT: ["PENDING_CONFIRMATION", "CANCELLED"],
   PENDING_CONFIRMATION: ["PROCESSING", "CANCELLED"],
   PROCESSING: ["ASSIGNED", "CANCELLED", "COMPLETED", "IN_TRANSIT"], // remove completed, in_transit when drivers are available
   ASSIGNED: ["IN_TRANSIT", "CANCELLED"],
-  IN_TRANSIT: ["ARRIVED", "CANCELLED"],
+  IN_TRANSIT: ["ARRIVED", "CANCELLED", "COMPLETED"], // remove completed when drivers are available
   ARRIVED: ["COMPLETED", "CANCELLED"],
   COMPLETED: [],
   CANCELLED: [],

@@ -39,8 +39,15 @@ const envSchema = z.object({
   EMAIL_SERVICE: z.string().default("gmail"),
   RESEND_API_KEY: z.string().min(1),
   RESEND_USER: z.string().min(1),
+  FLUTTERWAVE_SECRET_KEY: z.string().min(1),
+  FLUTTERWAVE_BASE_URL: z
+    .string()
+    .url()
+    .default("https://api.flutterwave.com/v3"),
+  FLUTTERWAVE_SECRET_HASH: z.string().min(1),
   DEFAULT_AGENT_PASSWORD: z.string().min(8),
   OTP_HMAC_SECRET: z.string().min(32),
+  PAYMENT_REDIRECT_URL: z.string().url(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

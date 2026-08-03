@@ -17,6 +17,9 @@ interface Config {
   ENCRYPTION_KEY: string;
   PAYSTACK_SECRET_KEY: string;
   PAYSTACK_BASE_URL: string;
+  FLUTTERWAVE_SECRET_KEY: string;
+  FLUTTERWAVE_BASE_URL: string;
+  FLUTTERWAVE_SECRET_HASH: string;
   EMAIL_HOST: string;
   EMAIL_USER: string;
   EMAIL_PASS: string;
@@ -27,7 +30,7 @@ interface Config {
   RESEND_USER: string;
   OTP_HMAC_SECRET: string;
   DEFAULT_AGENT_PASSWORD: string;
-
+  PAYMENT_REDIRECT_URL: string;
   seed: {
     adminPassword: string;
     superAdminPassword: string;
@@ -53,6 +56,9 @@ export const config: Config = {
   ENCRYPTION_KEY: env.ENCRYPTION_KEY,
   PAYSTACK_SECRET_KEY: env.PAYSTACK_SECRET_KEY,
   PAYSTACK_BASE_URL: env.PAYSTACK_BASE_URL,
+  FLUTTERWAVE_SECRET_HASH: env.FLUTTERWAVE_SECRET_HASH,
+  FLUTTERWAVE_SECRET_KEY: env.FLUTTERWAVE_SECRET_KEY,
+  FLUTTERWAVE_BASE_URL: env.FLUTTERWAVE_BASE_URL,
   seed: {
     adminPassword: env.ADMIN_PASSWORD,
     superAdminPassword: env.SUPER_ADMIN_PASSWORD,
@@ -68,6 +74,7 @@ export const config: Config = {
   RESEND_USER: env.RESEND_USER,
   OTP_HMAC_SECRET: env.OTP_HMAC_SECRET,
   DEFAULT_AGENT_PASSWORD: env.DEFAULT_AGENT_PASSWORD,
+  PAYMENT_REDIRECT_URL: env.PAYMENT_REDIRECT_URL,
 };
 
 export type { Config };

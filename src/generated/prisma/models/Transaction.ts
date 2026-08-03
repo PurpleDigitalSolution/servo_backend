@@ -42,6 +42,7 @@ export type TransactionMinAggregateOutputType = {
   paymentMethod: $Enums.PaymentMethod | null;
   status: $Enums.PaymentStatus | null;
   reference: string | null;
+  failureReason: string | null;
   gatewayReference: string | null;
   authorizationUrl: string | null;
   accessCode: string | null;
@@ -58,6 +59,7 @@ export type TransactionMaxAggregateOutputType = {
   paymentMethod: $Enums.PaymentMethod | null;
   status: $Enums.PaymentStatus | null;
   reference: string | null;
+  failureReason: string | null;
   gatewayReference: string | null;
   authorizationUrl: string | null;
   accessCode: string | null;
@@ -74,6 +76,7 @@ export type TransactionCountAggregateOutputType = {
   paymentMethod: number;
   status: number;
   reference: number;
+  failureReason: number;
   gatewayReference: number;
   authorizationUrl: number;
   accessCode: number;
@@ -100,6 +103,7 @@ export type TransactionMinAggregateInputType = {
   paymentMethod?: true;
   status?: true;
   reference?: true;
+  failureReason?: true;
   gatewayReference?: true;
   authorizationUrl?: true;
   accessCode?: true;
@@ -116,6 +120,7 @@ export type TransactionMaxAggregateInputType = {
   paymentMethod?: true;
   status?: true;
   reference?: true;
+  failureReason?: true;
   gatewayReference?: true;
   authorizationUrl?: true;
   accessCode?: true;
@@ -132,6 +137,7 @@ export type TransactionCountAggregateInputType = {
   paymentMethod?: true;
   status?: true;
   reference?: true;
+  failureReason?: true;
   gatewayReference?: true;
   authorizationUrl?: true;
   accessCode?: true;
@@ -243,6 +249,7 @@ export type TransactionGroupByOutputType = {
   paymentMethod: $Enums.PaymentMethod;
   status: $Enums.PaymentStatus;
   reference: string;
+  failureReason: string | null;
   gatewayReference: string | null;
   authorizationUrl: string | null;
   accessCode: string | null;
@@ -287,6 +294,7 @@ export type TransactionWhereInput = {
     Prisma.EnumPaymentMethodFilter<"Transaction"> | $Enums.PaymentMethod;
   status?: Prisma.EnumPaymentStatusFilter<"Transaction"> | $Enums.PaymentStatus;
   reference?: Prisma.StringFilter<"Transaction"> | string;
+  failureReason?: Prisma.StringNullableFilter<"Transaction"> | string | null;
   gatewayReference?: Prisma.StringNullableFilter<"Transaction"> | string | null;
   authorizationUrl?: Prisma.StringNullableFilter<"Transaction"> | string | null;
   accessCode?: Prisma.StringNullableFilter<"Transaction"> | string | null;
@@ -305,6 +313,7 @@ export type TransactionOrderByWithRelationInput = {
   paymentMethod?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   reference?: Prisma.SortOrder;
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   gatewayReference?: Prisma.SortOrderInput | Prisma.SortOrder;
   authorizationUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
   accessCode?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -334,6 +343,7 @@ export type TransactionWhereUniqueInput = Prisma.AtLeast<
       Prisma.EnumPaymentMethodFilter<"Transaction"> | $Enums.PaymentMethod;
     status?:
       Prisma.EnumPaymentStatusFilter<"Transaction"> | $Enums.PaymentStatus;
+    failureReason?: Prisma.StringNullableFilter<"Transaction"> | string | null;
     gatewayReference?:
       Prisma.StringNullableFilter<"Transaction"> | string | null;
     authorizationUrl?:
@@ -360,6 +370,7 @@ export type TransactionOrderByWithAggregationInput = {
   paymentMethod?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   reference?: Prisma.SortOrder;
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   gatewayReference?: Prisma.SortOrderInput | Prisma.SortOrder;
   authorizationUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
   accessCode?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -398,6 +409,8 @@ export type TransactionScalarWhereWithAggregatesInput = {
     | Prisma.EnumPaymentStatusWithAggregatesFilter<"Transaction">
     | $Enums.PaymentStatus;
   reference?: Prisma.StringWithAggregatesFilter<"Transaction"> | string;
+  failureReason?:
+    Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null;
   gatewayReference?:
     Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null;
   authorizationUrl?:
@@ -423,6 +436,7 @@ export type TransactionCreateInput = {
   paymentMethod: $Enums.PaymentMethod;
   status?: $Enums.PaymentStatus;
   reference: string;
+  failureReason?: string | null;
   gatewayReference?: string | null;
   authorizationUrl?: string | null;
   accessCode?: string | null;
@@ -441,6 +455,7 @@ export type TransactionUncheckedCreateInput = {
   paymentMethod: $Enums.PaymentMethod;
   status?: $Enums.PaymentStatus;
   reference: string;
+  failureReason?: string | null;
   gatewayReference?: string | null;
   authorizationUrl?: string | null;
   accessCode?: string | null;
@@ -464,6 +479,8 @@ export type TransactionUpdateInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -492,6 +509,8 @@ export type TransactionUncheckedUpdateInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -512,6 +531,7 @@ export type TransactionCreateManyInput = {
   paymentMethod: $Enums.PaymentMethod;
   status?: $Enums.PaymentStatus;
   reference: string;
+  failureReason?: string | null;
   gatewayReference?: string | null;
   authorizationUrl?: string | null;
   accessCode?: string | null;
@@ -535,6 +555,8 @@ export type TransactionUpdateManyMutationInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -562,6 +584,8 @@ export type TransactionUncheckedUpdateManyInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -592,6 +616,7 @@ export type TransactionCountOrderByAggregateInput = {
   paymentMethod?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   reference?: Prisma.SortOrder;
+  failureReason?: Prisma.SortOrder;
   gatewayReference?: Prisma.SortOrder;
   authorizationUrl?: Prisma.SortOrder;
   accessCode?: Prisma.SortOrder;
@@ -613,6 +638,7 @@ export type TransactionMaxOrderByAggregateInput = {
   paymentMethod?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   reference?: Prisma.SortOrder;
+  failureReason?: Prisma.SortOrder;
   gatewayReference?: Prisma.SortOrder;
   authorizationUrl?: Prisma.SortOrder;
   accessCode?: Prisma.SortOrder;
@@ -629,6 +655,7 @@ export type TransactionMinOrderByAggregateInput = {
   paymentMethod?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   reference?: Prisma.SortOrder;
+  failureReason?: Prisma.SortOrder;
   gatewayReference?: Prisma.SortOrder;
   authorizationUrl?: Prisma.SortOrder;
   accessCode?: Prisma.SortOrder;
@@ -754,6 +781,7 @@ export type TransactionCreateWithoutOrderInput = {
   paymentMethod: $Enums.PaymentMethod;
   status?: $Enums.PaymentStatus;
   reference: string;
+  failureReason?: string | null;
   gatewayReference?: string | null;
   authorizationUrl?: string | null;
   accessCode?: string | null;
@@ -770,6 +798,7 @@ export type TransactionUncheckedCreateWithoutOrderInput = {
   paymentMethod: $Enums.PaymentMethod;
   status?: $Enums.PaymentStatus;
   reference: string;
+  failureReason?: string | null;
   gatewayReference?: string | null;
   authorizationUrl?: string | null;
   accessCode?: string | null;
@@ -841,6 +870,7 @@ export type TransactionScalarWhereInput = {
     Prisma.EnumPaymentMethodFilter<"Transaction"> | $Enums.PaymentMethod;
   status?: Prisma.EnumPaymentStatusFilter<"Transaction"> | $Enums.PaymentStatus;
   reference?: Prisma.StringFilter<"Transaction"> | string;
+  failureReason?: Prisma.StringNullableFilter<"Transaction"> | string | null;
   gatewayReference?: Prisma.StringNullableFilter<"Transaction"> | string | null;
   authorizationUrl?: Prisma.StringNullableFilter<"Transaction"> | string | null;
   accessCode?: Prisma.StringNullableFilter<"Transaction"> | string | null;
@@ -857,6 +887,7 @@ export type TransactionCreateManyOrderInput = {
   paymentMethod: $Enums.PaymentMethod;
   status?: $Enums.PaymentStatus;
   reference: string;
+  failureReason?: string | null;
   gatewayReference?: string | null;
   authorizationUrl?: string | null;
   accessCode?: string | null;
@@ -880,6 +911,8 @@ export type TransactionUpdateWithoutOrderInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -906,6 +939,8 @@ export type TransactionUncheckedUpdateWithoutOrderInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -932,6 +967,8 @@ export type TransactionUncheckedUpdateManyWithoutOrderInput = {
   status?:
     Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus;
   reference?: Prisma.StringFieldUpdateOperationsInput | string;
+  failureReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   gatewayReference?:
     Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   authorizationUrl?:
@@ -956,6 +993,7 @@ export type TransactionSelect<
     paymentMethod?: boolean;
     status?: boolean;
     reference?: boolean;
+    failureReason?: boolean;
     gatewayReference?: boolean;
     authorizationUrl?: boolean;
     accessCode?: boolean;
@@ -980,6 +1018,7 @@ export type TransactionSelectCreateManyAndReturn<
     paymentMethod?: boolean;
     status?: boolean;
     reference?: boolean;
+    failureReason?: boolean;
     gatewayReference?: boolean;
     authorizationUrl?: boolean;
     accessCode?: boolean;
@@ -1004,6 +1043,7 @@ export type TransactionSelectUpdateManyAndReturn<
     paymentMethod?: boolean;
     status?: boolean;
     reference?: boolean;
+    failureReason?: boolean;
     gatewayReference?: boolean;
     authorizationUrl?: boolean;
     accessCode?: boolean;
@@ -1024,6 +1064,7 @@ export type TransactionSelectScalar = {
   paymentMethod?: boolean;
   status?: boolean;
   reference?: boolean;
+  failureReason?: boolean;
   gatewayReference?: boolean;
   authorizationUrl?: boolean;
   accessCode?: boolean;
@@ -1044,6 +1085,7 @@ export type TransactionOmit<
   | "paymentMethod"
   | "status"
   | "reference"
+  | "failureReason"
   | "gatewayReference"
   | "authorizationUrl"
   | "accessCode"
@@ -1089,6 +1131,7 @@ export type $TransactionPayload<
       paymentMethod: $Enums.PaymentMethod;
       status: $Enums.PaymentStatus;
       reference: string;
+      failureReason: string | null;
       gatewayReference: string | null;
       authorizationUrl: string | null;
       accessCode: string | null;
@@ -1706,6 +1749,7 @@ export interface TransactionFieldRefs {
   readonly paymentMethod: Prisma.FieldRef<"Transaction", "PaymentMethod">;
   readonly status: Prisma.FieldRef<"Transaction", "PaymentStatus">;
   readonly reference: Prisma.FieldRef<"Transaction", "String">;
+  readonly failureReason: Prisma.FieldRef<"Transaction", "String">;
   readonly gatewayReference: Prisma.FieldRef<"Transaction", "String">;
   readonly authorizationUrl: Prisma.FieldRef<"Transaction", "String">;
   readonly accessCode: Prisma.FieldRef<"Transaction", "String">;

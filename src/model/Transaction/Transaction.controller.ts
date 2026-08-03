@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/async.js";
 import { TransactionService } from "./Transaction.service.js";
 import { TransactionRepo } from "./Transaction.repository.js";
-import { PayStack } from "../../config/paystack.config.js";
 import { OrderRepository } from "../order/Order.repository.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
+import { paymentService } from "../../service/Payments/payment.service.js";
 const transactionRepo = new TransactionRepo();
-const payStack = new PayStack();
+
 const orderRepo = new OrderRepository();
 const transactionService = new TransactionService(
   transactionRepo,
-  payStack,
+  paymentService,
   orderRepo,
 );
 

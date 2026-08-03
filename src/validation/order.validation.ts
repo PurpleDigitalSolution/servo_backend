@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const PaymentProviderSchema = z
+  .enum(["PAYSTACK", "FLUTTERWAVE"])
+  .openapi({
+    description: "The payment provider for the order",
+    example: "PAYSTACK",
+  });
 export const OrderStatusSchema = z
   .enum([
     "PENDING_PAYMENT",
@@ -55,6 +61,7 @@ export const orderSchema = z.object({
       description: "The delivery fee for the order",
       example: 2.5,
     }),
+  provider: PaymentProviderSchema,
 });
 export const orderResponseSchema = z.object({
   id: z.string().uuid().openapi({

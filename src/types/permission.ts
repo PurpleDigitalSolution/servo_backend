@@ -55,6 +55,8 @@ export const USER_PERMISSIONS: Permission[] = [
   Permission.ORDER_READ,
   Permission.ORDER_CANCEL,
   Permission.STATION_READ,
+  Permission.PAYMENT_READ,
+  Permission.ORDER_UPDATE,
 ];
 
 /**
@@ -82,6 +84,10 @@ export const ADMIN_PERMISSIONS: Permission[] = [
   // Payments
   Permission.PAYMENT_READ,
   Permission.PAYMENT_VERIFY,
+  Permission.PAYMENT_READ,
+
+  // Transactions
+  Permission.TRANSACTION_READ,
 ];
 export const AGENT_PERMISSIONS: Permission[] = [
   Permission.ORDER_APPROVE,

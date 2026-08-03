@@ -61,6 +61,7 @@ export const Permission = {
   PAYMENT_REFUND: "PAYMENT_REFUND",
   DASHBOARD_READ: "DASHBOARD_READ",
   SETTINGS_UPDATE: "SETTINGS_UPDATE",
+  TRANSACTION_READ: "TRANSACTION_READ",
 } as const;
 
 export type Permission = (typeof Permission)[keyof typeof Permission];
@@ -74,6 +75,7 @@ export const FuelType = {
 export type FuelType = (typeof FuelType)[keyof typeof FuelType];
 
 export const OrderStatus = {
+  PAYMENT_FAILED: "PAYMENT_FAILED",
   PENDING_PAYMENT: "PENDING_PAYMENT",
   PENDING_CONFIRMATION: "PENDING_CONFIRMATION",
   PROCESSING: "PROCESSING",
@@ -89,6 +91,7 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
 
 export const PaymentMethod = {
   PAYSTACK: "PAYSTACK",
+  FLUTTERWAVE: "FLUTTERWAVE",
 } as const;
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
