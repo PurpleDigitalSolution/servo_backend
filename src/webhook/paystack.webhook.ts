@@ -10,6 +10,7 @@ import { OrderRepository } from "../model/order/Order.repository.js";
 import { UserRepository } from "../model/user/user.repository.js";
 import { prisma } from "../config/database.js";
 import { StationRepository } from "../model/station/Station.repository.js";
+import { paymentService } from "../service/Payments/payment.service.js";
 
 // Component instantiation
 const transactionRepo = new TransactionRepo();
@@ -19,7 +20,7 @@ const orderRepo = new OrderRepository();
 const stationRepo = new StationRepository();
 const transactionService = new TransactionService(
   transactionRepo,
-  paymentGateway,
+  paymentService,
   orderRepo,
 );
 

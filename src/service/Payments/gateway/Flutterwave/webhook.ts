@@ -3,22 +3,22 @@ import { config } from "../../../../config/config.js";
 import { FlutterwaveWebhookEvent } from "../../../../interface/flutterwave.interface.js";
 import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
 import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
-import { FlutterwaveGateWay } from "./index.js";
 import { OrderRepository } from "../../../../model/order/Order.repository.js";
 import { StationRepository } from "../../../../model/station/Station.repository.js";
 import { OrderService } from "../../../../model/order/Order.service.js";
 import { UserRepository } from "../../../../model/user/user.repository.js";
 import { prisma } from "../../../../config/database.js";
+import { paymentService } from "../../payment.service.js";
 
 const transactionRepo = new TransactionRepo();
-const paymentGateway = new FlutterwaveGateWay();
+
 const orderRepo = new OrderRepository();
 const stationRepo = new StationRepository();
 const userRepository = new UserRepository();
 
 const transactionService = new TransactionService(
   transactionRepo,
-  paymentGateway,
+  paymentService,
   orderRepo,
 );
 
@@ -85,7 +85,7 @@ export const flutterwaveWebhook = async (req: Request, res: Response) => {
 
           // (Optional) Send immediate email or push notification
           // await notificationService.sendPaymentFailedEmail(transaction.userId, failureReason);
-          return;
+          return res.sendStatus(200);
         }
 
         await transactionService.updateTransactionByReference(reference, {

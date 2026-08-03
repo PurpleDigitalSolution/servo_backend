@@ -1,25 +1,25 @@
-import { Request, Response } from "express";
 import crypto from "crypto";
-import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
-import { PayStack } from "../../../../config/paystack.config.js";
-import { UserRepository } from "../../../../model/user/user.repository.js";
-import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
+import { Request, Response } from "express";
+import { config } from "../../../../config/config.js";
+import { prisma } from "../../../../config/database.js";
+import { PaystackWebhookEvent } from "../../../../interface/paystack.interface.js";
 import { OrderRepository } from "../../../../model/order/Order.repository.js";
 import { OrderService } from "../../../../model/order/Order.service.js";
-import { config } from "../../../../config/config.js";
-import { PaystackWebhookEvent } from "../../../../interface/paystack.interface.js";
 import { StationRepository } from "../../../../model/station/Station.repository.js";
-import { prisma } from "../../../../config/database.js";
+import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
+import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
+import { UserRepository } from "../../../../model/user/user.repository.js";
+import { paymentService } from "../../payment.service.js";
 
 // Component instantiation
 const transactionRepo = new TransactionRepo();
-const paymentGateway = new PayStack();
 const userRepository = new UserRepository();
 const orderRepo = new OrderRepository();
 const stationRepo = new StationRepository();
+
 const transactionService = new TransactionService(
   transactionRepo,
-  paymentGateway,
+  paymentService,
   orderRepo,
 );
 
@@ -31,12 +31,12 @@ const orderService = new OrderService(
   prisma,
 );
 
-export const webhook = async (
+export const paystackWebhook = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
   try {
-    // 1. Defensively validate signature using pristine Raw Buffer to avoid serialization issues
+    // 1. Defensively validate signature using pristine Raw Buffer
     const rawBody = (req as any).rawBody || JSON.stringify(req.body);
 
     const hash = crypto
@@ -44,8 +44,10 @@ export const webhook = async (
       .update(rawBody)
       .digest("hex");
 
-    if (hash !== req.headers["x-paystack-signature"]) {
-      return res.sendStatus(401);
+    const paystackSignature = req.headers["x-paystack-signature"];
+
+    if (!paystackSignature || hash !== paystackSignature) {
+      return res.status(401).send("Invalid Paystack signature");
     }
 
     const event = req.body as PaystackWebhookEvent;
@@ -54,32 +56,59 @@ export const webhook = async (
       case "charge.success": {
         const reference = event.data.reference;
 
-        // 2. Fetch targeted transaction
         const transaction =
           await transactionService.findTransactionByReference(reference);
 
-        // Return 200 early if missing (prevents Paystack from retrying unresolvable entries)
         if (!transaction) {
           return res.sendStatus(200);
         }
 
-        // 3. Idempotency Guard: Stop handling if the payment has already been captured and processed
-        if (transaction.status === "COMPLETED") {
+        // Idempotency Guard: Stop handling if the payment has reached a terminal state
+        if (
+          transaction.status === "COMPLETED" ||
+          transaction.status === "FAILED"
+        ) {
           return res.sendStatus(200);
         }
 
-        // 4. Verification & State Updating Orchestration
-        await paymentGateway.verifyTransaction(reference);
+        // Paystack uses "success" for charge status (checking "successful" as fallback)
+        const isSuccess =
+          event.data.status === "success" || event.data.status === "successful";
 
+        if (!isSuccess) {
+          const failureReason =
+            event.data.message || "Payment failed or was cancelled";
+
+          // Update Transaction to FAILED
+          await transactionService.updateTransactionByReference(reference, {
+            status: "FAILED",
+            failureReason,
+          });
+
+          // Update Order Status
+          if (transaction.orderId) {
+            await orderService.updateOrderStatusByTransaction(
+              transaction.orderId,
+              "PAYMENT_FAILED",
+            );
+          }
+
+          // ✅ FIXED: Must send HTTP 200 response back to Paystack
+          return res.sendStatus(200);
+        }
+
+        // Handle Successful Charge
         await transactionService.updateTransactionByReference(reference, {
           paidAt: new Date().toISOString(),
           status: "COMPLETED",
         });
 
-        await orderService.updateOrderStatusByTransaction(
-          transaction.orderId as string,
-          "PENDING_CONFIRMATION",
-        );
+        if (transaction.orderId) {
+          await orderService.updateOrderStatusByTransaction(
+            transaction.orderId,
+            "PENDING_CONFIRMATION",
+          );
+        }
 
         break;
       }
@@ -91,10 +120,10 @@ export const webhook = async (
 
     return res.sendStatus(200);
   } catch (error) {
-    // 5. Catch-all Operational Safety Guard: Log issue locally, notify gateway to retry later
-    console.error(`[Webhook Process Error]:`, error);
+    // Catch-all Operational Safety Guard: Log issue locally, notify gateway to retry later
+    console.error(`[Paystack Webhook Process Error]:`, error);
 
-    // Return 500 so Paystack understands a transient problem occurred and retries the webhook
+    // Return 500 so Paystack understands a transient problem occurred and retries
     return res.sendStatus(500);
   }
 };
