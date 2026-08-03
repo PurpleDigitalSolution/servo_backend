@@ -7,16 +7,20 @@ import cookieParser from "cookie-parser";
 import helmetMiddleware from "./utils/helmet.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import router from "./routes/index.js";
+import { config } from "./config/config.js";
 dotenv.config();
 
 const app = express();
-
+const origin = config.CORS_ORIGIN;
 app.use(helmetMiddleware);
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "http://localhost:5174",
-];
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? [origin]
+    : [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:5174",
+      ];
 // app.disable("etag");
 app.use(
   cors({
