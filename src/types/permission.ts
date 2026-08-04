@@ -57,6 +57,7 @@ export const USER_PERMISSIONS: Permission[] = [
   Permission.STATION_READ,
   Permission.PAYMENT_READ,
   Permission.ORDER_UPDATE,
+  Permission.TRANSACTION_READ,
 ];
 
 /**

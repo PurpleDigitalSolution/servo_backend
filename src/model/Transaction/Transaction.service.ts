@@ -195,4 +195,23 @@ export class TransactionService {
 
     return transaction;
   }
+  async findUserTransactions(
+    userId: string,
+    skip: number,
+    take: number,
+  ): Promise<any[]> {
+    // Fetch user orders first
+    const userOrders = await this.orderRepository.getUserOrders(
+      userId,
+      skip,
+      take,
+    );
+    const orderIds = userOrders.map((order) => order.id);
+
+    // Fetch transactions for those orders
+    const transactions = await Promise.all(
+      orderIds.map((orderId) => this.transactionRepo.findByOrderId(orderId)),
+    );
+    return transactions;
+  }
 }

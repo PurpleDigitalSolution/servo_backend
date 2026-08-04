@@ -2,6 +2,7 @@ import express from "express";
 import {
   getOrderPendingTransaction,
   getOrderTransaction,
+  getUserTransactions,
   verifyTransaction,
 } from "../model/Transaction/Transaction.controller.js";
 import { protect } from "../middleware/protection.js";
@@ -20,6 +21,12 @@ transactionRouter.use(protect, requirePasswordChange());
 // TRANSACTION ROUTES
 // ==========================================
 
+transactionRouter.get(
+  "/",
+  authorize(["CUSTOMER"]),
+  // authorizePermission(["TRANSACTION_READ"]),
+  getUserTransactions,
+);
 /**
  * Verify a transaction using either ?reference=... OR ?orderId=...
  * Accessible by Customers, Admins, and Super Admins

@@ -57,3 +57,18 @@ export const verifyTransaction = asyncHandler(
       );
   },
 );
+export const getUserTransactions = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+    const skip = parseInt(req.query.skip as string) || 0;
+    const take = parseInt(req.query.take as string) || 10;
+    const result = await transactionService.findUserTransactions(
+      String(userId),
+      skip,
+      take,
+    );
+    res
+      .status(200)
+      .json(new ApiResponse(200, result, "User transactions fetched"));
+  },
+);

@@ -36,7 +36,6 @@ export const paystackWebhook = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    // 1. Defensively validate signature using pristine Raw Buffer
     const rawBody = (req as any).rawBody || JSON.stringify(req.body);
 
     const hash = crypto
@@ -63,7 +62,6 @@ export const paystackWebhook = async (
           return res.sendStatus(200);
         }
 
-        // Idempotency Guard: Stop handling if the payment has reached a terminal state
         if (
           transaction.status === "COMPLETED" ||
           transaction.status === "FAILED"
@@ -71,7 +69,6 @@ export const paystackWebhook = async (
           return res.sendStatus(200);
         }
 
-        // Paystack uses "success" for charge status (checking "successful" as fallback)
         const isSuccess =
           event.data.status === "success" || event.data.status === "successful";
 
@@ -79,13 +76,11 @@ export const paystackWebhook = async (
           const failureReason =
             event.data.message || "Payment failed or was cancelled";
 
-          // Update Transaction to FAILED
           await transactionService.updateTransactionByReference(reference, {
             status: "FAILED",
             failureReason,
           });
 
-          // Update Order Status
           if (transaction.orderId) {
             await orderService.updateOrderStatusByTransaction(
               transaction.orderId,
@@ -93,11 +88,9 @@ export const paystackWebhook = async (
             );
           }
 
-          // ✅ FIXED: Must send HTTP 200 response back to Paystack
           return res.sendStatus(200);
         }
 
-        // Handle Successful Charge
         await transactionService.updateTransactionByReference(reference, {
           paidAt: new Date().toISOString(),
           status: "COMPLETED",
@@ -114,16 +107,12 @@ export const paystackWebhook = async (
       }
 
       default:
-        // Acknowledge unhandled event types silently to prevent retry storming
         return res.sendStatus(200);
     }
 
     return res.sendStatus(200);
   } catch (error) {
-    // Catch-all Operational Safety Guard: Log issue locally, notify gateway to retry later
     console.error(`[Paystack Webhook Process Error]:`, error);
-
-    // Return 500 so Paystack understands a transient problem occurred and retries
     return res.sendStatus(500);
   }
 };
