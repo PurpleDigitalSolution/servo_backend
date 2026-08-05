@@ -10,6 +10,8 @@ export const authorize = (requiredRoles: string | string[]) => {
     const allowedRoles = Array.isArray(requiredRoles)
       ? requiredRoles
       : [requiredRoles];
+
+    console.log("User role:", user.role);
     const hasRole =
       allowedRoles.includes(user.role) || user.role === "SUPER_ADMIN"; // SUPER_ADMIN has access to all routes
     if (!hasRole) {
