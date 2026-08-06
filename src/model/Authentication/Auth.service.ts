@@ -11,7 +11,7 @@ import { EmailService } from "../../service/email.service.js";
 import { Response, Request } from "express";
 import config from "../../config/config.js";
 import { TokenService } from "../token/token.service.js";
-import { ClientType } from "../../utils/getClient.js"; // 👈 Added missing ClientType import
+import { ClientType } from "../../utils/getClient.js";
 
 export interface IAuthRepository {
   findUserByEmail(email: string): Promise<any | null>;

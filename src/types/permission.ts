@@ -93,6 +93,7 @@ export const ADMIN_PERMISSIONS: Permission[] = [
 export const AGENT_PERMISSIONS: Permission[] = [
   Permission.ORDER_APPROVE,
   Permission.ORDER_CANCEL,
+  Permission.ORDER_READ,
 ] as Permission[];
 
 /**

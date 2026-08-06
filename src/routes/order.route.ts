@@ -52,7 +52,7 @@ OrderRouter.get(
 // List all orders (Admin level)
 OrderRouter.get(
   "/list",
-  authorize(["ADMIN", "SUPER_ADMIN"]),
+  authorize(["ADMIN", "SUPER_ADMIN", "AGENT"]),
   authorizePermission(["ORDER_READ"]),
   OrderController.listOrders,
 );
@@ -60,7 +60,7 @@ OrderRouter.get(
 // Admin query orders for a specific user ID
 OrderRouter.get(
   "/user/:userId",
-  authorize(["ADMIN", "SUPER_ADMIN"]),
+  authorize(["ADMIN", "SUPER_ADMIN", "AGENT"]),
   authorizePermission(["ORDER_READ"]),
   OrderController.getAdminUserOrders,
 );
@@ -72,7 +72,7 @@ OrderRouter.get(
 // Update order status pipeline
 OrderRouter.put(
   "/:orderId/status",
-  authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN"]),
+  authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN", "AGENT"]),
   authorizePermission(["ORDER_UPDATE"]),
   OrderController.handleUpdateOrderPipeline,
 );
@@ -81,7 +81,7 @@ OrderRouter.put(
 OrderRouter.get(
   "/:id",
   validate(idRequestSchema),
-  authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN"]),
+  authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN", "AGENT"]),
   authorizePermission(["ORDER_READ"]),
   OrderController.getOrderById,
 );
