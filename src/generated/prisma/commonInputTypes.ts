@@ -654,6 +654,77 @@ export type EnumIdempotencyStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumIdempotencyStatusFilter<$PrismaModel>;
 };
 
+export type EnumAuditActionFilter<$PrismaModel = never> = {
+  equals?:
+    $Enums.AuditAction | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  not?: Prisma.NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction;
+};
+
+export type EnumresourceTypeNullableFilter<$PrismaModel = never> = {
+  equals?:
+    | $Enums.resourceType
+    | Prisma.EnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  in?:
+    | $Enums.resourceType[]
+    | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  notIn?:
+    | $Enums.resourceType[]
+    | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  not?:
+    | Prisma.NestedEnumresourceTypeNullableFilter<$PrismaModel>
+    | $Enums.resourceType
+    | null;
+};
+
+export type EnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?:
+    $Enums.AuditAction | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedEnumAuditActionWithAggregatesFilter<$PrismaModel>
+    | $Enums.AuditAction;
+  _count?: Prisma.NestedIntFilter<$PrismaModel>;
+  _min?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
+  _max?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
+};
+
+export type EnumresourceTypeNullableWithAggregatesFilter<$PrismaModel = never> =
+  {
+    equals?:
+      | $Enums.resourceType
+      | Prisma.EnumresourceTypeFieldRefInput<$PrismaModel>
+      | null;
+    in?:
+      | $Enums.resourceType[]
+      | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+      | null;
+    notIn?:
+      | $Enums.resourceType[]
+      | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+      | null;
+    not?:
+      | Prisma.NestedEnumresourceTypeNullableWithAggregatesFilter<$PrismaModel>
+      | $Enums.resourceType
+      | null;
+    _count?: Prisma.NestedIntNullableFilter<$PrismaModel>;
+    _min?: Prisma.NestedEnumresourceTypeNullableFilter<$PrismaModel>;
+    _max?: Prisma.NestedEnumresourceTypeNullableFilter<$PrismaModel>;
+  };
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>;
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>;
@@ -1234,4 +1305,76 @@ export type NestedEnumIdempotencyStatusWithAggregatesFilter<
   _count?: Prisma.NestedIntFilter<$PrismaModel>;
   _min?: Prisma.NestedEnumIdempotencyStatusFilter<$PrismaModel>;
   _max?: Prisma.NestedEnumIdempotencyStatusFilter<$PrismaModel>;
+};
+
+export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
+  equals?:
+    $Enums.AuditAction | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  not?: Prisma.NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction;
+};
+
+export type NestedEnumresourceTypeNullableFilter<$PrismaModel = never> = {
+  equals?:
+    | $Enums.resourceType
+    | Prisma.EnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  in?:
+    | $Enums.resourceType[]
+    | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  notIn?:
+    | $Enums.resourceType[]
+    | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  not?:
+    | Prisma.NestedEnumresourceTypeNullableFilter<$PrismaModel>
+    | $Enums.resourceType
+    | null;
+};
+
+export type NestedEnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?:
+    $Enums.AuditAction | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.AuditAction[]
+    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedEnumAuditActionWithAggregatesFilter<$PrismaModel>
+    | $Enums.AuditAction;
+  _count?: Prisma.NestedIntFilter<$PrismaModel>;
+  _min?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
+  _max?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
+};
+
+export type NestedEnumresourceTypeNullableWithAggregatesFilter<
+  $PrismaModel = never,
+> = {
+  equals?:
+    | $Enums.resourceType
+    | Prisma.EnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  in?:
+    | $Enums.resourceType[]
+    | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  notIn?:
+    | $Enums.resourceType[]
+    | Prisma.ListEnumresourceTypeFieldRefInput<$PrismaModel>
+    | null;
+  not?:
+    | Prisma.NestedEnumresourceTypeNullableWithAggregatesFilter<$PrismaModel>
+    | $Enums.resourceType
+    | null;
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>;
+  _min?: Prisma.NestedEnumresourceTypeNullableFilter<$PrismaModel>;
+  _max?: Prisma.NestedEnumresourceTypeNullableFilter<$PrismaModel>;
 };

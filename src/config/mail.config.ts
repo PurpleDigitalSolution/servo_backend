@@ -11,4 +11,4 @@ export const Transporter = nodemailer.createTransport({
   },
 });
 
-export const sender = `<onboarding@resend.dev>`;
+export const sender = `Admin <support@servo.sbs>`;

@@ -112,8 +112,9 @@ export class UserRepository implements IUserRepository {
   }
 
   async getProfileByUserId(userId: string) {
-    return prisma.userProfile.findUnique({
-      where: { userId },
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: this.defaultSelect,
     });
   }
 }

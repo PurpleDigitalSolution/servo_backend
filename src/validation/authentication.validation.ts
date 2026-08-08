@@ -104,7 +104,15 @@ export const verifyOtpBodySchema = z.object({
     message: "Purpose must be either 'FORGET_PASSWORD' or 'EMAIL_VERIFICATION'",
   }),
 });
-
+export const updateAccountStatusBodySchema = z.object({
+  userId: z.string().uuid({ message: "Invalid user ID format" }),
+  status: z.enum(["SUSPENDED", "BANNED", "ACTIVE"], {
+    message: "Status must be either 'SUSPENDED' or 'BANNED' or 'ACTIVE'",
+  }),
+});
+export const AccountStatusUpdateRequestSchema = z.object({
+  body: updateAccountStatusBodySchema,
+});
 export const createUserSchema = z.object({ body: createUserBodySchema });
 export const createAgentSchema = z.object({ body: createAgentBodySchema });
 export const loginRequestSchema = z.object({ body: loginBodySchema });
@@ -118,6 +126,13 @@ export const resetPasswordSchema = z.object({
   body: z.object({
     newPassword: PasswordSchema,
     token: z.string().min(1, { message: "token is required" }),
+  }),
+});
+export const sendTestEmailSchema = z.object({
+  body: z.object({
+    email: EmailSchema,
+    subject: z.string().min(1).optional(),
+    message: z.string().min(1).optional(),
   }),
 });
 export const changePasswordSchema = z.object({
@@ -182,3 +197,4 @@ registry.register("LoginRequest", loginBodySchema);
 registry.register("LoginResponse", userLoginResponse);
 registry.register("RequestOtpRequest", requestOtpSchema);
 registry.register("VerifyOtpRequest", verifyOtpSchema);
+registry.register("SendTestEmailRequest", sendTestEmailSchema);

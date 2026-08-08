@@ -48,6 +48,7 @@ export class SessionService {
       permissions: payload.permissions,
       client: client,
       mustChangePassword: payload.mustChangePassword,
+      accountStatus: payload.accountStatus,
     };
 
     const payloadWithSessionId = { ...cleanPayload, sessionId };

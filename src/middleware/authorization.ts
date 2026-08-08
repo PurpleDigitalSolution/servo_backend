@@ -10,7 +10,16 @@ export const authorize = (requiredRoles: string | string[]) => {
     const allowedRoles = Array.isArray(requiredRoles)
       ? requiredRoles
       : [requiredRoles];
-
+    const isSuspended =
+      user.accountStatus === "SUSPENDED" || user.accountStatus === "BANNED";
+    if (isSuspended) {
+      return next(
+        new ApiError(
+          403,
+          "Forbidden - Your account is suspended. Please contact support for assistance.",
+        ),
+      );
+    }
     const hasRole =
       allowedRoles.includes(user.role) || user.role === "SUPER_ADMIN"; // SUPER_ADMIN has access to all routes
     if (!hasRole) {

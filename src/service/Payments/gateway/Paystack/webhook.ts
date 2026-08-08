@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { Request, Response } from "express";
+import { Prisma } from "../../../../generated/prisma/client.js";
 import { config } from "../../../../config/config.js";
 import { prisma } from "../../../../config/database.js";
 import { PaystackWebhookEvent } from "../../../../interface/paystack.interface.js";
@@ -36,21 +37,35 @@ export const paystackWebhook = async (
   res: Response,
 ): Promise<Response> => {
   try {
-    const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+    // 1. Verify Raw Body exists
+    const rawBody = (req as any).rawBody;
+    const paystackSignature = req.headers["x-paystack-signature"] as string;
 
+    if (!rawBody || !paystackSignature) {
+      return res
+        .status(401)
+        .send("Missing raw body or Paystack signature header.");
+    }
+
+    // 2. Timing-Safe Signature Verification
     const hash = crypto
       .createHmac("sha512", config.PAYSTACK_SECRET_KEY)
       .update(rawBody)
       .digest("hex");
 
-    const paystackSignature = req.headers["x-paystack-signature"];
+    const hashBuffer = Buffer.from(hash, "utf-8");
+    const signatureBuffer = Buffer.from(paystackSignature, "utf-8");
 
-    if (!paystackSignature || hash !== paystackSignature) {
-      return res.status(401).send("Invalid Paystack signature");
+    if (
+      hashBuffer.length !== signatureBuffer.length ||
+      !crypto.timingSafeEqual(hashBuffer, signatureBuffer)
+    ) {
+      return res.status(401).send("Invalid Paystack signature.");
     }
 
     const event = req.body as PaystackWebhookEvent;
 
+    // 3. Handle Supported Events
     switch (event.event) {
       case "charge.success": {
         const reference = event.data.reference;
@@ -59,14 +74,18 @@ export const paystackWebhook = async (
           await transactionService.findTransactionByReference(reference);
 
         if (!transaction) {
-          return res.sendStatus(200);
+          // Send 200 so Paystack doesn't re-send non-existent system records
+          return res
+            .status(200)
+            .send("Transaction reference not found; ignored.");
         }
 
+        // Idempotency check
         if (
           transaction.status === "COMPLETED" ||
           transaction.status === "FAILED"
         ) {
-          return res.sendStatus(200);
+          return res.status(200).send("Transaction already processed.");
         }
 
         const isSuccess =
@@ -74,7 +93,9 @@ export const paystackWebhook = async (
 
         if (!isSuccess) {
           const failureReason =
-            event.data.message || "Payment failed or was cancelled";
+            event.data.gateway_response ||
+            event.data.message ||
+            "Payment failed or was cancelled";
 
           await transactionService.updateTransactionByReference(reference, {
             status: "FAILED",
@@ -88,9 +109,10 @@ export const paystackWebhook = async (
             );
           }
 
-          return res.sendStatus(200);
+          return res.status(200).send("Failed payment recorded.");
         }
 
+        // Update successful transaction
         await transactionService.updateTransactionByReference(reference, {
           paidAt: new Date().toISOString(),
           status: "COMPLETED",
@@ -103,16 +125,26 @@ export const paystackWebhook = async (
           );
         }
 
-        break;
+        return res.status(200).send("Charge processed successfully.");
       }
 
       default:
-        return res.sendStatus(200);
+        return res.status(200).send("Unhandled event type ignored.");
+    }
+  } catch (error) {
+    console.error("[Paystack Webhook Process Error]:", error);
+
+    // Handle database race conditions gracefully without triggering retries
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return res
+        .status(200)
+        .send("Order was already completed by a parallel process.");
     }
 
-    return res.sendStatus(200);
-  } catch (error) {
-    console.error(`[Paystack Webhook Process Error]:`, error);
-    return res.sendStatus(500);
+    // Unhandled application errors return 500 to allow Paystack retry logic
+    return res.status(500).send("Internal Server Error");
   }
 };
