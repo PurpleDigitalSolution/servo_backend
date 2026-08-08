@@ -114,3 +114,31 @@ export const IdempotencyStatus = {
 
 export type IdempotencyStatus =
   (typeof IdempotencyStatus)[keyof typeof IdempotencyStatus];
+
+export const AuditAction = {
+  CREATE: "CREATE",
+  READ: "READ",
+  UPDATE: "UPDATE",
+  DELETE: "DELETE",
+  SUSPEND: "SUSPEND",
+  ASSIGN: "ASSIGN",
+  APPROVE: "APPROVE",
+  CANCEL: "CANCEL",
+  VERIFY: "VERIFY",
+  REFUND: "REFUND",
+} as const;
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
+
+export const resourceType = {
+  USER: "USER",
+  ROLE: "ROLE",
+  STATION: "STATION",
+  ORDER: "ORDER",
+  PAYMENT: "PAYMENT",
+  DASHBOARD: "DASHBOARD",
+  SETTINGS: "SETTINGS",
+  TRANSACTION: "TRANSACTION",
+} as const;
+
+export type resourceType = (typeof resourceType)[keyof typeof resourceType];

@@ -14,9 +14,11 @@ import {
   loginRequestSchema,
   requestOtpSchema,
   resetPasswordSchema,
+  sendTestEmailSchema,
   verifyOtpSchema,
   changePasswordSchema, // 👈 Add validation schemas for password updates
   changeDefaultPasswordSchema,
+  AccountStatusUpdateRequestSchema,
 } from "../validation/authentication.validation.js";
 import { validate } from "../middleware/validation.js";
 import { protect } from "../middleware/protection.js";
@@ -82,6 +84,13 @@ authenticationRouter.post(
 );
 
 authenticationRouter.post(
+  "/test-email",
+  // protect,
+  validate(sendTestEmailSchema),
+  authController.sendTestEmail,
+);
+
+authenticationRouter.post(
   "/verify-otp",
   validate(verifyOtpSchema),
   authController.verifyOtp,
@@ -133,6 +142,16 @@ authenticationRouter.post(
   authorizePermission(["USER_CREATE"]),
   validate(createAgentSchema),
   authController.registerAgent,
+);
+
+authenticationRouter.post(
+  "/admin/account-status",
+  protect,
+  requirePasswordChange(),
+  authorize(["SUPER_ADMIN"]),
+  authorizePermission(["USER_UPDATE"]),
+  validate(AccountStatusUpdateRequestSchema),
+  authController.accountStatusUpdate,
 );
 
 export default authenticationRouter;

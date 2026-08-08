@@ -81,3 +81,8 @@ export type Transaction = Prisma.TransactionModel;
  *
  */
 export type IdempotencyRequest = Prisma.IdempotencyRequestModel;
+/**
+ * Model AuditLog
+ *
+ */
+export type AuditLog = Prisma.AuditLogModel;

@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum UserRole {
@@ -109,6 +109,28 @@ enum IdempotencyStatus {
   FAILED
 }
 
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  SUSPEND
+  ASSIGN
+  APPROVE
+  CANCEL
+  VERIFY
+  REFUND
+}
+enum resourceType {
+  USER
+  ROLE
+  STATION
+  ORDER
+  PAYMENT
+  DASHBOARD
+  SETTINGS
+  TRANSACTION
+}
 model User {
   id                 String             @id @default(uuid())
   email              String             @unique
@@ -133,12 +155,12 @@ model User {
   assignedOrders Order[] @relation("AssignedOrders")
 
   // Audit relationships
-  completedOrders Order[] @relation("CompletedOrders")
-  cancelledOrders Order[] @relation("CancelledOrders")
-
-  createdAt         DateTime  @default(now())
+  completedOrders   Order[]    @relation("CompletedOrders")
+  cancelledOrders   Order[]    @relation("CancelledOrders")
+  auditLogs         AuditLog[]
+  createdAt         DateTime   @default(now())
   passwordChangedAt DateTime?
-  updatedAt         DateTime  @updatedAt
+  updatedAt         DateTime   @updatedAt
 
   @@index([role])
   @@index([accountStatus])
@@ -253,8 +275,10 @@ model Transaction {
   paidAt           DateTime?
   gatewayResponse  Json?
 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@index([orderId])
 }
 
 model IdempotencyRequest {
@@ -275,4 +299,24 @@ model IdempotencyRequest {
   @@unique([key, route])
   @@index([userId])
   @@index([expiresAt])
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  action       AuditAction
+  resourceType resourceType?
+  resourceId   String?  @db.VarChar(100)
+  status       String   @db.VarChar(20)
+  errorMessage String?
+  ipAddress    String?  @db.Inet
+  userAgent    String?
+  metadata     Json?
+  createdAt    DateTime @default(now()) @db.Timestamp(3)
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
 }

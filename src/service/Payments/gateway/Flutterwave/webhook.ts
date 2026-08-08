@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
+import { Prisma } from "../../../../generated/prisma/client.js";
 import { config } from "../../../../config/config.js";
-import { FlutterwaveWebhookEvent } from "../../../../interface/flutterwave.interface.js";
-import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
-import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
-import { OrderRepository } from "../../../../model/order/Order.repository.js";
-import { StationRepository } from "../../../../model/station/Station.repository.js";
-import { OrderService } from "../../../../model/order/Order.service.js";
-import { UserRepository } from "../../../../model/user/user.repository.js";
 import { prisma } from "../../../../config/database.js";
+import { FlutterwaveWebhookEvent } from "../../../../interface/flutterwave.interface.js";
+import { OrderRepository } from "../../../../model/order/Order.repository.js";
+import { OrderService } from "../../../../model/order/Order.service.js";
+import { StationRepository } from "../../../../model/station/Station.repository.js";
+import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
+import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
+import { UserRepository } from "../../../../model/user/user.repository.js";
 import { paymentService } from "../../payment.service.js";
 
 const transactionRepo = new TransactionRepo();
-
 const orderRepo = new OrderRepository();
 const stationRepo = new StationRepository();
 const userRepository = new UserRepository();
@@ -32,50 +32,51 @@ const orderService = new OrderService(
 
 export const flutterwaveWebhook = async (req: Request, res: Response) => {
   try {
+    // 1. Verify Secret Hash Header
     const secretHash = config.FLUTTERWAVE_SECRET_HASH;
     const signature = req.headers["verif-hash"];
 
-    if (!signature) {
+    if (!signature || signature !== secretHash) {
       return res.status(401).json({
         status: false,
-        message: "Missing Flutterwave signature header",
+        message: "Unauthorized webhook source.",
       });
     }
 
-    if (signature !== secretHash) {
-      return res.status(401).json({
-        status: false,
-        message: "Invalid signature. Request source unverified.",
-      });
-    }
     const event = req.body as FlutterwaveWebhookEvent;
+
+    // 2. Handle Event Types
     switch (event.event) {
       case "charge.completed": {
         const reference = event.data.tx_ref;
 
+        // 3. Find target transaction
         const transaction =
           await transactionService.findTransactionByReference(reference);
+
         if (!transaction) {
-          return res.sendStatus(200);
+          // Acknowledge unknown transactions to prevent webhook retries
+          return res.status(200).send("Transaction not found; ignored.");
         }
+
+        // 4. Idempotency Check: Ignore already finalized transactions
         if (
           transaction.status === "COMPLETED" ||
           transaction.status === "FAILED"
         ) {
-          return res.sendStatus(200);
+          return res.status(200).send("Transaction already processed.");
         }
 
+        // 5. Handle Failed Charges
         if (event.data.status !== "successful") {
           const failureReason =
             event.data.processor_response || "Payment failed or was cancelled";
 
-          // Update Transaction
           await transactionService.updateTransactionByReference(reference, {
             status: "FAILED",
             failureReason,
           });
 
-          // Update Order
           if (transaction.orderId) {
             await orderService.updateOrderStatusByTransaction(
               transaction.orderId,
@@ -83,28 +84,46 @@ export const flutterwaveWebhook = async (req: Request, res: Response) => {
             );
           }
 
-          // (Optional) Send immediate email or push notification
-          // await notificationService.sendPaymentFailedEmail(transaction.userId, failureReason);
-          return res.sendStatus(200);
+          return res.status(200).send("Failed transaction recorded.");
         }
 
+        // 6. Handle Successful Charges
         await transactionService.updateTransactionByReference(reference, {
           paidAt: new Date().toISOString(),
           status: "COMPLETED",
         });
 
-        await orderService.updateOrderStatusByTransaction(
-          transaction.orderId as string,
-          "PENDING_CONFIRMATION",
-        );
+        if (transaction.orderId) {
+          await orderService.updateOrderStatusByTransaction(
+            transaction.orderId,
+            "PENDING_CONFIRMATION",
+          );
+        }
 
-        break;
+        return res.status(200).send("Webhook processed successfully.");
       }
+
       default:
-        return res.sendStatus(200);
+        // Return 200 for unhandled events so Flutterwave stops sending them
+        return res.status(200).send("Event type ignored.");
     }
   } catch (error) {
     console.error("Error processing Flutterwave webhook:", error);
-    return res.sendStatus(500);
+
+    // If duplicate transaction update occurs via P2002, handle gracefully
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return res
+        .status(200)
+        .send("Order already completed by a parallel process.");
+    }
+
+    // Always respond with 500 on server errors so the payment gateway can retry
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error processing webhook",
+    });
   }
 };

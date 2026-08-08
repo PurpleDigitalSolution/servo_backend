@@ -59,6 +59,7 @@ export class AuthController {
         client: clientSource,
         mustChangePassword:
           (userWithoutPassword as any).mustChangePassword || false,
+        accountStatus: userWithoutPassword.accountStatus,
       };
 
       const { accessToken, refreshToken } = await this.sessionService.signTo(
@@ -94,6 +95,22 @@ export class AuthController {
       .status(201)
       .json(new ApiResponse(201, response, "Agent registered successfully"));
   });
+
+  readonly accountStatusUpdate = asyncHandler(
+    async (req: Request, res: Response) => {
+      const { userId, status } = req.body;
+      await this.authService.accountStatusUpdate(userId, status);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            null,
+            `User account status updated to ${status}`,
+          ),
+        );
+    },
+  );
 
   readonly loginMobile = this.handleLoginPipeline("MOBILE");
 
@@ -184,6 +201,23 @@ export class AuthController {
       .status(202)
       .json(new ApiResponse(202, null, "Password reset successfully"));
   });
+
+  readonly sendTestEmail = asyncHandler(async (req: Request, res: Response) => {
+    const { email, subject, message } = req.body;
+
+    await this.authService.sendTestEmail(email, subject, message);
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { email, subject: subject || "Servo email test" },
+          "Test email sent successfully",
+        ),
+      );
+  });
+
   readonly changeDefaultPassword = asyncHandler(
     async (req: Request, res: Response) => {
       const { newPassword } = req.body;

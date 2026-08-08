@@ -30,25 +30,11 @@ export class TransactionService {
     }
 
     const reference = generateTransactionReference();
-    // Do NOT multiply by 100 here! Pass raw amount to paymentService,
-    // let each Gateway handle unit conversions (e.g., Paystack * 100).
     const amount = payload.amount;
 
     try {
-      // 1. Record pending transaction locally
-      await this.transactionRepo.record(
-        {
-          orderId: payload.orderId,
-          reference,
-          amount,
-          paymentMethod: payload.provider, // ✅ Dynamic provider
-          authorizationUrl: "",
-        },
-        payload.tx,
-      );
-
-      // 2. Initialize with Payment Gateway
-      const _res = await this.paymentService.initialize(
+      // 1. Initialize with Payment Gateway FIRST
+      const gatewayResponse = await this.paymentService.initialize(
         {
           amount,
           tx_ref: reference,
@@ -65,21 +51,26 @@ export class TransactionService {
         payload.provider,
       );
 
-      const { authorization_url } = _res.data;
+      const authorizationUrl = gatewayResponse.data.authorization_url;
 
-      // 3. Update local transaction with payment gateway link
-      await this.transactionRepo.updateAuthorizationUrl(
-        reference,
-        authorization_url,
+      // 2. Atomic record in local DB once gateway confirms authorization URL
+      await this.transactionRepo.record(
+        {
+          orderId: payload.orderId,
+          reference,
+          amount,
+          paymentMethod: payload.provider,
+          authorizationUrl,
+        },
         payload.tx,
       );
 
       return {
-        authorizationUrl: authorization_url,
+        authorizationUrl,
         reference,
       };
     } catch (error) {
-      console.error(error);
+      console.error("Transaction initialization failed:", error);
       if (error instanceof ApiError) throw error;
 
       throw new ApiError(
@@ -96,59 +87,74 @@ export class TransactionService {
     orderId?: string;
   }): Promise<{ status: string; reference: string; message?: string }> {
     let targetReference = params.reference;
-    let paymentMethod: providerType = "PAYSTACK";
-    if (!targetReference && params.orderId) {
-      const transaction = await this.transactionRepo.findPendingByOrderId(
+    let transaction: any = null;
+
+    if (targetReference) {
+      transaction = await this.transactionRepo.findByReference(targetReference);
+    } else if (params.orderId) {
+      transaction = await this.transactionRepo.findPendingByOrderId(
         params.orderId,
       );
-
-      if (!transaction) {
-        throw new ApiError(404, `No pending transaction found for this Order`);
-      }
-
-      targetReference = transaction.reference;
-      paymentMethod = transaction.paymentMethod;
     }
 
-    if (!targetReference) {
+    if (!transaction) {
       throw new ApiError(
-        400,
-        "Either 'reference' or 'orderId' must be provided for verification.",
+        404,
+        "No transaction found matching the provided reference or order ID.",
       );
+    }
+
+    targetReference = transaction.reference;
+    const paymentMethod: providerType = transaction.paymentMethod;
+
+    // 2. Fetch Order details safely for user ID check
+    const order = await this.orderRepository.findOrderById(transaction.orderId);
+    if (!order) {
+      throw new ApiError(404, "Associated order not found.");
     }
 
     try {
+      // 3. Verify with Provider
       const response = await this.paymentService.verify(
-        targetReference,
+        targetReference as string,
         paymentMethod,
       );
 
-      // ✅ Normalize checking status (successful or success)
       const isSuccessful =
         response.status === "successful" || response.status === "success";
 
       if (isSuccessful) {
-        await this.updateTransactionByReference(targetReference, {
-          paidAt: new Date().toISOString(),
-          status: "COMPLETED",
+        await Promise.all([
+          this.updateTransactionByReference(targetReference as string, {
+            paidAt: new Date().toISOString(),
+            status: "COMPLETED",
+          }),
+          this.orderRepository.updateOrderStatus(
+            order.userId,
+            transaction.orderId,
+            "PENDING_CONFIRMATION",
+          ),
+        ]);
+      } else {
+        await this.updateTransactionByReference(targetReference as string, {
+          status: "FAILED",
         });
       }
 
       return {
         status: isSuccessful ? "SUCCESSFUL" : "FAILED",
-        reference: targetReference,
+        reference: targetReference as string,
         message: isSuccessful
           ? "Transaction verified successfully"
           : "Transaction verification failed",
       };
-    } catch (error: Error | any) {
+    } catch (error: any) {
       if (error instanceof ApiError) throw error;
-      console.log(error);
-      const message =
-        error.message || "An error occurred during transaction verification.";
+      console.error("Verification error:", error);
+
       throw new ApiError(
         500,
-        message,
+        error.message || "An error occurred during transaction verification.",
         [error],
         error instanceof Error ? error.stack : undefined,
       );
@@ -170,48 +176,73 @@ export class TransactionService {
     return await this.transactionRepo.findByOrderId(orderId);
   }
 
-  // ✅ Fixed method
   async findPendingTransactionByOrderId(
     orderId: string,
     provider: providerType = "PAYSTACK",
-  ): Promise<any | null> {
+  ): Promise<any> {
+    // 1. Check if the order exists and its current status
     const order = await this.orderRepository.findOrderById(orderId);
     if (!order) {
       throw new ApiError(404, "Order not found");
     }
 
-    const transaction =
-      await this.transactionRepo.findPendingByOrderId(orderId);
-
-    if (!transaction) {
-      return await this.initialize({
-        orderId,
-        amount: order.totalAmount,
-        email: order.customer.email,
-        name: order.customer.name || order.customer.email, // ✅ Use name if available
-        provider,
-      });
+    // 2. Prevent payment if the order itself is already paid/processing
+    if (order.status !== "PENDING_PAYMENT") {
+      throw new ApiError(
+        400,
+        `This order has already been paid or processed (Status: ${order.status}).`,
+      );
     }
 
-    return transaction;
+    // 3. Fetch all transactions associated with this order
+    const transactions = await this.transactionRepo.findByOrderId(orderId);
+
+    if (Array.isArray(transactions) && transactions.length > 0) {
+      // Check if ANY transaction for this order is already COMPLETED
+      const completedTx = transactions.find((tx) => tx.status === "COMPLETED");
+      if (completedTx) {
+        throw new ApiError(
+          400,
+          "A successful payment has already been made for this order.",
+        );
+      }
+
+      // Check if there is already an active PENDING transaction
+      const pendingTx = transactions.find((tx) => tx.status === "PENDING");
+      if (pendingTx) {
+        return pendingTx; // Return the existing pending transaction
+      }
+    }
+
+    // 4. Safe to create a new transaction if no active or completed payment exists
+    return await this.initialize({
+      orderId,
+      amount: order.totalAmount,
+      email: order.customer.email,
+      name: order.customer.name || order.customer.email,
+      provider,
+    });
   }
+
   async findUserTransactions(
     userId: string,
     skip: number,
     take: number,
   ): Promise<any[]> {
-    // Fetch user orders first
     const userOrders = await this.orderRepository.getUserOrders(
       userId,
       skip,
       take,
     );
+    if (!userOrders.length) return [];
+
     const orderIds = userOrders.map((order) => order.id);
 
-    // Fetch transactions for those orders
+    // Recommended: delegate batching to repo (e.g. `transactionRepo.findByOrderIds(orderIds)`)
     const transactions = await Promise.all(
       orderIds.map((orderId) => this.transactionRepo.findByOrderId(orderId)),
     );
-    return transactions;
+
+    return transactions.filter(Boolean);
   }
 }

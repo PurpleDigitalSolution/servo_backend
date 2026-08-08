@@ -3,10 +3,12 @@ import {
   createUserSchema,
   loginBodySchema,
   registrationResponseSchema,
+  sendTestEmailSchema,
   userLoginResponse,
 } from "../../validation/authentication.validation.js";
 import { errorSchema } from "../../validation/comm.js";
 import { registry } from "../../docs/registry.js";
+import { z } from "zod";
 
 registry.registerPath({
   method: "post",
@@ -36,7 +38,16 @@ registry.registerPath({
 
       content: {
         "application/json": {
-          schema: registrationResponseSchema,
+          schema: z.object({
+            statusCode: z.number(),
+            data: z.object({
+              email: z.string().email(),
+              subject: z.string(),
+            }),
+            message: z.string(),
+            success: z.boolean(),
+            meta: z.any().optional(),
+          }),
         },
       },
     },
@@ -160,6 +171,50 @@ registry.registerPath({
     400: {
       description: "Validation Error",
 
+      content: {
+        "application/json": {
+          schema: errorSchema,
+        },
+      },
+    },
+  },
+});
+registry.registerPath({
+  method: "post",
+  path: "/auth/test-email",
+  tags: ["Authentication"],
+  summary: "Send a test email",
+  description:
+    "Sends a test email to verify that the current mail configuration works.",
+  request: {
+    body: {
+      required: true,
+      content: {
+        "application/json": {
+          schema: sendTestEmailSchema.shape.body,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Test email sent successfully",
+      content: {
+        "application/json": {
+          schema: errorSchema,
+        },
+      },
+    },
+    401: {
+      description: "Unauthorized",
+      content: {
+        "application/json": {
+          schema: errorSchema,
+        },
+      },
+    },
+    400: {
+      description: "Validation Error",
       content: {
         "application/json": {
           schema: errorSchema,

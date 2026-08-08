@@ -147,4 +147,14 @@ export class AuthRepository implements IAuthRepository {
       },
     });
   }
+  async updateAccountStatus(
+    userId: string,
+    status: "SUSPENDED" | "BANNED",
+  ): Promise<any> {
+    return await this.prismaClient.user.update({
+      where: { id: userId },
+      data: { accountStatus: status },
+      select: this.defaultUserSelect,
+    });
+  }
 }

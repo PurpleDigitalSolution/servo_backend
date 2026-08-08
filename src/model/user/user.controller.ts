@@ -28,6 +28,15 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) => {
     .status(200)
     .json(new ApiResponse(200, profile, "Profile fetched successfully"));
 });
+export const getUserProfile = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const profile = await userService.getProfile(String(id));
+    res
+      .status(200)
+      .json(new ApiResponse(200, profile, "User profile fetched successfully"));
+  },
+);
 export const updateProfile = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.userId;
@@ -57,6 +66,6 @@ export const searchUser = asyncHandler(async (req: Request, res: Response) => {
 });
 export const getUserById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const user = await userService.getProfile(id as string);
+  const user = await userService.getProfile(String(id));
   res.status(200).json(new ApiResponse(200, user, "User fetched successfully"));
 });

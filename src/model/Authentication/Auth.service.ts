@@ -7,7 +7,6 @@ import {
 import { ApiError } from "../../utils/errorHandler.js";
 import { SessionService } from "../../utils/Session.js";
 import { generateOTP, generateRandomToken } from "../../utils/generator.js";
-import { EmailService } from "../../service/email.service.js";
 import { Response, Request } from "express";
 import config from "../../config/config.js";
 import { TokenService } from "../token/token.service.js";
@@ -36,12 +35,35 @@ export interface IAuthRepository {
   ): Promise<void>;
   updateUserVerificationStatus(userId: string, status: string): Promise<void>;
   updateUserPassword(userId: string, passwordHash: string): Promise<void>;
+  updateAccountStatus(
+    userId: string,
+    status: "SUSPENDED" | "BANNED",
+  ): Promise<any>;
+}
+
+export interface IEmailService {
+  sendVerificationEmail(
+    email: string,
+    name: string,
+    token: string,
+  ): Promise<void>;
+  sendResetPasswordEmail(
+    email: string,
+    name: string,
+    token: string,
+  ): Promise<void>;
+  sendDefaultLoginCredentials(
+    email: string,
+    password: string,
+    name?: string,
+  ): Promise<void>;
+  sendTestEmail(email: string, subject?: string, html?: string): Promise<void>;
 }
 
 export class AuthenticationService {
   constructor(
     private readonly authRepository: IAuthRepository,
-    private readonly emailService: EmailService,
+    private readonly emailService: IEmailService,
     private readonly sessionService: typeof SessionService,
   ) {}
 
@@ -100,11 +122,17 @@ export class AuthenticationService {
     const defaultPassword = config.DEFAULT_AGENT_PASSWORD || "Agent@123";
     const passwordHash = await this.hashPassword(defaultPassword);
 
-    return await this.authRepository.createUserAccount({
+    const acc = await this.authRepository.createUserAccount({
       ...dto,
       mustAddPassword: true,
       password: passwordHash,
     });
+    await this.emailService.sendDefaultLoginCredentials(
+      dto.email,
+      defaultPassword,
+      dto.firstName,
+    );
+    return acc;
   }
 
   async login(email: string, password: string): Promise<userWithoutPassword> {
@@ -310,6 +338,7 @@ export class AuthenticationService {
       permissions: user.permissions,
       mustChangePassword: false,
       client: client,
+      accountStatus: user.accountStatus,
     };
 
     await SessionService.signTo(res, updatedUserPayload, client);
@@ -360,5 +389,31 @@ export class AuthenticationService {
     await this.authRepository.updateUserPassword(user.id, hashedPassword);
 
     await TokenService.revokeAllUserSessions(user.id);
+  }
+
+  async sendTestEmail(
+    email: string,
+    subject?: string,
+    message?: string,
+  ): Promise<void> {
+    if (!email) {
+      throw new ApiError(400, "Email is required");
+    }
+
+    await this.emailService.sendTestEmail(
+      email,
+      subject || "Servo email test",
+      message || "<p>This is a test email from Servo.</p>",
+    );
+  }
+  async accountStatusUpdate(
+    userId: string,
+    status: "SUSPENDED" | "BANNED",
+  ): Promise<void> {
+    const user = await this.authRepository.findUserById(userId);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    await this.authRepository.updateAccountStatus(userId, status);
   }
 }

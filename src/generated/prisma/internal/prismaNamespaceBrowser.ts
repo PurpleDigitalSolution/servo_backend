@@ -61,6 +61,7 @@ export const ModelName = {
   Order: "Order",
   Transaction: "Transaction",
   IdempotencyRequest: "IdempotencyRequest",
+  AuditLog: "AuditLog",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -212,6 +213,23 @@ export const IdempotencyRequestScalarFieldEnum = {
 
 export type IdempotencyRequestScalarFieldEnum =
   (typeof IdempotencyRequestScalarFieldEnum)[keyof typeof IdempotencyRequestScalarFieldEnum];
+
+export const AuditLogScalarFieldEnum = {
+  id: "id",
+  userId: "userId",
+  action: "action",
+  resourceType: "resourceType",
+  resourceId: "resourceId",
+  status: "status",
+  errorMessage: "errorMessage",
+  ipAddress: "ipAddress",
+  userAgent: "userAgent",
+  metadata: "metadata",
+  createdAt: "createdAt",
+} as const;
+
+export type AuditLogScalarFieldEnum =
+  (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",
