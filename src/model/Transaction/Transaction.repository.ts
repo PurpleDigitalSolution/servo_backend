@@ -3,81 +3,82 @@ import {
   TransactionDTO,
   TransactionUpdateDTO,
 } from "../../interface/dto/transaction.dto.js";
-import { PrismaTx } from "../../types/general.js";
+import {
+  PrismaTx,
+  PaymentStatus as TransactionStatus,
+} from "../../types/general.js";
 
-// 1. Establish the boundary interface contract
 export interface ITransactionRepository {
-  record(payload: TransactionDTO, tx?: PrismaTx): Promise<any>;
-  updateAuthorizationUrl(
+  createTransaction(data: TransactionDTO, tx?: PrismaTx): Promise<any>;
+  findByReference(reference: string, tx?: PrismaTx): Promise<any | null>;
+  findByOrderId(orderId: string, tx?: PrismaTx): Promise<any[]>;
+  findPendingByOrderId(orderId: string, tx?: PrismaTx): Promise<any | null>;
+  updateTransactionByReference(
     reference: string,
-    authorizationUrl: string,
+    data: TransactionUpdateDTO,
     tx?: PrismaTx,
   ): Promise<any>;
-  findByReference(reference: string): Promise<any | null>;
-  findByOrderId(orderId: string): Promise<any | null>;
-  updateTransaction(
+  updateStatus(
     reference: string,
-    data: TransactionUpdateDTO,
+    status: TransactionStatus,
     tx?: PrismaTx,
-  ): Promise<any | null>;
-  findPendingByOrderId(orderId: string): Promise<any | null>;
+  ): Promise<any>;
+  transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T>;
 }
 
-// 2. Implement the concrete class as an instance mapping
-export class TransactionRepo implements ITransactionRepository {
-  async record(payload: TransactionDTO, tx: PrismaTx = prisma) {
+export class TransactionRepository implements ITransactionRepository {
+  async transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T> {
+    return await prisma.$transaction(fn);
+  }
+
+  async createTransaction(data: TransactionDTO, tx: PrismaTx = prisma) {
     return await tx.transaction.create({
-      data: {
-        orderId: payload.orderId,
-        reference: payload.reference,
-        amount: payload.amount,
-        paymentMethod: payload.paymentMethod,
-        authorizationUrl: payload.authorizationUrl,
-      },
-    });
-  }
-
-  async updateAuthorizationUrl(
-    reference: string,
-    authorizationUrl: string,
-    tx: PrismaTx = prisma,
-  ) {
-    return await tx.transaction.update({
-      where: { reference },
-      data: { authorizationUrl },
-    });
-  }
-
-  async findByReference(reference: string) {
-    return await prisma.transaction.findUnique({
-      where: { reference },
-    });
-  }
-
-  async findByOrderId(orderId: string) {
-    return await prisma.transaction.findMany({
-      where: { orderId },
-    });
-  }
-
-  async updateTransaction(
-    reference: string,
-    data: TransactionUpdateDTO,
-  ): Promise<any | null> {
-    return await prisma.transaction.update({
-      where: {
-        reference,
-      },
       data,
     });
   }
 
-  async findPendingByOrderId(orderId: string): Promise<any | null> {
-    return await prisma.transaction.findFirst({
+  async findByReference(reference: string, tx: PrismaTx = prisma) {
+    return await tx.transaction.findUnique({
+      where: { reference },
+    });
+  }
+
+  async findByOrderId(orderId: string, tx: PrismaTx = prisma) {
+    return await tx.transaction.findMany({
+      where: { orderId },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async findPendingByOrderId(orderId: string, tx: PrismaTx = prisma) {
+    return await tx.transaction.findFirst({
       where: {
         orderId,
         status: "PENDING",
       },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async updateTransactionByReference(
+    reference: string,
+    data: TransactionUpdateDTO,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.transaction.update({
+      where: { reference },
+      data,
+    });
+  }
+
+  async updateStatus(
+    reference: string,
+    status: TransactionStatus,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.transaction.update({
+      where: { reference },
+      data: { status },
     });
   }
 }

@@ -1,6 +1,6 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { OrderDTO, OrderResponseDTO } from "../../interface/dto/order.dto.js";
-import { OrderStatus } from "../../types/general.js";
+import { OrderStatus, PrismaTx } from "../../types/general.js";
 import { ApiError } from "../../utils/errorHandler.js";
 import {
   canTransition,
@@ -8,6 +8,7 @@ import {
   UserRole,
 } from "../../utils/status.js";
 import { IStationRepository } from "../station/Station.repository.js";
+import { ITransactionRepository } from "../Transaction/Transaction.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
 import { IOrderRepository } from "./Order.repository.js";
 
@@ -24,6 +25,7 @@ export class OrderService {
   constructor(
     private readonly orderRepository: IOrderRepository,
     private readonly userRepository: IUserRepository,
+    private readonly transactionRepo: ITransactionRepository,
     private readonly transactionService: TransactionService,
     private readonly stationRepository: IStationRepository,
     private readonly prisma: PrismaClient,
@@ -158,9 +160,23 @@ export class OrderService {
     newStatus: OrderStatus,
     actor: ActorContext,
   ): Promise<any> {
-    const order = await this.orderRepository.findOrderById(orderId);
+    // 1. Delegate directly to cancelOrder if target status is CANCELLED
+    if (newStatus === "CANCELLED") {
+      return await this.cancelOrder(orderId, actor);
+    }
+
+    // Fetch Order & User in parallel
+    const [order, user] = await Promise.all([
+      this.orderRepository.findOrderById(orderId),
+      this.userRepository.findUserById(actor.id),
+    ]);
+
     if (!order) {
       throw new ApiError(404, "Order not found");
+    }
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
     }
 
     // 2. Ownership / Assignment Access Guard
@@ -172,7 +188,12 @@ export class OrderService {
       throw new ApiError(403, "Forbidden: You are not assigned to this order");
     }
 
-    // 3. Check State Machine Validity (Can the state transition from A -> B?)
+    // Idempotency: Return early if already in target status
+    if (order.status === newStatus) {
+      return order;
+    }
+
+    // 3. State Machine Transition Guard
     if (!canTransition(order.status, newStatus)) {
       throw new ApiError(
         400,
@@ -180,7 +201,7 @@ export class OrderService {
       );
     }
 
-    // 4. Check Role Permission (Is this actor allowed to set this target status?)
+    // 4. Role Authorization Guard
     if (!isRoleAllowedToSetStatus(actor.role, newStatus)) {
       throw new ApiError(
         403,
@@ -188,14 +209,83 @@ export class OrderService {
       );
     }
 
-    // 5. Execute Update
-    return await this.orderRepository.updateOrderStatus(
-      order.customerId,
-      orderId,
-      newStatus,
-    );
+    // 5. Execute Update (Atomically)
+    return await this.orderRepository.transaction(async (tx: PrismaTx) => {
+      return await this.orderRepository.updateOrderStatus(
+        order.customerId,
+        orderId,
+        newStatus,
+        tx,
+      );
+    });
   }
+  async cancelOrder(orderId: string, actor: ActorContext): Promise<void> {
+    const [order, user] = await Promise.all([
+      this.orderRepository.findOrderById(orderId),
+      this.userRepository.findUserById(actor.id),
+    ]);
 
+    if (!order) {
+      throw new ApiError(404, "Order not found");
+    }
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    // Authorization checks
+    if (actor.role === "CUSTOMER" && order.customerId !== actor.id) {
+      throw new ApiError(403, "Forbidden: You can only cancel your own orders");
+    }
+    if (actor.role === "AGENT" && order.agentId !== actor.id) {
+      throw new ApiError(403, "Forbidden: You are not assigned to this order");
+    }
+
+    // Idempotency: If already cancelled, return early without error
+    if (order.status === "CANCELLED") {
+      return;
+    }
+
+    // State Machine Validation
+    if (!canTransition(order.status, "CANCELLED")) {
+      throw new ApiError(
+        400,
+        `Invalid status transition from '${order.status}' to 'CANCELLED'`,
+      );
+    }
+    if (!isRoleAllowedToSetStatus(actor.role, "CANCELLED")) {
+      throw new ApiError(
+        403,
+        `Forbidden: '${actor.role}' role is not authorized to cancel orders`,
+      );
+    }
+
+    // Execute order status and pending transaction cancellation inside an atomic transaction
+    await this.orderRepository.transaction(async (tx: PrismaTx) => {
+      // 1. Update Order Status
+      await this.orderRepository.updateOrderStatus(
+        order.customerId,
+        orderId,
+        "CANCELLED",
+        tx,
+      );
+
+      // 2. Mark any associated PENDING transaction as FAILED/CANCELLED
+      const pendingTx = await this.transactionRepo.findPendingByOrderId(
+        orderId,
+        tx,
+      );
+      if (pendingTx) {
+        await this.transactionRepo.updateTransactionByReference(
+          pendingTx.reference,
+          {
+            status: "FAILED",
+            failureReason: `Order cancelled by ${actor.role.toLowerCase()}`,
+          },
+          tx,
+        );
+      }
+    });
+  }
   async updateOrderStatusByTransaction(
     orderId: string,
     status: OrderStatus,

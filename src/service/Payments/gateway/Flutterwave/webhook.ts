@@ -4,31 +4,11 @@ import { config } from "../../../../config/config.js";
 import { prisma } from "../../../../config/database.js";
 import { FlutterwaveWebhookEvent } from "../../../../interface/flutterwave.interface.js";
 import { OrderRepository } from "../../../../model/order/Order.repository.js";
-import { OrderService } from "../../../../model/order/Order.service.js";
-import { StationRepository } from "../../../../model/station/Station.repository.js";
-import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
-import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
-import { UserRepository } from "../../../../model/user/user.repository.js";
-import { paymentService } from "../../payment.service.js";
+import { TransactionRepository } from "../../../../model/Transaction/Transaction.repository.js";
 
-const transactionRepo = new TransactionRepo();
+// Repository instantiation
+const transactionRepo = new TransactionRepository();
 const orderRepo = new OrderRepository();
-const stationRepo = new StationRepository();
-const userRepository = new UserRepository();
-
-const transactionService = new TransactionService(
-  transactionRepo,
-  paymentService,
-  orderRepo,
-);
-
-const orderService = new OrderService(
-  orderRepo,
-  userRepository,
-  transactionService,
-  stationRepo,
-  prisma,
-);
 
 export const flutterwaveWebhook = async (req: Request, res: Response) => {
   try {
@@ -51,8 +31,7 @@ export const flutterwaveWebhook = async (req: Request, res: Response) => {
         const reference = event.data.tx_ref;
 
         // 3. Find target transaction
-        const transaction =
-          await transactionService.findTransactionByReference(reference);
+        const transaction = await transactionRepo.findByReference(reference);
 
         if (!transaction) {
           // Acknowledge unknown transactions to prevent webhook retries
@@ -72,33 +51,56 @@ export const flutterwaveWebhook = async (req: Request, res: Response) => {
           const failureReason =
             event.data.processor_response || "Payment failed or was cancelled";
 
-          await transactionService.updateTransactionByReference(reference, {
-            status: "FAILED",
-            failureReason,
-          });
-
-          if (transaction.orderId) {
-            await orderService.updateOrderStatusByTransaction(
-              transaction.orderId,
-              "PAYMENT_FAILED",
+          // Atomic execution for failed charges
+          await prisma.$transaction(async (tx) => {
+            await transactionRepo.updateTransactionByReference(
+              reference,
+              { status: "FAILED", failureReason },
+              tx,
             );
-          }
+
+            if (transaction.orderId) {
+              await orderRepo.updateOrderStatusByTransaction(
+                transaction.orderId,
+                "PAYMENT_FAILED",
+                tx,
+              );
+            }
+          });
 
           return res.status(200).send("Failed transaction recorded.");
         }
 
-        // 6. Handle Successful Charges
-        await transactionService.updateTransactionByReference(reference, {
-          paidAt: new Date().toISOString(),
-          status: "COMPLETED",
-        });
-
+        // 6. Check Order level status before proceeding
         if (transaction.orderId) {
-          await orderService.updateOrderStatusByTransaction(
-            transaction.orderId,
-            "PENDING_CONFIRMATION",
-          );
+          const order = await orderRepo.findOrderById(transaction.orderId);
+          if (order && order.status !== "PENDING_PAYMENT") {
+            // Short-circuit if order is already processed or past payment stage
+            return res
+              .status(200)
+              .send("Order status already updated by another process.");
+          }
         }
+
+        // 7. Atomic Execution for Successful Charges
+        await prisma.$transaction(async (tx) => {
+          await transactionRepo.updateTransactionByReference(
+            reference,
+            {
+              paidAt: new Date().toISOString(),
+              status: "COMPLETED",
+            },
+            tx,
+          );
+
+          if (transaction.orderId) {
+            await orderRepo.updateOrderStatusByTransaction(
+              transaction.orderId,
+              "PENDING_CONFIRMATION",
+              tx,
+            );
+          }
+        });
 
         return res.status(200).send("Webhook processed successfully.");
       }
@@ -110,10 +112,10 @@ export const flutterwaveWebhook = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error processing Flutterwave webhook:", error);
 
-    // If duplicate transaction update occurs via P2002, handle gracefully
+    // Handle database race conditions gracefully without triggering retries
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
+      (error.code === "P2002" || error.code === "P2025")
     ) {
       return res
         .status(200)

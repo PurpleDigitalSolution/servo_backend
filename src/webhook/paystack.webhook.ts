@@ -3,7 +3,7 @@ import crypto from "crypto";
 import config from "../config/config.js";
 import { PaystackWebhookEvent } from "../interface/paystack.interface.js";
 import { TransactionService } from "../model/Transaction/Transaction.service.js";
-import { TransactionRepo } from "../model/Transaction/Transaction.repository.js";
+import { TransactionRepository } from "../model/Transaction/Transaction.repository.js";
 import { PayStack } from "../config/paystack.config.js";
 import { OrderService } from "../model/order/Order.service.js";
 import { OrderRepository } from "../model/order/Order.repository.js";
@@ -13,7 +13,7 @@ import { StationRepository } from "../model/station/Station.repository.js";
 import { paymentService } from "../service/Payments/payment.service.js";
 
 // Component instantiation
-const transactionRepo = new TransactionRepo();
+const transactionRepo = new TransactionRepository();
 const paymentGateway = new PayStack();
 const userRepository = new UserRepository();
 const orderRepo = new OrderRepository();
@@ -27,6 +27,7 @@ const transactionService = new TransactionService(
 const orderService = new OrderService(
   orderRepo,
   userRepository,
+  transactionRepo,
   transactionService,
   stationRepo,
   prisma,

@@ -54,7 +54,7 @@ export class TransactionService {
       const authorizationUrl = gatewayResponse.data.authorization_url;
 
       // 2. Atomic record in local DB once gateway confirms authorization URL
-      await this.transactionRepo.record(
+      await this.transactionRepo.createTransaction(
         {
           orderId: payload.orderId,
           reference,
@@ -89,32 +89,68 @@ export class TransactionService {
     let targetReference = params.reference;
     let transaction: any = null;
 
+    // 1. RESOLVE TRANSACTION
     if (targetReference) {
       transaction = await this.transactionRepo.findByReference(targetReference);
     } else if (params.orderId) {
-      transaction = await this.transactionRepo.findPendingByOrderId(
+      const transactions = await this.transactionRepo.findByOrderId(
         params.orderId,
       );
+
+      // A. Check if ANY transaction for this order is already COMPLETED
+      transaction = transactions.find((tx) => tx.status === "COMPLETED");
+
+      // B. If none completed, pick the most recent PENDING attempt
+      if (!transaction) {
+        transaction = transactions.find((tx) => tx.status === "PENDING");
+      }
     }
 
     if (!transaction) {
       throw new ApiError(
         404,
-        "No transaction found matching the provided reference or order ID.",
+        "No active or valid transaction found matching the provided reference or order ID.",
       );
     }
 
     targetReference = transaction.reference;
     const paymentMethod: providerType = transaction.paymentMethod;
 
-    // 2. Fetch Order details safely for user ID check
+    // 2. FETCH ASSOCIATED ORDER
     const order = await this.orderRepository.findOrderById(transaction.orderId);
     if (!order) {
       throw new ApiError(404, "Associated order not found.");
     }
 
+    // 3. EARLY RETURN / SELF-HEALING: If transaction is already COMPLETED
+    if (transaction.status === "COMPLETED") {
+      // Catch-up check: Heal order state if transaction succeeded but order status was left behind
+      if (order.status === "PENDING_PAYMENT") {
+        await this.orderRepository.updateOrderStatus(
+          order.userId,
+          order.id,
+          "PENDING_CONFIRMATION",
+        );
+      }
+
+      return {
+        status: "SUCCESSFUL",
+        reference: targetReference as string,
+        message: "Order has already been successfully paid and verified.",
+      };
+    }
+
+    // 4. EARLY RETURN: If order has already advanced past payment (e.g. by webhook)
+    if (order.status !== "PENDING_PAYMENT") {
+      return {
+        status: "SUCCESSFUL",
+        reference: targetReference as string,
+        message: `Order status is already ${order.status}.`,
+      };
+    }
+
     try {
-      // 3. Verify with Provider
+      // 5. VERIFY WITH PAYMENT PROVIDER
       const response = await this.paymentService.verify(
         targetReference as string,
         paymentMethod,
@@ -124,21 +160,35 @@ export class TransactionService {
         response.status === "successful" || response.status === "success";
 
       if (isSuccessful) {
-        await Promise.all([
-          this.updateTransactionByReference(targetReference as string, {
-            paidAt: new Date().toISOString(),
-            status: "COMPLETED",
-          }),
-          this.orderRepository.updateOrderStatus(
-            order.userId,
-            transaction.orderId,
-            "PENDING_CONFIRMATION",
-          ),
-        ]);
-      } else {
-        await this.updateTransactionByReference(targetReference as string, {
-          status: "FAILED",
+        // 6. ATOMIC DB TRANSACTION UPDATE
+        await this.orderRepository.transaction(async (tx: PrismaTx) => {
+          // Mark current transaction COMPLETED
+          await this.transactionRepo.updateTransactionByReference(
+            targetReference as string,
+            {
+              paidAt: new Date().toISOString(),
+              status: "COMPLETED",
+            },
+            tx,
+          );
+
+          // Advance order state if still in PENDING_PAYMENT
+          if (order.status === "PENDING_PAYMENT") {
+            await this.orderRepository.updateOrderStatus(
+              order.userId,
+              transaction.orderId,
+              "PENDING_CONFIRMATION",
+              tx,
+            );
+          }
         });
+      } else {
+        await this.transactionRepo.updateTransactionByReference(
+          targetReference as string,
+          {
+            status: "FAILED",
+          },
+        );
       }
 
       return {
@@ -169,7 +219,10 @@ export class TransactionService {
     reference: string,
     data: TransactionUpdateDTO,
   ) {
-    return await this.transactionRepo.updateTransaction(reference, data);
+    return await this.transactionRepo.updateTransactionByReference(
+      reference,
+      data,
+    );
   }
 
   async findTransactionByOrderId(orderId: string): Promise<any | null> {

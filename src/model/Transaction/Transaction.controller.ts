@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../../utils/async.js";
 import { TransactionService } from "./Transaction.service.js";
-import { TransactionRepo } from "./Transaction.repository.js";
+import { TransactionRepository } from "./Transaction.repository.js";
 import { OrderRepository } from "../order/Order.repository.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { paymentService } from "../../service/Payments/payment.service.js";
-const transactionRepo = new TransactionRepo();
+const transactionRepo = new TransactionRepository();
 
 const orderRepo = new OrderRepository();
 const transactionService = new TransactionService(

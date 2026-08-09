@@ -6,14 +6,15 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { OrderRepository } from "./Order.repository.js";
 import { UserRepository } from "../user/user.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
-import { TransactionRepo } from "../Transaction/Transaction.repository.js";
+import { TransactionRepository } from "../Transaction/Transaction.repository.js";
 import { prisma } from "../../config/database.js";
 import { StationRepository } from "../station/Station.repository.js";
 import { paymentService } from "../../service/Payments/payment.service.js";
+import { ApiError } from "../../utils/errorHandler.js";
 
 const orderRepository = new OrderRepository();
 const userRepository = new UserRepository();
-const transactionRepo = new TransactionRepo();
+const transactionRepo = new TransactionRepository();
 
 const stationRepo = new StationRepository();
 
@@ -26,6 +27,7 @@ const transactionService = new TransactionService(
 const orderService = new OrderService(
   orderRepository,
   userRepository,
+  transactionRepo,
   transactionService,
   stationRepo,
   prisma,
@@ -85,7 +87,35 @@ export class OrderController {
 
     res.json(new ApiResponse(200, orders, "Orders listed successfully"));
   });
+  static cancelOrder = asyncHandler(async (req: Request, res: Response) => {
+    const { orderId } = req.params;
+    const client = req.query.client as string; // "MOBILE" or "ADMIN"
 
+    // Fallback to logged-in user if req.params.userId is omitted in ADMIN routes
+    const actorId =
+      client === "MOBILE"
+        ? req.user?.userId
+        : req.params.userId || req.user?.userId;
+
+    const actorRole = req.user?.role;
+
+    if (!orderId) {
+      throw new ApiError(400, "Order ID is required");
+    }
+
+    if (!actorId) {
+      throw new ApiError(400, "Actor User ID could not be identified");
+    }
+
+    const updatedOrder = await orderService.cancelOrder(orderId as string, {
+      id: actorId as string,
+      role: actorRole as any,
+    });
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, updatedOrder, "Order cancelled successfully"));
+  });
   static getMobileUserOrders = OrderController.handleGetOrderPipeline("MOBILE");
   static getAdminUserOrders = OrderController.handleGetOrderPipeline("ADMIN");
 }

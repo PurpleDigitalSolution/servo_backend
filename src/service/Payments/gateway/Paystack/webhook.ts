@@ -5,32 +5,11 @@ import { config } from "../../../../config/config.js";
 import { prisma } from "../../../../config/database.js";
 import { PaystackWebhookEvent } from "../../../../interface/paystack.interface.js";
 import { OrderRepository } from "../../../../model/order/Order.repository.js";
-import { OrderService } from "../../../../model/order/Order.service.js";
-import { StationRepository } from "../../../../model/station/Station.repository.js";
-import { TransactionRepo } from "../../../../model/Transaction/Transaction.repository.js";
-import { TransactionService } from "../../../../model/Transaction/Transaction.service.js";
-import { UserRepository } from "../../../../model/user/user.repository.js";
-import { paymentService } from "../../payment.service.js";
+import { TransactionRepository } from "../../../../model/Transaction/Transaction.repository.js";
 
 // Component instantiation
-const transactionRepo = new TransactionRepo();
-const userRepository = new UserRepository();
+const transactionRepo = new TransactionRepository();
 const orderRepo = new OrderRepository();
-const stationRepo = new StationRepository();
-
-const transactionService = new TransactionService(
-  transactionRepo,
-  paymentService,
-  orderRepo,
-);
-
-const orderService = new OrderService(
-  orderRepo,
-  userRepository,
-  transactionService,
-  stationRepo,
-  prisma,
-);
 
 export const paystackWebhook = async (
   req: Request,
@@ -70,8 +49,7 @@ export const paystackWebhook = async (
       case "charge.success": {
         const reference = event.data.reference;
 
-        const transaction =
-          await transactionService.findTransactionByReference(reference);
+        const transaction = await transactionRepo.findByReference(reference);
 
         if (!transaction) {
           // Send 200 so Paystack doesn't re-send non-existent system records
@@ -80,7 +58,7 @@ export const paystackWebhook = async (
             .send("Transaction reference not found; ignored.");
         }
 
-        // Idempotency check
+        // Idempotency check on Transaction level
         if (
           transaction.status === "COMPLETED" ||
           transaction.status === "FAILED"
@@ -97,33 +75,56 @@ export const paystackWebhook = async (
             event.data.message ||
             "Payment failed or was cancelled";
 
-          await transactionService.updateTransactionByReference(reference, {
-            status: "FAILED",
-            failureReason,
-          });
-
-          if (transaction.orderId) {
-            await orderService.updateOrderStatusByTransaction(
-              transaction.orderId,
-              "PAYMENT_FAILED",
+          // Atomic execution for payment failure
+          await prisma.$transaction(async (tx) => {
+            await transactionRepo.updateTransactionByReference(
+              reference,
+              { status: "FAILED", failureReason },
+              tx,
             );
-          }
+
+            if (transaction.orderId) {
+              await orderRepo.updateOrderStatusByTransaction(
+                transaction.orderId,
+                "PAYMENT_FAILED",
+                tx,
+              );
+            }
+          });
 
           return res.status(200).send("Failed payment recorded.");
         }
 
-        // Update successful transaction
-        await transactionService.updateTransactionByReference(reference, {
-          paidAt: new Date().toISOString(),
-          status: "COMPLETED",
-        });
-
+        // Fetch Order details for idempotency check on Order level
         if (transaction.orderId) {
-          await orderService.updateOrderStatusByTransaction(
-            transaction.orderId,
-            "PENDING_CONFIRMATION",
-          );
+          const order = await orderRepo.findOrderById(transaction.orderId);
+          if (order && order.status !== "PENDING_PAYMENT") {
+            // Short-circuit if order is already processed or past payment stage
+            return res
+              .status(200)
+              .send("Order status already updated by another process.");
+          }
         }
+
+        // Atomic Transaction Execution for Successful Payment
+        await prisma.$transaction(async (tx) => {
+          await transactionRepo.updateTransactionByReference(
+            reference,
+            {
+              paidAt: new Date().toISOString(),
+              status: "COMPLETED",
+            },
+            tx,
+          );
+
+          if (transaction.orderId) {
+            await orderRepo.updateOrderStatusByTransaction(
+              transaction.orderId,
+              "PENDING_CONFIRMATION",
+              tx,
+            );
+          }
+        });
 
         return res.status(200).send("Charge processed successfully.");
       }
@@ -137,7 +138,7 @@ export const paystackWebhook = async (
     // Handle database race conditions gracefully without triggering retries
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
+      (error.code === "P2002" || error.code === "P2025")
     ) {
       return res
         .status(200)
