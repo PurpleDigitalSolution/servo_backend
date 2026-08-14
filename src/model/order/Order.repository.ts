@@ -30,6 +30,11 @@ export interface IOrderRepository {
     status: OrderStatus,
     tx?: PrismaTx,
   ): Promise<any>;
+  assignOrder: (
+    orderId: string,
+    agentId: string,
+    tx?: PrismaTx,
+  ) => Promise<any>;
   getOrderStatus(orderId: string, tx?: PrismaTx): Promise<OrderStatus | null>;
   deleteOrder(orderId: string, tx?: PrismaTx): Promise<any>;
   transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T>;
@@ -189,6 +194,23 @@ export class OrderRepository implements IOrderRepository {
   async deleteOrder(orderId: string, tx: PrismaTx = prisma) {
     return await tx.order.delete({
       where: { id: orderId },
+    });
+  }
+  async assignOrder(orderId: string, agentId: string, tx: PrismaTx = prisma) {
+    return await tx.order.update({
+      where: { id: orderId },
+      data: { agentId, status: "ASSIGNED" },
+    });
+  }
+  async getUnassignedOrders(tx: PrismaTx = prisma) {
+    return tx.order.findMany({
+      where: {
+        agentId: null,
+        status: "PENDING_CONFIRMATION",
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
     });
   }
 }

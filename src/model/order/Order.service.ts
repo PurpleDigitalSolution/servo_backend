@@ -53,7 +53,7 @@ export class OrderService {
     // 3. Server-Controlled Calculations (Mitigates Client-Side Pricing Manipulation)
     // TODO: Pull these rules dynamically from a config service table mapped to the station location
     const vatRate = 0.075; // Example: 7.5% baseline tax
-    const baselineDeliveryFee = 15.0;
+    const baselineDeliveryFee = 1200;
 
     const fuelSubtotal = quantity * unitPrice;
     const calculatedVat = Number((fuelSubtotal * vatRate).toFixed(2));
