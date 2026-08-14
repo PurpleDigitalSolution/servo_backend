@@ -4,25 +4,47 @@ import { OrderStatus, PrismaTx } from "../../types/general.js";
 
 export interface IOrderRepository {
   createOrder(orderData: OrderDTO, tx?: PrismaTx): Promise<any>;
-  getOrders(skip: number, take: number): Promise<any[]>;
-  getUserOrders(userId: string, skip: number, take: number): Promise<any[]>;
-  countOrders(): Promise<number>;
-  findOrderById(orderId: string): Promise<any | null>;
-  updateOrder(orderId: string, orderData: Partial<OrderDTO>): Promise<any>;
+
+  getOrders(skip: number, take: number, tx?: PrismaTx): Promise<any[]>;
+  getUserOrders(
+    userId: string,
+    skip: number,
+    take: number,
+    tx?: PrismaTx,
+  ): Promise<any[]>;
+  countOrders(tx?: PrismaTx): Promise<number>;
+  findOrderById(orderId: string, tx?: PrismaTx): Promise<any | null>;
+  updateOrder(
+    orderId: string,
+    orderData: Partial<OrderDTO>,
+    tx?: PrismaTx,
+  ): Promise<any>;
   updateOrderStatus(
     userId: string,
     orderId: string,
     status: OrderStatus,
+    tx?: PrismaTx,
   ): Promise<any>;
   updateOrderStatusByTransaction(
     orderId: string,
     status: OrderStatus,
+    tx?: PrismaTx,
   ): Promise<any>;
-  getOrderStatus(orderId: string): Promise<OrderStatus | null>;
-  deleteOrder(orderId: string): Promise<any>;
+  assignOrder: (
+    orderId: string,
+    agentId: string,
+    tx?: PrismaTx,
+  ) => Promise<any>;
+  getOrderStatus(orderId: string, tx?: PrismaTx): Promise<OrderStatus | null>;
+  deleteOrder(orderId: string, tx?: PrismaTx): Promise<any>;
+  transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T>;
 }
 
 export class OrderRepository implements IOrderRepository {
+  async transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T> {
+    return await prisma.$transaction(fn);
+  }
+
   async createOrder(orderData: OrderDTO, tx: PrismaTx = prisma) {
     return await tx.order.create({
       data: {
@@ -49,8 +71,8 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async getOrders(skip: number, take: number) {
-    return await prisma.order.findMany({
+  async getOrders(skip: number, take: number, tx: PrismaTx = prisma) {
+    return await tx.order.findMany({
       skip,
       take,
       include: {
@@ -79,8 +101,13 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async getUserOrders(userId: string, skip: number, take: number) {
-    return await prisma.order.findMany({
+  async getUserOrders(
+    userId: string,
+    skip: number,
+    take: number,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.findMany({
       where: { customerId: userId },
       skip,
       take,
@@ -93,12 +120,12 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async countOrders() {
-    return await prisma.order.count();
+  async countOrders(tx: PrismaTx = prisma) {
+    return await tx.order.count();
   }
 
-  async findOrderById(orderId: string) {
-    return await prisma.order.findUnique({
+  async findOrderById(orderId: string, tx: PrismaTx = prisma) {
+    return await tx.order.findUnique({
       where: { id: orderId },
       include: {
         station: {
@@ -119,8 +146,12 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async updateOrder(orderId: string, orderData: Partial<OrderDTO>) {
-    return await prisma.order.update({
+  async updateOrder(
+    orderId: string,
+    orderData: Partial<OrderDTO>,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.update({
       where: { id: orderId },
       data: orderData,
     });
@@ -130,29 +161,56 @@ export class OrderRepository implements IOrderRepository {
     userId: string,
     orderId: string,
     status: OrderStatus,
+    tx: PrismaTx = prisma,
   ) {
-    return await prisma.order.update({
+    return await tx.order.update({
       where: { id: orderId, customerId: userId },
       data: { status },
     });
   }
 
-  async updateOrderStatusByTransaction(orderId: string, status: OrderStatus) {
-    return await prisma.order.update({
+  async updateOrderStatusByTransaction(
+    orderId: string,
+    status: OrderStatus,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.update({
       where: { id: orderId },
       data: { status },
     });
   }
-  async getOrderStatus(orderId: string): Promise<OrderStatus | null> {
-    const order = await prisma.order.findUnique({
+
+  async getOrderStatus(
+    orderId: string,
+    tx: PrismaTx = prisma,
+  ): Promise<OrderStatus | null> {
+    const order = await tx.order.findUnique({
       where: { id: orderId },
       select: { status: true },
     });
     return order ? (order.status as unknown as OrderStatus) : null;
   }
-  async deleteOrder(orderId: string) {
-    return await prisma.order.delete({
+
+  async deleteOrder(orderId: string, tx: PrismaTx = prisma) {
+    return await tx.order.delete({
       where: { id: orderId },
+    });
+  }
+  async assignOrder(orderId: string, agentId: string, tx: PrismaTx = prisma) {
+    return await tx.order.update({
+      where: { id: orderId },
+      data: { agentId, status: "ASSIGNED" },
+    });
+  }
+  async getUnassignedOrders(tx: PrismaTx = prisma) {
+    return tx.order.findMany({
+      where: {
+        agentId: null,
+        status: "PENDING_CONFIRMATION",
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
     });
   }
 }
