@@ -218,3 +218,15 @@ export const SstationResponseSchema = z.object({
 export const stationRequestSchema = z.object({
   body: stationSchema,
 });
+
+export const updateStationRequestSchema = z.object({
+  params: z.object({
+    id: z.string().uuid().openapi({
+      description: "The unique identifier of the station to be updated",
+      example: "123e4567-e89b-12d3-a456-426614174000",
+    }),
+  }),
+  body: stationSchema.partial().openapi({
+    description: "The fields of the station to be updated",
+  }),
+});
