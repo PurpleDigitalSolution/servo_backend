@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/errorHandler.js";
-import { Permission } from "../generated/prisma/browser.js";
+
 export const authorize = (requiredRoles: string | string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const user = req.user;
@@ -37,21 +37,56 @@ export const authorize = (requiredRoles: string | string[]) => {
 export const authorizePermission = (requiredPermissions: string | string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const user = req.user;
+
     if (!user) {
       throw new ApiError(401, "Unauthorized - No user session found");
     }
-    const allowedPermissions = Array.isArray(requiredPermissions)
-      ? requiredPermissions
-      : [requiredPermissions];
-    const hasPermission = allowedPermissions.every((perm) =>
-      user.permissions?.includes(perm as Permission),
+
+    // Bypass check immediately for SUPER_ADMIN
+    if (user.role === "SUPER_ADMIN") {
+      return next();
+    }
+
+    // 1. Normalize required permissions array & trim whitespace
+    const requiredList = (
+      Array.isArray(requiredPermissions)
+        ? requiredPermissions
+        : [requiredPermissions]
+    ).map((p) => String(p).trim().toUpperCase());
+
+    // 2. Safely extract user permissions (handles both string[] and object[])
+    const rawUserPermissions: unknown = user.permissions ?? [];
+
+    let userPermsList: string[] = [];
+
+    if (Array.isArray(rawUserPermissions)) {
+      userPermsList = rawUserPermissions.map((item) => {
+        if (typeof item === "string") {
+          return item.trim().toUpperCase();
+        }
+        if (typeof item === "object" && item !== null) {
+          // Extracts permission name if stored as object like { name: "ORDER_READ" } or { permission: "ORDER_READ" }
+          const obj = item as Record<string, unknown>;
+          return String(obj.name || obj.permission || obj.code || "")
+            .trim()
+            .toUpperCase();
+        }
+        return String(item).trim().toUpperCase();
+      });
+    }
+
+    // 3. Perform match check (OR logic with .some)
+    const hasPermission = requiredList.some((requiredPerm) =>
+      userPermsList.includes(requiredPerm),
     );
+
     if (!hasPermission) {
       throw new ApiError(
         403,
         "Forbidden - You do not have permission to access this resource",
       );
     }
+
     next();
   };
 };

@@ -1,4 +1,4 @@
-import { UserRole } from "../types/general.js";
+import { AccountStatus, UserRole, workStatus } from "../types/general.js";
 
 export interface CreateUserDTO {
   email: string;
@@ -14,7 +14,8 @@ export interface CreateUserDTO {
 export interface userWithoutPassword {
   id: string;
   email: string;
-  role: string;
+  role: UserRole;
+  stationId?: string;
   accountStatus: "ACTIVE" | "SUSPENDED" | "BANNED";
   userProfile: {
     userId: string;
@@ -26,10 +27,37 @@ export interface userWithoutPassword {
   } | null;
   createdAt: Date;
 }
+
+export interface IAgent {
+  id: string;
+  email: string;
+  role: UserRole;
+  accountStatus: "ACTIVE" | "SUSPENDED" | "BANNED";
+  userProfile: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    dateOfBirth: Date;
+    address: string;
+  } | null;
+  createdAt: Date;
+  stationId: string | null;
+  workStatus: workStatus | null;
+}
+
 export interface updateProfileDTO {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
   dateOfBirth?: Date;
   address?: string;
+}
+export interface UpdateAccountStatusDTO {
+  userId: string;
+  adminId?: string;
+  status: AccountStatus;
+  metaData?: {
+    reason: string;
+  };
 }

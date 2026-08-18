@@ -1,24 +1,23 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { OrderDTO, OrderResponseDTO } from "../../interface/dto/order.dto.js";
+import { IOrderAssignmentService } from "../../service/order-assignment/order-assignment.service.js";
 import { OrderStatus, PrismaTx } from "../../types/general.js";
 import { ApiError } from "../../utils/errorHandler.js";
-import {
-  canTransition,
-  isRoleAllowedToSetStatus,
-  UserRole,
-} from "../../utils/status.js";
+import { canChangeOrderStatus, UserRole } from "../../utils/status.js";
+import { IAgentRepository } from "../agent/agent.repository.js";
 import { IStationRepository } from "../station/Station.repository.js";
 import { ITransactionRepository } from "../Transaction/Transaction.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
 import { IOrderRepository } from "./Order.repository.js";
 
-// Basic interface descriptions to ensure structural alignment with injected user repo instance
 export interface IUserRepository {
   findUserById(userId: string): Promise<any | null>;
 }
+
 export interface ActorContext {
   id: string;
   role: UserRole;
+  stationId?: string;
 }
 
 export class OrderService {
@@ -28,6 +27,8 @@ export class OrderService {
     private readonly transactionRepo: ITransactionRepository,
     private readonly transactionService: TransactionService,
     private readonly stationRepository: IStationRepository,
+    private readonly agentRepository: IAgentRepository,
+    private readonly orderAssignment: IOrderAssignmentService,
     private readonly prisma: PrismaClient,
   ) {}
 
@@ -41,7 +42,7 @@ export class OrderService {
       );
     }
 
-    // 2. Parallel Dependency Check (Fast-Fail Layer)
+    // 1. Parallel Dependency Check
     const [user, station] = await Promise.all([
       this.userRepository.findUserById(customerId),
       this.stationRepository.findStationById(stationId),
@@ -50,9 +51,8 @@ export class OrderService {
     if (!user) throw new ApiError(404, "Target customer profile not found.");
     if (!station) throw new ApiError(404, "Target filling station not found.");
 
-    // 3. Server-Controlled Calculations (Mitigates Client-Side Pricing Manipulation)
-    // TODO: Pull these rules dynamically from a config service table mapped to the station location
-    const vatRate = 0.075; // Example: 7.5% baseline tax
+    // 2. Server-Controlled Calculations
+    const vatRate = 0.075; // 7.5% baseline tax
     const baselineDeliveryFee = 1200;
 
     const fuelSubtotal = quantity * unitPrice;
@@ -61,10 +61,9 @@ export class OrderService {
       (fuelSubtotal + calculatedVat + baselineDeliveryFee).toFixed(2),
     );
 
-    // 4. Atomic Execution Block (Protects Against Orphaned Records)
+    // 3. Atomic Execution Block
     try {
       return await this.prisma.$transaction(async (tx: any) => {
-        // Save order using transactional context
         const order = await this.orderRepository.createOrder(
           {
             ...orderData,
@@ -76,7 +75,6 @@ export class OrderService {
           tx,
         );
 
-        // Remote financial initialization gate
         const transaction = await this.transactionService.initialize({
           orderId: order.id,
           amount: totalAmount,
@@ -96,9 +94,8 @@ export class OrderService {
         };
       });
     } catch (error: any) {
-      // Clean handling of explicit engine exceptions
       if (error instanceof ApiError) throw error;
-
+      console.log(error);
       if (
         error.code === "P2003" ||
         error.code === "23503" ||
@@ -120,23 +117,37 @@ export class OrderService {
   async listOrders(
     page: number,
     limit: number,
+    actor?: ActorContext,
   ): Promise<{ page: number; limit: number; total: number; orders: any[] }> {
     const take = Math.min(100, Math.max(1, Number(limit) || 50));
     const pageNum = Math.max(1, Number(page) || 1);
     const skip = (pageNum - 1) * take;
 
+    const filters: { stationId?: string; agentId?: string } = {};
+
+    if (actor?.role === "AGENT") {
+      filters.agentId = actor.id;
+      if (actor.stationId) {
+        filters.stationId = actor.stationId;
+      }
+    }
+
     const [orderCount, orders] = await Promise.all([
-      this.orderRepository.countOrders(),
-      this.orderRepository.getOrders(skip, take),
+      this.orderRepository.countOrders(filters),
+      this.orderRepository.getOrders({
+        skip,
+        take,
+        stationId: filters.stationId,
+        agentId: filters.agentId,
+      }),
     ]);
 
-    const results = {
+    return {
       page: pageNum,
       limit: take,
       total: orderCount,
+      orders,
     };
-
-    return { ...results, orders: orders };
   }
 
   async getUserOrders(
@@ -160,120 +171,126 @@ export class OrderService {
     newStatus: OrderStatus,
     actor: ActorContext,
   ): Promise<any> {
-    // 1. Delegate directly to cancelOrder if target status is CANCELLED
+    // Delegate to cancelOrder if targeting CANCELLED
     if (newStatus === "CANCELLED") {
       return await this.cancelOrder(orderId, actor);
     }
 
-    // Fetch Order & User in parallel
     const [order, user] = await Promise.all([
       this.orderRepository.findOrderById(orderId),
       this.userRepository.findUserById(actor.id),
     ]);
 
-    if (!order) {
-      throw new ApiError(404, "Order not found");
-    }
+    if (!order) throw new ApiError(404, "Order not found");
+    if (!user) throw new ApiError(404, "User not found");
 
-    if (!user) {
-      throw new ApiError(404, "User not found");
-    }
-
-    // 2. Ownership / Assignment Access Guard
+    // 1. Ownership & Access Guard
     if (actor.role === "CUSTOMER" && order.customerId !== actor.id) {
       throw new ApiError(403, "Forbidden: You can only manage your own orders");
     }
 
-    if (actor.role === "AGENT" && order.agentId !== actor.id) {
+    if (actor.role === "AGENT" && order.assignedAgentId !== actor.id) {
       throw new ApiError(403, "Forbidden: You are not assigned to this order");
     }
 
-    // Idempotency: Return early if already in target status
+    // Idempotency check
     if (order.status === newStatus) {
       return order;
     }
 
-    // 3. State Machine Transition Guard
-    if (!canTransition(order.status, newStatus)) {
+    // 2. Unified State Transition & Authorization Guard
+    const transitionCheck = canChangeOrderStatus(
+      order.status,
+      newStatus,
+      actor.role,
+    );
+
+    if (!transitionCheck.allowed) {
       throw new ApiError(
         400,
-        `Invalid status transition from '${order.status}' to '${newStatus}'`,
+        transitionCheck.reason || "Invalid status transition",
       );
     }
 
-    // 4. Role Authorization Guard
-    if (!isRoleAllowedToSetStatus(actor.role, newStatus)) {
-      throw new ApiError(
-        403,
-        `Forbidden: '${actor.role}' role is not authorized to transition orders to '${newStatus}'`,
-      );
-    }
-
-    // 5. Execute Update (Atomically)
+    // 3. Execute Update Atomically
     return await this.orderRepository.transaction(async (tx: PrismaTx) => {
-      return await this.orderRepository.updateOrderStatus(
-        order.customerId,
+      // free agent assigned to the order
+      const statusesToFreeAgent: OrderStatus[] = [
+        "IN_TRANSIT",
+        "COMPLETED",
+        "CANCELLED",
+      ];
+      if (statusesToFreeAgent.includes(newStatus) && order.assignedAgentId) {
+        await this.agentRepository.syncAgentWorkStatus(
+          order.assignedAgentId,
+          tx,
+        );
+        if (newStatus === "COMPLETED") {
+          await this.orderRepository.completeOrderByAgent(
+            orderId,
+            order.assignedAgentId,
+            tx,
+          );
+        }
+      }
+      return await this.orderRepository.updateOrderStatusByTransaction(
         orderId,
         newStatus,
         tx,
       );
     });
   }
-  async cancelOrder(orderId: string, actor: ActorContext): Promise<void> {
+
+  async cancelOrder(orderId: string, actor: ActorContext): Promise<any> {
     const [order, user] = await Promise.all([
       this.orderRepository.findOrderById(orderId),
       this.userRepository.findUserById(actor.id),
     ]);
 
-    if (!order) {
-      throw new ApiError(404, "Order not found");
-    }
-    if (!user) {
-      throw new ApiError(404, "User not found");
-    }
+    if (!order) throw new ApiError(404, "Order not found");
+    if (!user) throw new ApiError(404, "User not found");
 
     // Authorization checks
     if (actor.role === "CUSTOMER" && order.customerId !== actor.id) {
       throw new ApiError(403, "Forbidden: You can only cancel your own orders");
     }
-    if (actor.role === "AGENT" && order.agentId !== actor.id) {
+    if (actor.role === "AGENT" && order.assignedAgentId !== actor.id) {
       throw new ApiError(403, "Forbidden: You are not assigned to this order");
     }
 
-    // Idempotency: If already cancelled, return early without error
+    // Idempotency: Return existing order if already cancelled
     if (order.status === "CANCELLED") {
-      return;
+      return order;
     }
 
-    // State Machine Validation
-    if (!canTransition(order.status, "CANCELLED")) {
+    // Unified State Transition & Authorization Guard for Cancellation
+    const transitionCheck = canChangeOrderStatus(
+      order.status,
+      "CANCELLED",
+      actor.role,
+    );
+
+    if (!transitionCheck.allowed) {
       throw new ApiError(
         400,
-        `Invalid status transition from '${order.status}' to 'CANCELLED'`,
-      );
-    }
-    if (!isRoleAllowedToSetStatus(actor.role, "CANCELLED")) {
-      throw new ApiError(
-        403,
-        `Forbidden: '${actor.role}' role is not authorized to cancel orders`,
+        transitionCheck.reason || "Order cannot be cancelled",
       );
     }
 
     // Execute order status and pending transaction cancellation inside an atomic transaction
-    await this.orderRepository.transaction(async (tx: PrismaTx) => {
-      // 1. Update Order Status
-      await this.orderRepository.updateOrderStatus(
-        order.customerId,
-        orderId,
-        "CANCELLED",
-        tx,
-      );
+    return await this.orderRepository.transaction(async (tx: PrismaTx) => {
+      const updatedOrder =
+        await this.orderRepository.updateOrderStatusByTransaction(
+          orderId,
+          "CANCELLED",
+          tx,
+        );
 
-      // 2. Mark any associated PENDING transaction as FAILED/CANCELLED
       const pendingTx = await this.transactionRepo.findPendingByOrderId(
         orderId,
         tx,
       );
+
       if (pendingTx) {
         await this.transactionRepo.updateTransactionByReference(
           pendingTx.reference,
@@ -284,8 +301,29 @@ export class OrderService {
           tx,
         );
       }
+      if (
+        actor.role === "AGENT" ||
+        actor.role === "ADMIN" ||
+        actor.role === "SUPER_ADMIN"
+      ) {
+        await this.orderRepository.cancelOrderByAgent(
+          orderId,
+          order.assignedAgentId,
+          tx,
+        );
+      } else if (actor.role === "CUSTOMER") {
+        await tx.order.update({
+          where: { id: orderId, customerId: actor.id },
+          data: {
+            status: "CANCELLED",
+            cancelledById: actor.id,
+          },
+        });
+      }
+      return updatedOrder;
     });
   }
+
   async updateOrderStatusByTransaction(
     orderId: string,
     status: OrderStatus,
@@ -307,5 +345,8 @@ export class OrderService {
       }
       throw error;
     }
+  }
+  async assignOrderToAgent(agentId: string, orderId: string) {
+    return await this.orderAssignment.assignAgentToOrder(orderId, agentId);
   }
 }

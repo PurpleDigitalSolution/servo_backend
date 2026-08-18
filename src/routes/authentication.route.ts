@@ -16,7 +16,7 @@ import {
   resetPasswordSchema,
   sendTestEmailSchema,
   verifyOtpSchema,
-  changePasswordSchema, // 👈 Add validation schemas for password updates
+  changePasswordSchema,
   changeDefaultPasswordSchema,
   AccountStatusUpdateRequestSchema,
 } from "../validation/authentication.validation.js";

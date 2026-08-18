@@ -1,6 +1,7 @@
 import app from "./app.js";
 import config from "./config/config.js";
 import { prisma } from "./config/database.js";
+import { assignPendingOrder } from "./job/order.job.js";
 
 let server: ReturnType<typeof app.listen>;
 
@@ -12,6 +13,8 @@ const startServer = async () => {
       console.log(`Server is running on port ${PORT}`);
       console.log(`http://localhost:${PORT}/api/v1/health`);
     });
+    console.log("loading cron jobs");
+    assignPendingOrder();
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);

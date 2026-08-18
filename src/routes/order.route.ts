@@ -2,6 +2,7 @@ import express from "express";
 import { OrderController } from "../model/order/Order.controller.js";
 import { validate } from "../middleware/validation.js";
 import {
+  assignAgentToOrderRequest,
   createOrderRequest,
   idRequestSchema,
 } from "../validation/order.validation.js";
@@ -73,7 +74,7 @@ OrderRouter.get(
 OrderRouter.put(
   "/:orderId/status",
   authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN", "AGENT"]),
-  authorizePermission(["ORDER_UPDATE"]),
+  authorizePermission(["ORDER_UPDATE", "ORDER_APPROVE", "ORDER_CANCEL"]),
   OrderController.handleUpdateOrderPipeline,
 );
 
@@ -84,6 +85,14 @@ OrderRouter.get(
   authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN", "AGENT"]),
   authorizePermission(["ORDER_READ"]),
   OrderController.getOrderById,
+);
+
+OrderRouter.put(
+  "/:orderId/agent",
+  validate(assignAgentToOrderRequest),
+  authorize(["ADMIN", "SUPER_ADMIN", "AGENT"]),
+  authorizePermission(["ORDER_UPDATE"]),
+  OrderController.assignOrderToAgent,
 );
 
 export default OrderRouter;

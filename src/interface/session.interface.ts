@@ -7,6 +7,7 @@ export interface SessionPayload {
   permissions?: Permission[];
   client: "MOBILE" | "ADMIN";
   mustChangePassword?: boolean;
+  stationId?: string;
   accountStatus: "ACTIVE" | "SUSPENDED" | "BANNED";
 }
 export interface jwtSignReturnType {

@@ -70,3 +70,16 @@ export const getAvailableStations = asyncHandler(
       );
   },
 );
+export const updateStation = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const stationData = req.body;
+    const result = await stationService.updateStation(
+      id as string,
+      stationData,
+    );
+    res
+      .status(200)
+      .json(new ApiResponse(200, result, "Station updated successfully"));
+  },
+);

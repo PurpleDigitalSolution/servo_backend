@@ -5,39 +5,71 @@ import { OrderStatus, PrismaTx } from "../../types/general.js";
 export interface IOrderRepository {
   createOrder(orderData: OrderDTO, tx?: PrismaTx): Promise<any>;
 
-  getOrders(skip: number, take: number, tx?: PrismaTx): Promise<any[]>;
+  getOrders({
+    skip,
+    take,
+    stationId,
+    agentId,
+    tx,
+  }: {
+    skip: number;
+    take: number;
+    stationId?: string;
+    agentId?: string;
+    tx?: PrismaTx;
+  }): Promise<any[]>;
+
   getUserOrders(
     userId: string,
     skip: number,
     take: number,
     tx?: PrismaTx,
   ): Promise<any[]>;
-  countOrders(tx?: PrismaTx): Promise<number>;
+
+  countOrders(
+    filters?: { stationId?: string; agentId?: string },
+    tx?: PrismaTx,
+  ): Promise<number>;
+
   findOrderById(orderId: string, tx?: PrismaTx): Promise<any | null>;
+
   updateOrder(
     orderId: string,
     orderData: Partial<OrderDTO>,
     tx?: PrismaTx,
   ): Promise<any>;
+
   updateOrderStatus(
     userId: string,
     orderId: string,
     status: OrderStatus,
     tx?: PrismaTx,
   ): Promise<any>;
+
   updateOrderStatusByTransaction(
     orderId: string,
     status: OrderStatus,
     tx?: PrismaTx,
   ): Promise<any>;
-  assignOrder: (
+
+  assignOrder(orderId: string, agentId: string, tx?: PrismaTx): Promise<any>;
+
+  getOrderStatus(orderId: string, tx?: PrismaTx): Promise<OrderStatus | null>;
+  deleteOrder(orderId: string, tx?: PrismaTx): Promise<any>;
+
+  getUnassignedOrders(tx?: PrismaTx): Promise<any[]>;
+
+  transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T>;
+  completeOrderByAgent(
     orderId: string,
     agentId: string,
     tx?: PrismaTx,
-  ) => Promise<any>;
-  getOrderStatus(orderId: string, tx?: PrismaTx): Promise<OrderStatus | null>;
-  deleteOrder(orderId: string, tx?: PrismaTx): Promise<any>;
-  transaction<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T>;
+  ): Promise<any>;
+  cancelOrderByAgent(
+    orderId: string,
+    agentId: string,
+    tx?: PrismaTx,
+  ): Promise<any>;
 }
 
 export class OrderRepository implements IOrderRepository {
@@ -71,8 +103,26 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async getOrders(skip: number, take: number, tx: PrismaTx = prisma) {
+  async getOrders({
+    skip,
+    take,
+    stationId,
+    agentId,
+    tx = prisma,
+  }: {
+    skip: number;
+    take: number;
+    stationId?: string;
+    agentId?: string;
+    tx?: PrismaTx;
+  }) {
+    const whereClause: { stationId?: string; assignedAgentId?: string } = {};
+
+    if (stationId) whereClause.stationId = stationId;
+    if (agentId) whereClause.assignedAgentId = agentId;
+
     return await tx.order.findMany({
+      where: whereClause,
       skip,
       take,
       include: {
@@ -120,8 +170,19 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async countOrders(tx: PrismaTx = prisma) {
-    return await tx.order.count();
+  // Inside OrderRepository class:
+  async countOrders(
+    filters?: { stationId?: string; agentId?: string },
+    tx: PrismaTx = prisma,
+  ): Promise<number> {
+    const whereClause: { stationId?: string; assignedAgentId?: string } = {};
+
+    if (filters?.stationId) whereClause.stationId = filters.stationId;
+    if (filters?.agentId) whereClause.assignedAgentId = filters.agentId;
+
+    return await tx.order.count({
+      where: whereClause,
+    });
   }
 
   async findOrderById(orderId: string, tx: PrismaTx = prisma) {
@@ -140,6 +201,11 @@ export class OrderRepository implements IOrderRepository {
           select: {
             id: true,
             email: true,
+            userProfile: {
+              select: {
+                phoneNumber: true,
+              },
+            },
           },
         },
       },
@@ -196,20 +262,60 @@ export class OrderRepository implements IOrderRepository {
       where: { id: orderId },
     });
   }
+
   async assignOrder(orderId: string, agentId: string, tx: PrismaTx = prisma) {
     return await tx.order.update({
       where: { id: orderId },
-      data: { agentId, status: "ASSIGNED" },
+      data: { assignedAgentId: agentId },
     });
   }
+  async assignOrderToDriver(
+    orderId: string,
+    agentId: string,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.update({
+      where: { id: orderId },
+      data: { driverId: agentId, status: "ASSIGNED" },
+    });
+  }
+
   async getUnassignedOrders(tx: PrismaTx = prisma) {
-    return tx.order.findMany({
+    return await tx.order.findMany({
       where: {
-        agentId: null,
+        assignedAgentId: null,
         status: "PENDING_CONFIRMATION",
       },
       orderBy: {
         createdAt: "asc",
+      },
+    });
+  }
+  async completeOrderByAgent(
+    orderId: string,
+    agentId: string,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.update({
+      where: { id: orderId, assignedAgentId: agentId },
+      data: {
+        status: "COMPLETED",
+        completedById: agentId,
+        assignedAgentId: null,
+      },
+    });
+  }
+  async cancelOrderByAgent(
+    orderId: string,
+    agentId: string,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.update({
+      where: { id: orderId, assignedAgentId: agentId },
+      data: {
+        status: "CANCELLED",
+        cancelledById: agentId,
+        assignedAgentId: null,
       },
     });
   }

@@ -1117,6 +1117,8 @@ export type TransactionIsolationLevel =
 
 export const UserScalarFieldEnum = {
   id: "id",
+  stationId: "stationId",
+  workStatus: "workStatus",
   email: "email",
   balance: "balance",
   passwordHash: "passwordHash",
@@ -1128,6 +1130,9 @@ export const UserScalarFieldEnum = {
   otp: "otp",
   otpExpiry: "otpExpiry",
   mustChangePassword: "mustChangePassword",
+  suspensionReason: "suspensionReason",
+  suspendedAt: "suspendedAt",
+  suspendedById: "suspendedById",
   createdAt: "createdAt",
   passwordChangedAt: "passwordChangedAt",
   updatedAt: "updatedAt",
@@ -1329,6 +1334,22 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   "String[]"
+>;
+
+/**
+ * Reference to a field of type 'workStatus'
+ */
+export type EnumworkStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "workStatus"
+>;
+
+/**
+ * Reference to a field of type 'workStatus[]'
+ */
+export type ListEnumworkStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "workStatus[]"
 >;
 
 /**

@@ -48,6 +48,7 @@ export class AuthController {
         userId: userWithoutPassword.id,
         email: userWithoutPassword.email,
         role: userWithoutPassword.role as UserRole,
+        stationId: userWithoutPassword.stationId,
         permissions:
           userWithoutPassword.role === "ADMIN"
             ? ROLE_PERMISSIONS.ADMIN
@@ -98,8 +99,18 @@ export class AuthController {
 
   readonly accountStatusUpdate = asyncHandler(
     async (req: Request, res: Response) => {
-      const { userId, status } = req.body;
-      await this.authService.accountStatusUpdate(userId, status);
+      const { userId, status, data } = req.body;
+
+      // Extract admin/actor ID from auth middleware (e.g., req.user.id)
+      const adminId = req.user?.userId;
+
+      await this.authService.accountStatusUpdate({
+        userId,
+        status,
+        adminId,
+        metaData: data ? { reason: data.reason } : undefined,
+      });
+
       return res
         .status(200)
         .json(

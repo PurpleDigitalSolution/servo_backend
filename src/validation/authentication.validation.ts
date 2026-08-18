@@ -104,12 +104,34 @@ export const verifyOtpBodySchema = z.object({
     message: "Purpose must be either 'FORGET_PASSWORD' or 'EMAIL_VERIFICATION'",
   }),
 });
-export const updateAccountStatusBodySchema = z.object({
-  userId: z.string().uuid({ message: "Invalid user ID format" }),
-  status: z.enum(["SUSPENDED", "BANNED", "ACTIVE"], {
-    message: "Status must be either 'SUSPENDED' or 'BANNED' or 'ACTIVE'",
-  }),
-});
+export const updateAccountStatusBodySchema = z
+  .object({
+    userId: z.string().uuid({ message: "Invalid user ID format" }),
+    status: z.enum(["SUSPENDED", "BANNED", "ACTIVE"], {
+      message: "Status must be either 'SUSPENDED', 'BANNED', or 'ACTIVE'",
+    }),
+    data: z
+      .object({
+        reason: z
+          .string()
+          .trim()
+          .min(3, { message: "Reason must be at least 3 characters" }),
+      })
+      .optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (
+      (val.status === "SUSPENDED" || val.status === "BANNED") &&
+      !val.data?.reason
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "A reason is required when suspending or banning an account",
+        path: ["data", "reason"],
+      });
+    }
+  });
+
 export const AccountStatusUpdateRequestSchema = z.object({
   body: updateAccountStatusBodySchema,
 });

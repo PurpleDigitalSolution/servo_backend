@@ -36,6 +36,8 @@ export type UserSumAggregateOutputType = {
 
 export type UserMinAggregateOutputType = {
   id: string | null;
+  stationId: string | null;
+  workStatus: $Enums.workStatus | null;
   email: string | null;
   balance: runtime.Decimal | null;
   passwordHash: string | null;
@@ -47,6 +49,9 @@ export type UserMinAggregateOutputType = {
   otp: string | null;
   otpExpiry: Date | null;
   mustChangePassword: boolean | null;
+  suspensionReason: string | null;
+  suspendedAt: Date | null;
+  suspendedById: string | null;
   createdAt: Date | null;
   passwordChangedAt: Date | null;
   updatedAt: Date | null;
@@ -54,6 +59,8 @@ export type UserMinAggregateOutputType = {
 
 export type UserMaxAggregateOutputType = {
   id: string | null;
+  stationId: string | null;
+  workStatus: $Enums.workStatus | null;
   email: string | null;
   balance: runtime.Decimal | null;
   passwordHash: string | null;
@@ -65,6 +72,9 @@ export type UserMaxAggregateOutputType = {
   otp: string | null;
   otpExpiry: Date | null;
   mustChangePassword: boolean | null;
+  suspensionReason: string | null;
+  suspendedAt: Date | null;
+  suspendedById: string | null;
   createdAt: Date | null;
   passwordChangedAt: Date | null;
   updatedAt: Date | null;
@@ -72,6 +82,8 @@ export type UserMaxAggregateOutputType = {
 
 export type UserCountAggregateOutputType = {
   id: number;
+  stationId: number;
+  workStatus: number;
   email: number;
   balance: number;
   passwordHash: number;
@@ -83,6 +95,9 @@ export type UserCountAggregateOutputType = {
   otp: number;
   otpExpiry: number;
   mustChangePassword: number;
+  suspensionReason: number;
+  suspendedAt: number;
+  suspendedById: number;
   createdAt: number;
   passwordChangedAt: number;
   updatedAt: number;
@@ -99,6 +114,8 @@ export type UserSumAggregateInputType = {
 
 export type UserMinAggregateInputType = {
   id?: true;
+  stationId?: true;
+  workStatus?: true;
   email?: true;
   balance?: true;
   passwordHash?: true;
@@ -110,6 +127,9 @@ export type UserMinAggregateInputType = {
   otp?: true;
   otpExpiry?: true;
   mustChangePassword?: true;
+  suspensionReason?: true;
+  suspendedAt?: true;
+  suspendedById?: true;
   createdAt?: true;
   passwordChangedAt?: true;
   updatedAt?: true;
@@ -117,6 +137,8 @@ export type UserMinAggregateInputType = {
 
 export type UserMaxAggregateInputType = {
   id?: true;
+  stationId?: true;
+  workStatus?: true;
   email?: true;
   balance?: true;
   passwordHash?: true;
@@ -128,6 +150,9 @@ export type UserMaxAggregateInputType = {
   otp?: true;
   otpExpiry?: true;
   mustChangePassword?: true;
+  suspensionReason?: true;
+  suspendedAt?: true;
+  suspendedById?: true;
   createdAt?: true;
   passwordChangedAt?: true;
   updatedAt?: true;
@@ -135,6 +160,8 @@ export type UserMaxAggregateInputType = {
 
 export type UserCountAggregateInputType = {
   id?: true;
+  stationId?: true;
+  workStatus?: true;
   email?: true;
   balance?: true;
   passwordHash?: true;
@@ -146,6 +173,9 @@ export type UserCountAggregateInputType = {
   otp?: true;
   otpExpiry?: true;
   mustChangePassword?: true;
+  suspensionReason?: true;
+  suspendedAt?: true;
+  suspendedById?: true;
   createdAt?: true;
   passwordChangedAt?: true;
   updatedAt?: true;
@@ -246,6 +276,8 @@ export type UserGroupByArgs<
 
 export type UserGroupByOutputType = {
   id: string;
+  stationId: string | null;
+  workStatus: $Enums.workStatus | null;
   email: string;
   balance: runtime.Decimal;
   passwordHash: string;
@@ -257,6 +289,9 @@ export type UserGroupByOutputType = {
   otp: string | null;
   otpExpiry: Date | null;
   mustChangePassword: boolean;
+  suspensionReason: string | null;
+  suspendedAt: Date | null;
+  suspendedById: string | null;
   createdAt: Date;
   passwordChangedAt: Date | null;
   updatedAt: Date;
@@ -285,6 +320,9 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[];
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
   id?: Prisma.StringFilter<"User"> | string;
+  stationId?: Prisma.StringNullableFilter<"User"> | string | null;
+  workStatus?:
+    Prisma.EnumworkStatusNullableFilter<"User"> | $Enums.workStatus | null;
   email?: Prisma.StringFilter<"User"> | string;
   balance?:
     | Prisma.DecimalFilter<"User">
@@ -302,10 +340,17 @@ export type UserWhereInput = {
   otp?: Prisma.StringNullableFilter<"User"> | string | null;
   otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
   mustChangePassword?: Prisma.BoolFilter<"User"> | boolean;
+  suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null;
+  suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  suspendedById?: Prisma.StringNullableFilter<"User"> | string | null;
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   passwordChangedAt?:
     Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
+  station?: Prisma.XOR<
+    Prisma.StationNullableScalarRelationFilter,
+    Prisma.StationWhereInput
+  > | null;
   userProfile?: Prisma.XOR<
     Prisma.UserProfileNullableScalarRelationFilter,
     Prisma.UserProfileWhereInput
@@ -316,10 +361,17 @@ export type UserWhereInput = {
   completedOrders?: Prisma.OrderListRelationFilter;
   cancelledOrders?: Prisma.OrderListRelationFilter;
   auditLogs?: Prisma.AuditLogListRelationFilter;
+  suspendedBy?: Prisma.XOR<
+    Prisma.UserNullableScalarRelationFilter,
+    Prisma.UserWhereInput
+  > | null;
+  suspendedUsers?: Prisma.UserListRelationFilter;
 };
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
+  stationId?: Prisma.SortOrderInput | Prisma.SortOrder;
+  workStatus?: Prisma.SortOrderInput | Prisma.SortOrder;
   email?: Prisma.SortOrder;
   balance?: Prisma.SortOrder;
   passwordHash?: Prisma.SortOrder;
@@ -331,9 +383,13 @@ export type UserOrderByWithRelationInput = {
   otp?: Prisma.SortOrderInput | Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
   mustChangePassword?: Prisma.SortOrder;
+  suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder;
+  suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  suspendedById?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   passwordChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
+  station?: Prisma.StationOrderByWithRelationInput;
   userProfile?: Prisma.UserProfileOrderByWithRelationInput;
   sessionTokens?: Prisma.SessionTokenOrderByRelationAggregateInput;
   customerOrders?: Prisma.OrderOrderByRelationAggregateInput;
@@ -341,6 +397,8 @@ export type UserOrderByWithRelationInput = {
   completedOrders?: Prisma.OrderOrderByRelationAggregateInput;
   cancelledOrders?: Prisma.OrderOrderByRelationAggregateInput;
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput;
+  suspendedBy?: Prisma.UserOrderByWithRelationInput;
+  suspendedUsers?: Prisma.UserOrderByRelationAggregateInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -352,6 +410,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
     OR?: Prisma.UserWhereInput[];
     NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[];
+    stationId?: Prisma.StringNullableFilter<"User"> | string | null;
+    workStatus?:
+      Prisma.EnumworkStatusNullableFilter<"User"> | $Enums.workStatus | null;
     balance?:
       | Prisma.DecimalFilter<"User">
       | runtime.Decimal
@@ -367,10 +428,17 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     tokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
     otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
     mustChangePassword?: Prisma.BoolFilter<"User"> | boolean;
+    suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null;
+    suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+    suspendedById?: Prisma.StringNullableFilter<"User"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     passwordChangedAt?:
       Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
     updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
+    station?: Prisma.XOR<
+      Prisma.StationNullableScalarRelationFilter,
+      Prisma.StationWhereInput
+    > | null;
     userProfile?: Prisma.XOR<
       Prisma.UserProfileNullableScalarRelationFilter,
       Prisma.UserProfileWhereInput
@@ -381,12 +449,19 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     completedOrders?: Prisma.OrderListRelationFilter;
     cancelledOrders?: Prisma.OrderListRelationFilter;
     auditLogs?: Prisma.AuditLogListRelationFilter;
+    suspendedBy?: Prisma.XOR<
+      Prisma.UserNullableScalarRelationFilter,
+      Prisma.UserWhereInput
+    > | null;
+    suspendedUsers?: Prisma.UserListRelationFilter;
   },
   "id" | "email" | "token" | "otp"
 >;
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
+  stationId?: Prisma.SortOrderInput | Prisma.SortOrder;
+  workStatus?: Prisma.SortOrderInput | Prisma.SortOrder;
   email?: Prisma.SortOrder;
   balance?: Prisma.SortOrder;
   passwordHash?: Prisma.SortOrder;
@@ -398,6 +473,9 @@ export type UserOrderByWithAggregationInput = {
   otp?: Prisma.SortOrderInput | Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrderInput | Prisma.SortOrder;
   mustChangePassword?: Prisma.SortOrder;
+  suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder;
+  suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  suspendedById?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   passwordChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -417,6 +495,11 @@ export type UserScalarWhereWithAggregatesInput = {
     | Prisma.UserScalarWhereWithAggregatesInput
     | Prisma.UserScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<"User"> | string;
+  stationId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
+  workStatus?:
+    | Prisma.EnumworkStatusNullableWithAggregatesFilter<"User">
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringWithAggregatesFilter<"User"> | string;
   balance?:
     | Prisma.DecimalWithAggregatesFilter<"User">
@@ -438,6 +521,12 @@ export type UserScalarWhereWithAggregatesInput = {
   otpExpiry?:
     Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
   mustChangePassword?: Prisma.BoolWithAggregatesFilter<"User"> | boolean;
+  suspensionReason?:
+    Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
+  suspendedAt?:
+    Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
+  suspendedById?:
+    Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string;
   passwordChangedAt?:
     Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null;
@@ -446,6 +535,7 @@ export type UserScalarWhereWithAggregatesInput = {
 
 export type UserCreateInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -457,9 +547,12 @@ export type UserCreateInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
@@ -467,10 +560,14 @@ export type UserCreateInput = {
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -482,6 +579,9 @@ export type UserUncheckedCreateInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -492,10 +592,15 @@ export type UserUncheckedCreateInput = {
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -517,10 +622,15 @@ export type UserUpdateInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
@@ -528,10 +638,17 @@ export type UserUpdateInput = {
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -553,6 +670,12 @@ export type UserUncheckedUpdateInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -564,10 +687,13 @@ export type UserUncheckedUpdateInput = {
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserCreateManyInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -579,6 +705,9 @@ export type UserCreateManyInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -586,6 +715,10 @@ export type UserCreateManyInput = {
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -607,6 +740,10 @@ export type UserUpdateManyMutationInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -615,6 +752,11 @@ export type UserUpdateManyMutationInput = {
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -636,14 +778,37 @@ export type UserUncheckedUpdateManyInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null;
+  isNot?: Prisma.UserWhereInput | null;
+};
+
+export type UserListRelationFilter = {
+  every?: Prisma.UserWhereInput;
+  some?: Prisma.UserWhereInput;
+  none?: Prisma.UserWhereInput;
+};
+
+export type UserOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder;
+};
+
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  stationId?: Prisma.SortOrder;
+  workStatus?: Prisma.SortOrder;
   email?: Prisma.SortOrder;
   balance?: Prisma.SortOrder;
   passwordHash?: Prisma.SortOrder;
@@ -655,6 +820,9 @@ export type UserCountOrderByAggregateInput = {
   otp?: Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrder;
   mustChangePassword?: Prisma.SortOrder;
+  suspensionReason?: Prisma.SortOrder;
+  suspendedAt?: Prisma.SortOrder;
+  suspendedById?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   passwordChangedAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -666,6 +834,8 @@ export type UserAvgOrderByAggregateInput = {
 
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  stationId?: Prisma.SortOrder;
+  workStatus?: Prisma.SortOrder;
   email?: Prisma.SortOrder;
   balance?: Prisma.SortOrder;
   passwordHash?: Prisma.SortOrder;
@@ -677,6 +847,9 @@ export type UserMaxOrderByAggregateInput = {
   otp?: Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrder;
   mustChangePassword?: Prisma.SortOrder;
+  suspensionReason?: Prisma.SortOrder;
+  suspendedAt?: Prisma.SortOrder;
+  suspendedById?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   passwordChangedAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -684,6 +857,8 @@ export type UserMaxOrderByAggregateInput = {
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  stationId?: Prisma.SortOrder;
+  workStatus?: Prisma.SortOrder;
   email?: Prisma.SortOrder;
   balance?: Prisma.SortOrder;
   passwordHash?: Prisma.SortOrder;
@@ -695,6 +870,9 @@ export type UserMinOrderByAggregateInput = {
   otp?: Prisma.SortOrder;
   otpExpiry?: Prisma.SortOrder;
   mustChangePassword?: Prisma.SortOrder;
+  suspensionReason?: Prisma.SortOrder;
+  suspendedAt?: Prisma.SortOrder;
+  suspendedById?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   passwordChangedAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -709,13 +887,51 @@ export type UserScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput;
 };
 
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null;
-  isNot?: Prisma.UserWhereInput | null;
+export type UserCreateNestedOneWithoutSuspendedUsersInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSuspendedUsersInput,
+    Prisma.UserUncheckedCreateWithoutSuspendedUsersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSuspendedUsersInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserCreateNestedManyWithoutSuspendedByInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutSuspendedByInput,
+        Prisma.UserUncheckedCreateWithoutSuspendedByInput
+      >
+    | Prisma.UserCreateWithoutSuspendedByInput[]
+    | Prisma.UserUncheckedCreateWithoutSuspendedByInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput[];
+  createMany?: Prisma.UserCreateManySuspendedByInputEnvelope;
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+};
+
+export type UserUncheckedCreateNestedManyWithoutSuspendedByInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutSuspendedByInput,
+        Prisma.UserUncheckedCreateWithoutSuspendedByInput
+      >
+    | Prisma.UserCreateWithoutSuspendedByInput[]
+    | Prisma.UserUncheckedCreateWithoutSuspendedByInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput[];
+  createMany?: Prisma.UserCreateManySuspendedByInputEnvelope;
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
 };
 
 export type StringFieldUpdateOperationsInput = {
   set?: string;
+};
+
+export type NullableEnumworkStatusFieldUpdateOperationsInput = {
+  set?: $Enums.workStatus | null;
 };
 
 export type DecimalFieldUpdateOperationsInput = {
@@ -754,6 +970,81 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string;
 };
 
+export type UserUpdateOneWithoutSuspendedUsersNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutSuspendedUsersInput,
+    Prisma.UserUncheckedCreateWithoutSuspendedUsersInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSuspendedUsersInput;
+  upsert?: Prisma.UserUpsertWithoutSuspendedUsersInput;
+  disconnect?: Prisma.UserWhereInput | boolean;
+  delete?: Prisma.UserWhereInput | boolean;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutSuspendedUsersInput,
+      Prisma.UserUpdateWithoutSuspendedUsersInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutSuspendedUsersInput
+  >;
+};
+
+export type UserUpdateManyWithoutSuspendedByNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutSuspendedByInput,
+        Prisma.UserUncheckedCreateWithoutSuspendedByInput
+      >
+    | Prisma.UserCreateWithoutSuspendedByInput[]
+    | Prisma.UserUncheckedCreateWithoutSuspendedByInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput[];
+  upsert?:
+    | Prisma.UserUpsertWithWhereUniqueWithoutSuspendedByInput
+    | Prisma.UserUpsertWithWhereUniqueWithoutSuspendedByInput[];
+  createMany?: Prisma.UserCreateManySuspendedByInputEnvelope;
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  update?:
+    | Prisma.UserUpdateWithWhereUniqueWithoutSuspendedByInput
+    | Prisma.UserUpdateWithWhereUniqueWithoutSuspendedByInput[];
+  updateMany?:
+    | Prisma.UserUpdateManyWithWhereWithoutSuspendedByInput
+    | Prisma.UserUpdateManyWithWhereWithoutSuspendedByInput[];
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[];
+};
+
+export type UserUncheckedUpdateManyWithoutSuspendedByNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutSuspendedByInput,
+        Prisma.UserUncheckedCreateWithoutSuspendedByInput
+      >
+    | Prisma.UserCreateWithoutSuspendedByInput[]
+    | Prisma.UserUncheckedCreateWithoutSuspendedByInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput
+    | Prisma.UserCreateOrConnectWithoutSuspendedByInput[];
+  upsert?:
+    | Prisma.UserUpsertWithWhereUniqueWithoutSuspendedByInput
+    | Prisma.UserUpsertWithWhereUniqueWithoutSuspendedByInput[];
+  createMany?: Prisma.UserCreateManySuspendedByInputEnvelope;
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  update?:
+    | Prisma.UserUpdateWithWhereUniqueWithoutSuspendedByInput
+    | Prisma.UserUpdateWithWhereUniqueWithoutSuspendedByInput[];
+  updateMany?:
+    | Prisma.UserUpdateManyWithWhereWithoutSuspendedByInput
+    | Prisma.UserUpdateManyWithWhereWithoutSuspendedByInput[];
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[];
+};
+
 export type UserCreateNestedOneWithoutUserProfileInput = {
   create?: Prisma.XOR<
     Prisma.UserCreateWithoutUserProfileInput,
@@ -778,6 +1069,92 @@ export type UserUpdateOneRequiredWithoutUserProfileNestedInput = {
     >,
     Prisma.UserUncheckedUpdateWithoutUserProfileInput
   >;
+};
+
+export type UserCreateNestedManyWithoutStationInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutStationInput,
+        Prisma.UserUncheckedCreateWithoutStationInput
+      >
+    | Prisma.UserCreateWithoutStationInput[]
+    | Prisma.UserUncheckedCreateWithoutStationInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutStationInput
+    | Prisma.UserCreateOrConnectWithoutStationInput[];
+  createMany?: Prisma.UserCreateManyStationInputEnvelope;
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+};
+
+export type UserUncheckedCreateNestedManyWithoutStationInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutStationInput,
+        Prisma.UserUncheckedCreateWithoutStationInput
+      >
+    | Prisma.UserCreateWithoutStationInput[]
+    | Prisma.UserUncheckedCreateWithoutStationInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutStationInput
+    | Prisma.UserCreateOrConnectWithoutStationInput[];
+  createMany?: Prisma.UserCreateManyStationInputEnvelope;
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+};
+
+export type UserUpdateManyWithoutStationNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutStationInput,
+        Prisma.UserUncheckedCreateWithoutStationInput
+      >
+    | Prisma.UserCreateWithoutStationInput[]
+    | Prisma.UserUncheckedCreateWithoutStationInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutStationInput
+    | Prisma.UserCreateOrConnectWithoutStationInput[];
+  upsert?:
+    | Prisma.UserUpsertWithWhereUniqueWithoutStationInput
+    | Prisma.UserUpsertWithWhereUniqueWithoutStationInput[];
+  createMany?: Prisma.UserCreateManyStationInputEnvelope;
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  update?:
+    | Prisma.UserUpdateWithWhereUniqueWithoutStationInput
+    | Prisma.UserUpdateWithWhereUniqueWithoutStationInput[];
+  updateMany?:
+    | Prisma.UserUpdateManyWithWhereWithoutStationInput
+    | Prisma.UserUpdateManyWithWhereWithoutStationInput[];
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[];
+};
+
+export type UserUncheckedUpdateManyWithoutStationNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.UserCreateWithoutStationInput,
+        Prisma.UserUncheckedCreateWithoutStationInput
+      >
+    | Prisma.UserCreateWithoutStationInput[]
+    | Prisma.UserUncheckedCreateWithoutStationInput[];
+  connectOrCreate?:
+    | Prisma.UserCreateOrConnectWithoutStationInput
+    | Prisma.UserCreateOrConnectWithoutStationInput[];
+  upsert?:
+    | Prisma.UserUpsertWithWhereUniqueWithoutStationInput
+    | Prisma.UserUpsertWithWhereUniqueWithoutStationInput[];
+  createMany?: Prisma.UserCreateManyStationInputEnvelope;
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[];
+  update?:
+    | Prisma.UserUpdateWithWhereUniqueWithoutStationInput
+    | Prisma.UserUpdateWithWhereUniqueWithoutStationInput[];
+  updateMany?:
+    | Prisma.UserUpdateManyWithWhereWithoutStationInput
+    | Prisma.UserUpdateManyWithWhereWithoutStationInput[];
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[];
 };
 
 export type UserCreateNestedOneWithoutSessionTokensInput = {
@@ -944,8 +1321,9 @@ export type UserUpdateOneWithoutAuditLogsNestedInput = {
   >;
 };
 
-export type UserCreateWithoutUserProfileInput = {
+export type UserCreateWithoutSuspendedUsersInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -957,19 +1335,26 @@ export type UserCreateWithoutUserProfileInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
   assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
 };
 
-export type UserUncheckedCreateWithoutUserProfileInput = {
+export type UserUncheckedCreateWithoutSuspendedUsersInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -981,6 +1366,327 @@ export type UserUncheckedCreateWithoutUserProfileInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+};
+
+export type UserCreateOrConnectWithoutSuspendedUsersInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSuspendedUsersInput,
+    Prisma.UserUncheckedCreateWithoutSuspendedUsersInput
+  >;
+};
+
+export type UserCreateWithoutSuspendedByInput = {
+  id?: string;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
+};
+
+export type UserUncheckedCreateWithoutSuspendedByInput = {
+  id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
+};
+
+export type UserCreateOrConnectWithoutSuspendedByInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSuspendedByInput,
+    Prisma.UserUncheckedCreateWithoutSuspendedByInput
+  >;
+};
+
+export type UserCreateManySuspendedByInputEnvelope = {
+  data:
+    | Prisma.UserCreateManySuspendedByInput
+    | Prisma.UserCreateManySuspendedByInput[];
+  skipDuplicates?: boolean;
+};
+
+export type UserUpsertWithoutSuspendedUsersInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutSuspendedUsersInput,
+    Prisma.UserUncheckedUpdateWithoutSuspendedUsersInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSuspendedUsersInput,
+    Prisma.UserUncheckedCreateWithoutSuspendedUsersInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutSuspendedUsersInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutSuspendedUsersInput,
+    Prisma.UserUncheckedUpdateWithoutSuspendedUsersInput
+  >;
+};
+
+export type UserUpdateWithoutSuspendedUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutSuspendedUsersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+};
+
+export type UserUpsertWithWhereUniqueWithoutSuspendedByInput = {
+  where: Prisma.UserWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutSuspendedByInput,
+    Prisma.UserUncheckedUpdateWithoutSuspendedByInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutSuspendedByInput,
+    Prisma.UserUncheckedCreateWithoutSuspendedByInput
+  >;
+};
+
+export type UserUpdateWithWhereUniqueWithoutSuspendedByInput = {
+  where: Prisma.UserWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutSuspendedByInput,
+    Prisma.UserUncheckedUpdateWithoutSuspendedByInput
+  >;
+};
+
+export type UserUpdateManyWithWhereWithoutSuspendedByInput = {
+  where: Prisma.UserScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateManyMutationInput,
+    Prisma.UserUncheckedUpdateManyWithoutSuspendedByInput
+  >;
+};
+
+export type UserScalarWhereInput = {
+  AND?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[];
+  OR?: Prisma.UserScalarWhereInput[];
+  NOT?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[];
+  id?: Prisma.StringFilter<"User"> | string;
+  stationId?: Prisma.StringNullableFilter<"User"> | string | null;
+  workStatus?:
+    Prisma.EnumworkStatusNullableFilter<"User"> | $Enums.workStatus | null;
+  email?: Prisma.StringFilter<"User"> | string;
+  balance?:
+    | Prisma.DecimalFilter<"User">
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFilter<"User"> | string;
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole;
+  accountStatus?: Prisma.EnumAccountStatusFilter<"User"> | $Enums.AccountStatus;
+  verificationStatus?:
+    Prisma.EnumVerificationStatusFilter<"User"> | $Enums.VerificationStatus;
+  token?: Prisma.StringNullableFilter<"User"> | string | null;
+  tokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  otp?: Prisma.StringNullableFilter<"User"> | string | null;
+  otpExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  mustChangePassword?: Prisma.BoolFilter<"User"> | boolean;
+  suspensionReason?: Prisma.StringNullableFilter<"User"> | string | null;
+  suspendedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  suspendedById?: Prisma.StringNullableFilter<"User"> | string | null;
+  createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
+  passwordChangedAt?:
+    Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
+};
+
+export type UserCreateWithoutUserProfileInput = {
+  id?: string;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
+};
+
+export type UserUncheckedCreateWithoutUserProfileInput = {
+  id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -990,6 +1696,7 @@ export type UserUncheckedCreateWithoutUserProfileInput = {
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutUserProfileInput = {
@@ -1022,6 +1729,10 @@ export type UserUpdateToOneWithWhereWithoutUserProfileInput = {
 
 export type UserUpdateWithoutUserProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1043,20 +1754,32 @@ export type UserUpdateWithoutUserProfileInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
   assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutUserProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1078,6 +1801,12 @@ export type UserUncheckedUpdateWithoutUserProfileInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1088,10 +1817,12 @@ export type UserUncheckedUpdateWithoutUserProfileInput = {
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
-export type UserCreateWithoutSessionTokensInput = {
+export type UserCreateWithoutStationInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1103,19 +1834,127 @@ export type UserCreateWithoutSessionTokensInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
+};
+
+export type UserUncheckedCreateWithoutStationInput = {
+  id?: string;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  userProfile?: Prisma.UserProfileUncheckedCreateNestedOneWithoutUserInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedCreateNestedManyWithoutUserInput;
+  customerOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput;
+  assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
+  completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
+  cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
+};
+
+export type UserCreateOrConnectWithoutStationInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutStationInput,
+    Prisma.UserUncheckedCreateWithoutStationInput
+  >;
+};
+
+export type UserCreateManyStationInputEnvelope = {
+  data: Prisma.UserCreateManyStationInput | Prisma.UserCreateManyStationInput[];
+  skipDuplicates?: boolean;
+};
+
+export type UserUpsertWithWhereUniqueWithoutStationInput = {
+  where: Prisma.UserWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutStationInput,
+    Prisma.UserUncheckedUpdateWithoutStationInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutStationInput,
+    Prisma.UserUncheckedCreateWithoutStationInput
+  >;
+};
+
+export type UserUpdateWithWhereUniqueWithoutStationInput = {
+  where: Prisma.UserWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutStationInput,
+    Prisma.UserUncheckedUpdateWithoutStationInput
+  >;
+};
+
+export type UserUpdateManyWithWhereWithoutStationInput = {
+  where: Prisma.UserScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateManyMutationInput,
+    Prisma.UserUncheckedUpdateManyWithoutStationInput
+  >;
+};
+
+export type UserCreateWithoutSessionTokensInput = {
+  id?: string;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
   assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateWithoutSessionTokensInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1127,6 +1966,9 @@ export type UserUncheckedCreateWithoutSessionTokensInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -1136,6 +1978,7 @@ export type UserUncheckedCreateWithoutSessionTokensInput = {
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutSessionTokensInput = {
@@ -1168,6 +2011,10 @@ export type UserUpdateToOneWithWhereWithoutSessionTokensInput = {
 
 export type UserUpdateWithoutSessionTokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1189,20 +2036,32 @@ export type UserUpdateWithoutSessionTokensInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
   assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutSessionTokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1224,6 +2083,12 @@ export type UserUncheckedUpdateWithoutSessionTokensInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1234,10 +2099,12 @@ export type UserUncheckedUpdateWithoutSessionTokensInput = {
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserCreateWithoutCustomerOrdersInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1249,19 +2116,26 @@ export type UserCreateWithoutCustomerOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateWithoutCustomerOrdersInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1273,6 +2147,9 @@ export type UserUncheckedCreateWithoutCustomerOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -1282,6 +2159,7 @@ export type UserUncheckedCreateWithoutCustomerOrdersInput = {
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutCustomerOrdersInput = {
@@ -1294,6 +2172,7 @@ export type UserCreateOrConnectWithoutCustomerOrdersInput = {
 
 export type UserCreateWithoutAssignedOrdersInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1305,19 +2184,26 @@ export type UserCreateWithoutAssignedOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateWithoutAssignedOrdersInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1329,6 +2215,9 @@ export type UserUncheckedCreateWithoutAssignedOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -1338,6 +2227,7 @@ export type UserUncheckedCreateWithoutAssignedOrdersInput = {
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutAssignedOrdersInput = {
@@ -1350,6 +2240,7 @@ export type UserCreateOrConnectWithoutAssignedOrdersInput = {
 
 export type UserCreateWithoutCompletedOrdersInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1361,19 +2252,26 @@ export type UserCreateWithoutCompletedOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
   assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateWithoutCompletedOrdersInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1385,6 +2283,9 @@ export type UserUncheckedCreateWithoutCompletedOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -1394,6 +2295,7 @@ export type UserUncheckedCreateWithoutCompletedOrdersInput = {
   assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutCompletedOrdersInput = {
@@ -1406,6 +2308,7 @@ export type UserCreateOrConnectWithoutCompletedOrdersInput = {
 
 export type UserCreateWithoutCancelledOrdersInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1417,19 +2320,26 @@ export type UserCreateWithoutCancelledOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
   assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateWithoutCancelledOrdersInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1441,6 +2351,9 @@ export type UserUncheckedCreateWithoutCancelledOrdersInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -1450,6 +2363,7 @@ export type UserUncheckedCreateWithoutCancelledOrdersInput = {
   assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutCancelledOrdersInput = {
@@ -1482,6 +2396,10 @@ export type UserUpdateToOneWithWhereWithoutCustomerOrdersInput = {
 
 export type UserUpdateWithoutCustomerOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1503,20 +2421,32 @@ export type UserUpdateWithoutCustomerOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutCustomerOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1538,6 +2468,12 @@ export type UserUncheckedUpdateWithoutCustomerOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1548,6 +2484,7 @@ export type UserUncheckedUpdateWithoutCustomerOrdersInput = {
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUpsertWithoutAssignedOrdersInput = {
@@ -1572,6 +2509,10 @@ export type UserUpdateToOneWithWhereWithoutAssignedOrdersInput = {
 
 export type UserUpdateWithoutAssignedOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1593,20 +2534,32 @@ export type UserUpdateWithoutAssignedOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1628,6 +2581,12 @@ export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1638,6 +2597,7 @@ export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUpsertWithoutCompletedOrdersInput = {
@@ -1662,6 +2622,10 @@ export type UserUpdateToOneWithWhereWithoutCompletedOrdersInput = {
 
 export type UserUpdateWithoutCompletedOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1683,20 +2647,32 @@ export type UserUpdateWithoutCompletedOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
   assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutCompletedOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1718,6 +2694,12 @@ export type UserUncheckedUpdateWithoutCompletedOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1728,6 +2710,7 @@ export type UserUncheckedUpdateWithoutCompletedOrdersInput = {
   assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUpsertWithoutCancelledOrdersInput = {
@@ -1752,6 +2735,10 @@ export type UserUpdateToOneWithWhereWithoutCancelledOrdersInput = {
 
 export type UserUpdateWithoutCancelledOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1773,20 +2760,32 @@ export type UserUpdateWithoutCancelledOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
   assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutCancelledOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1808,6 +2807,12 @@ export type UserUncheckedUpdateWithoutCancelledOrdersInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1818,10 +2823,12 @@ export type UserUncheckedUpdateWithoutCancelledOrdersInput = {
   assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserCreateWithoutAuditLogsInput = {
   id?: string;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1833,19 +2840,26 @@ export type UserCreateWithoutAuditLogsInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
+  station?: Prisma.StationCreateNestedOneWithoutAgentsInput;
   userProfile?: Prisma.UserProfileCreateNestedOneWithoutUserInput;
   sessionTokens?: Prisma.SessionTokenCreateNestedManyWithoutUserInput;
   customerOrders?: Prisma.OrderCreateNestedManyWithoutCustomerInput;
   assignedOrders?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderCreateNestedManyWithoutCancelledByInput;
+  suspendedBy?: Prisma.UserCreateNestedOneWithoutSuspendedUsersInput;
+  suspendedUsers?: Prisma.UserCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
   id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
   email: string;
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
   passwordHash: string;
@@ -1857,6 +2871,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   otp?: string | null;
   otpExpiry?: Date | string | null;
   mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
   createdAt?: Date | string;
   passwordChangedAt?: Date | string | null;
   updatedAt?: Date | string;
@@ -1866,6 +2883,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   assignedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput;
   completedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCompletedByInput;
   cancelledOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutCancelledByInput;
+  suspendedUsers?: Prisma.UserUncheckedCreateNestedManyWithoutSuspendedByInput;
 };
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -1898,6 +2916,10 @@ export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
 
 export type UserUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1919,20 +2941,32 @@ export type UserUpdateWithoutAuditLogsInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
   userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
   sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
   customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
   assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   balance?:
     | Prisma.DecimalFieldUpdateOperationsInput
@@ -1954,6 +2988,12 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   otpExpiry?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
   mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   passwordChangedAt?:
     Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
@@ -1964,6 +3004,313 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
   completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
   cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
+};
+
+export type UserCreateManySuspendedByInput = {
+  id?: string;
+  stationId?: string | null;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+};
+
+export type UserUpdateWithoutSuspendedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  station?: Prisma.StationUpdateOneWithoutAgentsNestedInput;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutSuspendedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
+};
+
+export type UserUncheckedUpdateManyWithoutSuspendedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  stationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+};
+
+export type UserCreateManyStationInput = {
+  id?: string;
+  workStatus?: $Enums.workStatus | null;
+  email: string;
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  passwordHash: string;
+  role?: $Enums.UserRole;
+  accountStatus?: $Enums.AccountStatus;
+  verificationStatus?: $Enums.VerificationStatus;
+  token?: string | null;
+  tokenExpiry?: Date | string | null;
+  otp?: string | null;
+  otpExpiry?: Date | string | null;
+  mustChangePassword?: boolean;
+  suspensionReason?: string | null;
+  suspendedAt?: Date | string | null;
+  suspendedById?: string | null;
+  createdAt?: Date | string;
+  passwordChangedAt?: Date | string | null;
+  updatedAt?: Date | string;
+};
+
+export type UserUpdateWithoutStationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUpdateManyWithoutCancelledByNestedInput;
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput;
+  suspendedBy?: Prisma.UserUpdateOneWithoutSuspendedUsersNestedInput;
+  suspendedUsers?: Prisma.UserUpdateManyWithoutSuspendedByNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutStationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  userProfile?: Prisma.UserProfileUncheckedUpdateOneWithoutUserNestedInput;
+  sessionTokens?: Prisma.SessionTokenUncheckedUpdateManyWithoutUserNestedInput;
+  customerOrders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput;
+  assignedOrders?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput;
+  completedOrders?: Prisma.OrderUncheckedUpdateManyWithoutCompletedByNestedInput;
+  cancelledOrders?: Prisma.OrderUncheckedUpdateManyWithoutCancelledByNestedInput;
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput;
+  suspendedUsers?: Prisma.UserUncheckedUpdateManyWithoutSuspendedByNestedInput;
+};
+
+export type UserUncheckedUpdateManyWithoutStationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  workStatus?:
+    | Prisma.NullableEnumworkStatusFieldUpdateOperationsInput
+    | $Enums.workStatus
+    | null;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  balance?:
+    | Prisma.DecimalFieldUpdateOperationsInput
+    | runtime.Decimal
+    | runtime.DecimalJsLike
+    | number
+    | string;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
+  accountStatus?:
+    Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus;
+  verificationStatus?:
+    | Prisma.EnumVerificationStatusFieldUpdateOperationsInput
+    | $Enums.VerificationStatus;
+  token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tokenExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  otp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  otpExpiry?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  suspensionReason?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  suspendedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  suspendedById?:
+    Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  passwordChangedAt?:
+    Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 /**
@@ -1977,6 +3324,7 @@ export type UserCountOutputType = {
   completedOrders: number;
   cancelledOrders: number;
   auditLogs: number;
+  suspendedUsers: number;
 };
 
 export type UserCountOutputTypeSelect<
@@ -1989,6 +3337,7 @@ export type UserCountOutputTypeSelect<
   completedOrders?: boolean | UserCountOutputTypeCountCompletedOrdersArgs;
   cancelledOrders?: boolean | UserCountOutputTypeCountCancelledOrdersArgs;
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs;
+  suspendedUsers?: boolean | UserCountOutputTypeCountSuspendedUsersArgs;
 };
 
 /**
@@ -2064,12 +3413,24 @@ export type UserCountOutputTypeCountAuditLogsArgs<
   where?: Prisma.AuditLogWhereInput;
 };
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSuspendedUsersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.UserWhereInput;
+};
+
 export type UserSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    stationId?: boolean;
+    workStatus?: boolean;
     email?: boolean;
     balance?: boolean;
     passwordHash?: boolean;
@@ -2081,9 +3442,13 @@ export type UserSelect<
     otp?: boolean;
     otpExpiry?: boolean;
     mustChangePassword?: boolean;
+    suspensionReason?: boolean;
+    suspendedAt?: boolean;
+    suspendedById?: boolean;
     createdAt?: boolean;
     passwordChangedAt?: boolean;
     updatedAt?: boolean;
+    station?: boolean | Prisma.User$stationArgs<ExtArgs>;
     userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
     sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
     customerOrders?: boolean | Prisma.User$customerOrdersArgs<ExtArgs>;
@@ -2091,6 +3456,8 @@ export type UserSelect<
     completedOrders?: boolean | Prisma.User$completedOrdersArgs<ExtArgs>;
     cancelledOrders?: boolean | Prisma.User$cancelledOrdersArgs<ExtArgs>;
     auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>;
+    suspendedBy?: boolean | Prisma.User$suspendedByArgs<ExtArgs>;
+    suspendedUsers?: boolean | Prisma.User$suspendedUsersArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
@@ -2102,6 +3469,8 @@ export type UserSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    stationId?: boolean;
+    workStatus?: boolean;
     email?: boolean;
     balance?: boolean;
     passwordHash?: boolean;
@@ -2113,9 +3482,14 @@ export type UserSelectCreateManyAndReturn<
     otp?: boolean;
     otpExpiry?: boolean;
     mustChangePassword?: boolean;
+    suspensionReason?: boolean;
+    suspendedAt?: boolean;
+    suspendedById?: boolean;
     createdAt?: boolean;
     passwordChangedAt?: boolean;
     updatedAt?: boolean;
+    station?: boolean | Prisma.User$stationArgs<ExtArgs>;
+    suspendedBy?: boolean | Prisma.User$suspendedByArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
 >;
@@ -2126,6 +3500,8 @@ export type UserSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    stationId?: boolean;
+    workStatus?: boolean;
     email?: boolean;
     balance?: boolean;
     passwordHash?: boolean;
@@ -2137,15 +3513,22 @@ export type UserSelectUpdateManyAndReturn<
     otp?: boolean;
     otpExpiry?: boolean;
     mustChangePassword?: boolean;
+    suspensionReason?: boolean;
+    suspendedAt?: boolean;
+    suspendedById?: boolean;
     createdAt?: boolean;
     passwordChangedAt?: boolean;
     updatedAt?: boolean;
+    station?: boolean | Prisma.User$stationArgs<ExtArgs>;
+    suspendedBy?: boolean | Prisma.User$suspendedByArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
 >;
 
 export type UserSelectScalar = {
   id?: boolean;
+  stationId?: boolean;
+  workStatus?: boolean;
   email?: boolean;
   balance?: boolean;
   passwordHash?: boolean;
@@ -2157,6 +3540,9 @@ export type UserSelectScalar = {
   otp?: boolean;
   otpExpiry?: boolean;
   mustChangePassword?: boolean;
+  suspensionReason?: boolean;
+  suspendedAt?: boolean;
+  suspendedById?: boolean;
   createdAt?: boolean;
   passwordChangedAt?: boolean;
   updatedAt?: boolean;
@@ -2167,6 +3553,8 @@ export type UserOmit<
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
   | "id"
+  | "stationId"
+  | "workStatus"
   | "email"
   | "balance"
   | "passwordHash"
@@ -2178,6 +3566,9 @@ export type UserOmit<
   | "otp"
   | "otpExpiry"
   | "mustChangePassword"
+  | "suspensionReason"
+  | "suspendedAt"
+  | "suspendedById"
   | "createdAt"
   | "passwordChangedAt"
   | "updatedAt",
@@ -2187,6 +3578,7 @@ export type UserInclude<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
+  station?: boolean | Prisma.User$stationArgs<ExtArgs>;
   userProfile?: boolean | Prisma.User$userProfileArgs<ExtArgs>;
   sessionTokens?: boolean | Prisma.User$sessionTokensArgs<ExtArgs>;
   customerOrders?: boolean | Prisma.User$customerOrdersArgs<ExtArgs>;
@@ -2194,16 +3586,24 @@ export type UserInclude<
   completedOrders?: boolean | Prisma.User$completedOrdersArgs<ExtArgs>;
   cancelledOrders?: boolean | Prisma.User$cancelledOrdersArgs<ExtArgs>;
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>;
+  suspendedBy?: boolean | Prisma.User$suspendedByArgs<ExtArgs>;
+  suspendedUsers?: boolean | Prisma.User$suspendedUsersArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
-> = {};
+> = {
+  station?: boolean | Prisma.User$stationArgs<ExtArgs>;
+  suspendedBy?: boolean | Prisma.User$suspendedByArgs<ExtArgs>;
+};
 export type UserIncludeUpdateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
-> = {};
+> = {
+  station?: boolean | Prisma.User$stationArgs<ExtArgs>;
+  suspendedBy?: boolean | Prisma.User$suspendedByArgs<ExtArgs>;
+};
 
 export type $UserPayload<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
@@ -2211,6 +3611,7 @@ export type $UserPayload<
 > = {
   name: "User";
   objects: {
+    station: Prisma.$StationPayload<ExtArgs> | null;
     userProfile: Prisma.$UserProfilePayload<ExtArgs> | null;
     sessionTokens: Prisma.$SessionTokenPayload<ExtArgs>[];
     customerOrders: Prisma.$OrderPayload<ExtArgs>[];
@@ -2218,10 +3619,14 @@ export type $UserPayload<
     completedOrders: Prisma.$OrderPayload<ExtArgs>[];
     cancelledOrders: Prisma.$OrderPayload<ExtArgs>[];
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[];
+    suspendedBy: Prisma.$UserPayload<ExtArgs> | null;
+    suspendedUsers: Prisma.$UserPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
+      stationId: string | null;
+      workStatus: $Enums.workStatus | null;
       email: string;
       balance: runtime.Decimal;
       passwordHash: string;
@@ -2233,6 +3638,9 @@ export type $UserPayload<
       otp: string | null;
       otpExpiry: Date | null;
       mustChangePassword: boolean;
+      suspensionReason: string | null;
+      suspendedAt: Date | null;
+      suspendedById: string | null;
       createdAt: Date;
       passwordChangedAt: Date | null;
       updatedAt: Date;
@@ -2786,6 +4194,19 @@ export interface Prisma__UserClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
+  station<T extends Prisma.User$stationArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$stationArgs<ExtArgs>>,
+  ): Prisma.Prisma__StationClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$StationPayload<ExtArgs>,
+      T,
+      "findUniqueOrThrow",
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
   userProfile<T extends Prisma.User$userProfileArgs<ExtArgs> = {}>(
     args?: Prisma.Subset<T, Prisma.User$userProfileArgs<ExtArgs>>,
   ): Prisma.Prisma__UserProfileClient<
@@ -2865,6 +4286,30 @@ export interface Prisma__UserClient<
       >
     | Null
   >;
+  suspendedBy<T extends Prisma.User$suspendedByArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$suspendedByArgs<ExtArgs>>,
+  ): Prisma.Prisma__UserClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$UserPayload<ExtArgs>,
+      T,
+      "findUniqueOrThrow",
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
+  suspendedUsers<T extends Prisma.User$suspendedUsersArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.User$suspendedUsersArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$UserPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2902,6 +4347,8 @@ export interface Prisma__UserClient<
  */
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", "String">;
+  readonly stationId: Prisma.FieldRef<"User", "String">;
+  readonly workStatus: Prisma.FieldRef<"User", "workStatus">;
   readonly email: Prisma.FieldRef<"User", "String">;
   readonly balance: Prisma.FieldRef<"User", "Decimal">;
   readonly passwordHash: Prisma.FieldRef<"User", "String">;
@@ -2913,6 +4360,9 @@ export interface UserFieldRefs {
   readonly otp: Prisma.FieldRef<"User", "String">;
   readonly otpExpiry: Prisma.FieldRef<"User", "DateTime">;
   readonly mustChangePassword: Prisma.FieldRef<"User", "Boolean">;
+  readonly suspensionReason: Prisma.FieldRef<"User", "String">;
+  readonly suspendedAt: Prisma.FieldRef<"User", "DateTime">;
+  readonly suspendedById: Prisma.FieldRef<"User", "String">;
   readonly createdAt: Prisma.FieldRef<"User", "DateTime">;
   readonly passwordChangedAt: Prisma.FieldRef<"User", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"User", "DateTime">;
@@ -3196,6 +4646,10 @@ export type UserCreateManyAndReturnArgs<
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[];
   skipDuplicates?: boolean;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserIncludeCreateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -3281,6 +4735,10 @@ export type UserUpdateManyAndReturnArgs<
    * Limit how many Users to update.
    */
   limit?: number;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserIncludeUpdateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -3356,6 +4814,28 @@ export type UserDeleteManyArgs<
    * Limit how many Users to delete.
    */
   limit?: number;
+};
+
+/**
+ * User.station
+ */
+export type User$stationArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Station
+   */
+  select?: Prisma.StationSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Station
+   */
+  omit?: Prisma.StationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationInclude<ExtArgs> | null;
+  where?: Prisma.StationWhereInput;
 };
 
 /**
@@ -3553,6 +5033,56 @@ export type User$auditLogsArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[];
+};
+
+/**
+ * User.suspendedBy
+ */
+export type User$suspendedByArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null;
+  where?: Prisma.UserWhereInput;
+};
+
+/**
+ * User.suspendedUsers
+ */
+export type User$suspendedUsersArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null;
+  where?: Prisma.UserWhereInput;
+  orderBy?:
+    Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[];
+  cursor?: Prisma.UserWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[];
 };
 
 /**

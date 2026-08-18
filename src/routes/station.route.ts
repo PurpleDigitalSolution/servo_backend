@@ -5,9 +5,13 @@ import {
   getStationById,
   updateAvailability,
   getAvailableStations,
+  updateStation,
 } from "../model/station/Station.controller.js";
 import { validate } from "../middleware/validation.js";
-import { stationRequestSchema } from "../validation/station.validation.js";
+import {
+  stationRequestSchema,
+  updateStationRequestSchema,
+} from "../validation/station.validation.js";
 import { protect } from "../middleware/protection.js";
 import {
   authorize,
@@ -71,6 +75,14 @@ stationRouter.get(
   authorize(["CUSTOMER", "ADMIN", "SUPER_ADMIN"]),
   authorizePermission(["STATION_READ"]),
   getStationById,
+);
+
+stationRouter.put(
+  "/:id",
+  validate(updateStationRequestSchema),
+  authorize(["ADMIN", "SUPER_ADMIN"]),
+  authorizePermission(["STATION_UPDATE"]),
+  updateStation,
 );
 
 export default stationRouter;

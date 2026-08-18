@@ -4,6 +4,7 @@ import "../model/Authentication/authentication.doc.js";
 import "../model/order/order.docs.js";
 import "../model/user/user.doc.js";
 import "../model/station/station.doc.js";
+import "../model/agent/agent.doc.js";
 const generator = new OpenApiGeneratorV3(registry.definitions);
 
 export const openApiDocument = generator.generateDocument({
@@ -34,6 +35,10 @@ export const openApiDocument = generator.generateDocument({
     {
       name: "Station Management",
       description: "Endpoints for managing gas stations",
+    },
+    {
+      name: "Agent Management",
+      description: "Endpoints for managing agents",
     },
   ],
 });
