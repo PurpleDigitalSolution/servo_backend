@@ -121,6 +121,7 @@ enum AuditAction {
   VERIFY
   REFUND
 }
+
 enum resourceType {
   USER
   ROLE
@@ -131,8 +132,17 @@ enum resourceType {
   SETTINGS
   TRANSACTION
 }
+
+enum workStatus {
+  AVAILABLE
+  NOT_AVAILABLE
+}
+
 model User {
   id                 String             @id @default(uuid())
+  stationId          String?
+  station            Station?           @relation("StationAgents", fields: [stationId], references: [id], onDelete: SetNull)
+  workStatus         workStatus?        @default(AVAILABLE)
   email              String             @unique
   balance            Decimal            @default(0.00) @db.Decimal(10, 2)
   passwordHash       String
@@ -155,15 +165,24 @@ model User {
   assignedOrders Order[] @relation("AssignedOrders")
 
   // Audit relationships
-  completedOrders   Order[]    @relation("CompletedOrders")
-  cancelledOrders   Order[]    @relation("CancelledOrders")
-  auditLogs         AuditLog[]
-  createdAt         DateTime   @default(now())
+  completedOrders Order[]    @relation("CompletedOrders")
+  cancelledOrders Order[]    @relation("CancelledOrders")
+  auditLogs       AuditLog[]
+
+  // Self-referencing suspension relations
+  suspensionReason String?
+  suspendedAt      DateTime?
+  suspendedById    String?
+  suspendedBy      User?     @relation("UserSuspensions", fields: [suspendedById], references: [id])
+  suspendedUsers   User[]    @relation("UserSuspensions")
+
+  createdAt         DateTime  @default(now())
   passwordChangedAt DateTime?
-  updatedAt         DateTime   @updatedAt
+  updatedAt         DateTime  @updatedAt
 
   @@index([role])
   @@index([accountStatus])
+  @@index([stationId, role, workStatus])
 }
 
 model UserProfile {
@@ -199,6 +218,7 @@ model Station {
   updatedAt DateTime   @updatedAt
 
   orders Order[]
+  agents User[]  @relation("StationAgents")
 
   @@unique([name, addressStreet, addressCity])
   @@index([addressCity])
@@ -275,9 +295,9 @@ model Transaction {
   paidAt           DateTime?
   gatewayResponse  Json?
 
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@index([orderId])
 }
 
@@ -302,17 +322,17 @@ model IdempotencyRequest {
 }
 
 model AuditLog {
-  id           String   @id @default(uuid())
+  id           String        @id @default(uuid())
   userId       String?
   action       AuditAction
   resourceType resourceType?
-  resourceId   String?  @db.VarChar(100)
-  status       String   @db.VarChar(20)
+  resourceId   String?       @db.VarChar(100)
+  status       String        @db.VarChar(20)
   errorMessage String?
-  ipAddress    String?  @db.Inet
+  ipAddress    String?       @db.Inet
   userAgent    String?
   metadata     Json?
-  createdAt    DateTime @default(now()) @db.Timestamp(3)
+  createdAt    DateTime      @default(now()) @db.Timestamp(3)
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 

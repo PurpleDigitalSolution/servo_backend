@@ -22,3 +22,4 @@ export type PaymentMethod = "PAYSTACK";
 export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
 export type PrismaTx = Prisma.TransactionClient;
 export type providerType = "FLUTTERWAVE" | "PAYSTACK";
+export type workStatus = "AVAILABLE" | "NOT_AVAILABLE";

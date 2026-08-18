@@ -144,3 +144,11 @@ export const idRequestSchema = z.object({
     }),
   }),
 });
+export const assignAgentToOrderRequest = z.object({
+  body: z.object({
+    agentId: z.string().uuid({ message: "Invalid agent ID format" }),
+  }),
+  params: z.object({
+    orderId: z.string().uuid({ message: "Invalid order ID format" }),
+  }),
+});

@@ -142,3 +142,10 @@ export const resourceType = {
 } as const;
 
 export type resourceType = (typeof resourceType)[keyof typeof resourceType];
+
+export const workStatus = {
+  AVAILABLE: "AVAILABLE",
+  NOT_AVAILABLE: "NOT_AVAILABLE",
+} as const;
+
+export type workStatus = (typeof workStatus)[keyof typeof workStatus];

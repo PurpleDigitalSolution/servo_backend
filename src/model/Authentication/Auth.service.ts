@@ -2,6 +2,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import {
   CreateUserDTO,
+  UpdateAccountStatusDTO,
   userWithoutPassword,
 } from "../../interface/user.interface.js";
 import { ApiError } from "../../utils/errorHandler.js";
@@ -11,6 +12,7 @@ import { Response, Request } from "express";
 import config from "../../config/config.js";
 import { TokenService } from "../token/token.service.js";
 import { ClientType } from "../../utils/getClient.js";
+import { AccountStatus, PrismaTx } from "../../types/general.js";
 
 export interface IAuthRepository {
   findUserByEmail(email: string): Promise<any | null>;
@@ -37,7 +39,13 @@ export interface IAuthRepository {
   updateUserPassword(userId: string, passwordHash: string): Promise<void>;
   updateAccountStatus(
     userId: string,
-    status: "SUSPENDED" | "BANNED",
+    status: AccountStatus,
+    suspensionData?: {
+      reason?: string;
+      suspendedAt?: Date | null;
+      suspendedById?: string | null;
+    },
+    tx?: PrismaTx,
   ): Promise<any>;
 }
 
@@ -406,14 +414,35 @@ export class AuthenticationService {
       message || "<p>This is a test email from Servo.</p>",
     );
   }
-  async accountStatusUpdate(
-    userId: string,
-    status: "SUSPENDED" | "BANNED",
-  ): Promise<void> {
+  async accountStatusUpdate({
+    userId,
+    status,
+    adminId,
+    metaData,
+  }: UpdateAccountStatusDTO): Promise<void> {
     const user = await this.authRepository.findUserById(userId);
     if (!user) {
       throw new ApiError(404, "User not found");
     }
-    await this.authRepository.updateAccountStatus(userId, status);
+
+    const isSuspension = status === "SUSPENDED" || status === "BANNED";
+
+    const suspensionData = isSuspension
+      ? {
+          reason: metaData?.reason,
+          suspendedAt: new Date(),
+          suspendedById: adminId ?? null,
+        }
+      : {
+          reason: undefined,
+          suspendedAt: null,
+          suspendedById: null,
+        };
+
+    await this.authRepository.updateAccountStatus(
+      userId,
+      status,
+      suspensionData,
+    );
   }
 }

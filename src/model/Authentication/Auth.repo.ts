@@ -1,6 +1,6 @@
 import { prisma } from "../../config/database.js";
 import { CreateUserDTO } from "../../interface/user.interface.js";
-import { AccountStatus } from "../../types/general.js";
+import { AccountStatus, PrismaTx } from "../../types/general.js";
 import { IAuthRepository } from "./Auth.service.js";
 
 // Note: To prevent circular dependencies, define the contract interface either here
@@ -12,6 +12,7 @@ export class AuthRepository implements IAuthRepository {
   // Consistently select the same payload structure for clean mapping operations
   private readonly defaultUserSelect = {
     id: true,
+    stationId: true,
     email: true,
     role: true,
     accountStatus: true,
@@ -149,11 +150,28 @@ export class AuthRepository implements IAuthRepository {
   }
   async updateAccountStatus(
     userId: string,
-    status: "SUSPENDED" | "BANNED",
+    status: AccountStatus,
+    suspensionData?: {
+      reason?: string;
+      suspendedAt?: Date | null;
+      suspendedById?: string | null;
+    },
+    tx: PrismaTx = this.prismaClient,
   ): Promise<any> {
-    return await this.prismaClient.user.update({
+    const isSuspended = status === "SUSPENDED" || status === "BANNED";
+
+    return await tx.user.update({
       where: { id: userId },
-      data: { accountStatus: status },
+      data: {
+        accountStatus: status,
+        suspensionReason: isSuspended ? suspensionData?.reason : null,
+        suspendedAt: isSuspended
+          ? (suspensionData?.suspendedAt ?? new Date())
+          : null,
+        suspendedById: isSuspended ? suspensionData?.suspendedById : null,
+        // If reactivating an account, reset workStatus/tokens if applicable
+        ...(status === "ACTIVE" && { workStatus: "AVAILABLE" }),
+      },
       select: this.defaultUserSelect,
     });
   }

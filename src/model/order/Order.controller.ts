@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OrderDTO } from "../../interface/dto/order.dto.js";
 import { asyncHandler } from "../../utils/async.js";
-import { OrderService } from "./Order.service.js";
+import { ActorContext, OrderService } from "./Order.service.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { OrderRepository } from "./Order.repository.js";
 import { UserRepository } from "../user/user.repository.js";
@@ -11,25 +11,33 @@ import { prisma } from "../../config/database.js";
 import { StationRepository } from "../station/Station.repository.js";
 import { paymentService } from "../../service/Payments/payment.service.js";
 import { ApiError } from "../../utils/errorHandler.js";
+import { UserRole } from "../../types/general.js";
+import { AgentRepository } from "../agent/agent.repository.js";
+import { OrderAssignmentService } from "../../service/order-assignment/order-assignment.service.js";
 
 const orderRepository = new OrderRepository();
 const userRepository = new UserRepository();
 const transactionRepo = new TransactionRepository();
 
 const stationRepo = new StationRepository();
-
+const agentRepository = new AgentRepository();
 const transactionService = new TransactionService(
   transactionRepo,
   paymentService,
   orderRepository,
 );
-
+const orderAssignment = new OrderAssignmentService(
+  agentRepository,
+  orderRepository,
+);
 const orderService = new OrderService(
   orderRepository,
   userRepository,
   transactionRepo,
   transactionService,
   stationRepo,
+  agentRepository,
+  orderAssignment,
   prisma,
 );
 export class OrderController {
@@ -83,9 +91,22 @@ export class OrderController {
   static listOrders = asyncHandler(async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const orders = await orderService.listOrders(page, limit);
 
-    res.json(new ApiResponse(200, orders, "Orders listed successfully"));
+    if (!req.user) {
+      throw new ApiError(401, "Unauthorized access");
+    }
+
+    const actor: ActorContext = {
+      id: req.user.userId || req.user.userId,
+      role: req.user.role as UserRole,
+      stationId: req.user.stationId, // Fixed key from 'station' to 'stationId'
+    };
+
+    const result = await orderService.listOrders(page, limit, actor);
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, result, "Orders listed successfully"));
   });
   static cancelOrder = asyncHandler(async (req: Request, res: Response) => {
     const { orderId } = req.params;
@@ -118,4 +139,12 @@ export class OrderController {
   });
   static getMobileUserOrders = OrderController.handleGetOrderPipeline("MOBILE");
   static getAdminUserOrders = OrderController.handleGetOrderPipeline("ADMIN");
+  static assignOrderToAgent = asyncHandler(
+    async (req: Request, res: Response) => {
+      const { agentId } = req.body;
+      const { orderId } = req.params;
+      await orderService.assignOrderToAgent(agentId, orderId as string);
+      res.status(200).json(new ApiResponse(200, null, "Order Assigned"));
+    },
+  );
 }

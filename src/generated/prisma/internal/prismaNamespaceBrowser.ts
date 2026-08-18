@@ -82,6 +82,8 @@ export type TransactionIsolationLevel =
 
 export const UserScalarFieldEnum = {
   id: "id",
+  stationId: "stationId",
+  workStatus: "workStatus",
   email: "email",
   balance: "balance",
   passwordHash: "passwordHash",
@@ -93,6 +95,9 @@ export const UserScalarFieldEnum = {
   otp: "otp",
   otpExpiry: "otpExpiry",
   mustChangePassword: "mustChangePassword",
+  suspensionReason: "suspensionReason",
+  suspendedAt: "suspendedAt",
+  suspendedById: "suspendedById",
   createdAt: "createdAt",
   passwordChangedAt: "passwordChangedAt",
   updatedAt: "updatedAt",
