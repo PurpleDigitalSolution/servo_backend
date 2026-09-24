@@ -1,3 +1,4 @@
+import { ApiError } from "../../utils/errorHandler.js";
 import { TokenRepository } from "./sessionToken.js";
 export class TokenService {
   static async isActiveToken(userId: string, sessionId: string) {
@@ -17,13 +18,24 @@ export class TokenService {
     return TokenRepository.deleteAllUserSessions(userId);
   }
   static async rotateSession(userId: string, sessionId: string) {
-    if (typeof TokenRepository.markAsRotated === "function") {
-      await TokenRepository.markAsRotated(userId, sessionId);
-    } else {
-      await TokenRepository.deleteSession(userId, sessionId);
+    const result = await TokenRepository.markAsRotated(userId, sessionId);
+
+    if (result.count !== 1) {
+      throw new ApiError(401, "Refresh token has already been used");
     }
   }
   static revokeAllUserSessions(userId: string) {
     return TokenRepository.deleteAllUserSessions(userId);
+  }
+  static async rotateSessionAtomically(
+    userId: string,
+    oldSessionId: string,
+    newSessionId: string,
+  ) {
+    return TokenRepository.rotateSessionAtomically(
+      userId,
+      oldSessionId,
+      newSessionId,
+    );
   }
 }

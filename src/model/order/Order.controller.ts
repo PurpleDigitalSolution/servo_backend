@@ -7,13 +7,13 @@ import { OrderRepository } from "./Order.repository.js";
 import { UserRepository } from "../user/user.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
 import { TransactionRepository } from "../Transaction/Transaction.repository.js";
-import { prisma } from "../../config/database.js";
 import { StationRepository } from "../station/Station.repository.js";
 import { paymentService } from "../../service/Payments/payment.service.js";
 import { ApiError } from "../../utils/errorHandler.js";
 import { UserRole } from "../../types/general.js";
 import { AgentRepository } from "../agent/agent.repository.js";
 import { OrderAssignmentService } from "../../service/order-assignment/order-assignment.service.js";
+import pricingSettingRepository from "../settings/price.settings/pricing.repository.js";
 
 const orderRepository = new OrderRepository();
 const userRepository = new UserRepository();
@@ -38,7 +38,7 @@ const orderService = new OrderService(
   stationRepo,
   agentRepository,
   orderAssignment,
-  prisma,
+  pricingSettingRepository,
 );
 export class OrderController {
   private static handleGetOrderPipeline = (clientSource: string) => {

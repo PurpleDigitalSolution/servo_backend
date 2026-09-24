@@ -18,7 +18,11 @@ export interface IOrderRepository {
     agentId?: string;
     tx?: PrismaTx;
   }): Promise<any[]>;
-
+  pendingOrder(
+    stationId: string,
+    agentId: string,
+    tx?: PrismaTx,
+  ): Promise<number>;
   getUserOrders(
     userId: string,
     skip: number,
@@ -185,6 +189,19 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
+  async pendingOrder(
+    stationId: string,
+    agentId: string,
+    tx: PrismaTx = prisma,
+  ) {
+    return await tx.order.count({
+      where: {
+        // stationId,
+        assignedAgentId: agentId,
+        // status: "PENDING_CONFIRMATION",
+      },
+    });
+  }
   async findOrderById(orderId: string, tx: PrismaTx = prisma) {
     return await tx.order.findUnique({
       where: { id: orderId },
@@ -280,12 +297,13 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async getUnassignedOrders(tx: PrismaTx = prisma) {
+  async getUnassignedOrders(tx: PrismaTx = prisma, limit = 20) {
     return await tx.order.findMany({
       where: {
         assignedAgentId: null,
         status: "PENDING_CONFIRMATION",
       },
+      take: limit,
       orderBy: {
         createdAt: "asc",
       },
@@ -320,3 +338,6 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 }
+
+const orderRepository = new OrderRepository();
+export default orderRepository;

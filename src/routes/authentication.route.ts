@@ -130,7 +130,7 @@ authenticationRouter.get(
 
 // Logout (Mobile & General)
 authenticationRouter.post("/logout", protect, authController.logout);
-
+authenticationRouter.post("/refresh", authController.refreshSession);
 authenticationRouter.post("/mobile/logout", protect, authController.logout);
 
 // Admin Agent Registration

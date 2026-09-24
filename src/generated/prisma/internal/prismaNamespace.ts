@@ -435,6 +435,8 @@ export const ModelName = {
   Transaction: "Transaction",
   IdempotencyRequest: "IdempotencyRequest",
   AuditLog: "AuditLog",
+  PriceSettings: "PriceSettings",
+  PriceSettingsValue: "PriceSettingsValue",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -464,7 +466,9 @@ export type TypeMap<
       | "order"
       | "transaction"
       | "idempotencyRequest"
-      | "auditLog";
+      | "auditLog"
+      | "priceSettings"
+      | "priceSettingsValue";
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -1076,6 +1080,158 @@ export type TypeMap<
         };
       };
     };
+    PriceSettings: {
+      payload: Prisma.$PriceSettingsPayload<ExtArgs>;
+      fields: Prisma.PriceSettingsFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.PriceSettingsFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.PriceSettingsFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>;
+        };
+        findFirst: {
+          args: Prisma.PriceSettingsFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.PriceSettingsFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>;
+        };
+        findMany: {
+          args: Prisma.PriceSettingsFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>[];
+        };
+        create: {
+          args: Prisma.PriceSettingsCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>;
+        };
+        createMany: {
+          args: Prisma.PriceSettingsCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.PriceSettingsCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>[];
+        };
+        delete: {
+          args: Prisma.PriceSettingsDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>;
+        };
+        update: {
+          args: Prisma.PriceSettingsUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>;
+        };
+        deleteMany: {
+          args: Prisma.PriceSettingsDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.PriceSettingsUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.PriceSettingsUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>[];
+        };
+        upsert: {
+          args: Prisma.PriceSettingsUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsPayload>;
+        };
+        aggregate: {
+          args: Prisma.PriceSettingsAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePriceSettings>;
+        };
+        groupBy: {
+          args: Prisma.PriceSettingsGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.PriceSettingsGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.PriceSettingsCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.PriceSettingsCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
+    PriceSettingsValue: {
+      payload: Prisma.$PriceSettingsValuePayload<ExtArgs>;
+      fields: Prisma.PriceSettingsValueFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.PriceSettingsValueFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.PriceSettingsValueFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>;
+        };
+        findFirst: {
+          args: Prisma.PriceSettingsValueFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.PriceSettingsValueFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>;
+        };
+        findMany: {
+          args: Prisma.PriceSettingsValueFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>[];
+        };
+        create: {
+          args: Prisma.PriceSettingsValueCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>;
+        };
+        createMany: {
+          args: Prisma.PriceSettingsValueCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.PriceSettingsValueCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>[];
+        };
+        delete: {
+          args: Prisma.PriceSettingsValueDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>;
+        };
+        update: {
+          args: Prisma.PriceSettingsValueUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>;
+        };
+        deleteMany: {
+          args: Prisma.PriceSettingsValueDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.PriceSettingsValueUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.PriceSettingsValueUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>[];
+        };
+        upsert: {
+          args: Prisma.PriceSettingsValueUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceSettingsValuePayload>;
+        };
+        aggregate: {
+          args: Prisma.PriceSettingsValueAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePriceSettingsValue>;
+        };
+        groupBy: {
+          args: Prisma.PriceSettingsValueGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.PriceSettingsValueGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.PriceSettingsValueCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.PriceSettingsValueCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -1270,6 +1426,24 @@ export const AuditLogScalarFieldEnum = {
 
 export type AuditLogScalarFieldEnum =
   (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
+export const PriceSettingsScalarFieldEnum = {
+  id: "id",
+  deliveryFeeId: "deliveryFeeId",
+  vatId: "vatId",
+} as const;
+
+export type PriceSettingsScalarFieldEnum =
+  (typeof PriceSettingsScalarFieldEnum)[keyof typeof PriceSettingsScalarFieldEnum];
+
+export const PriceSettingsValueScalarFieldEnum = {
+  id: "id",
+  isEnable: "isEnable",
+  value: "value",
+} as const;
+
+export type PriceSettingsValueScalarFieldEnum =
+  (typeof PriceSettingsValueScalarFieldEnum)[keyof typeof PriceSettingsValueScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",
@@ -1735,6 +1909,8 @@ export type GlobalOmitConfig = {
   transaction?: Prisma.TransactionOmit;
   idempotencyRequest?: Prisma.IdempotencyRequestOmit;
   auditLog?: Prisma.AuditLogOmit;
+  priceSettings?: Prisma.PriceSettingsOmit;
+  priceSettingsValue?: Prisma.PriceSettingsValueOmit;
 };
 
 /* Types for Logging */

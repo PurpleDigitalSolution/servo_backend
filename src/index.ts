@@ -46,12 +46,12 @@ const gracefulShutdown = async (signal: string) => {
   console.log(`${signal} received. Shutting down gracefully...`);
   if (server) {
     server.close(async () => {
-      // await prisma.$disconnect();
+      await prisma.$disconnect();
       console.log("Server and database disconnected");
       process.exit(0);
     });
   } else {
-    // await prisma.$disconnect();
+    await prisma.$disconnect();
     process.exit(0);
   }
 };
