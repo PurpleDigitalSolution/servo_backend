@@ -1,4 +1,5 @@
 import { IAgentRepository } from "../../model/agent/agent.repository.js";
+import { badgeSSEManager } from "../../model/badges/badge.sse.js";
 import { IOrderRepository } from "../../model/order/Order.repository.js";
 import { PrismaTx } from "../../types/general.js";
 import { ApiError } from "../../utils/errorHandler.js";
@@ -22,9 +23,11 @@ export class OrderAssignmentService implements IOrderAssignmentService {
 
   /**
    * Auto-assigns an order to the least busy available agent at the station.
-   * Reuses an existing transaction client if provided, or starts a new one.
    */
   autoAssignOrder = async (orderId: string, tx?: PrismaTx): Promise<void> => {
+    // Track notification payload outside the transaction scope
+    let notificationData: { agentId: string; stationId: string } | null = null;
+
     const executeAssignment = async (activeTx: PrismaTx): Promise<void> => {
       const order = await this.orderRepository.findOrderById(orderId, activeTx);
       if (!order) {
@@ -41,10 +44,10 @@ export class OrderAssignmentService implements IOrderAssignmentService {
           stationId,
           activeTx,
         );
-      // Filter agents under threshold and sort by least busy
-      const eligibleAgents = availableAgents
-        .filter((agent) => agent._count.assignedOrders < MAX_ORDERS_PER_AGENT)
-        .sort((a, b) => a._count.assignedOrders - b._count.assignedOrders);
+
+      const eligibleAgents = availableAgents.filter(
+        (agent) => agent._count.assignedOrders < MAX_ORDERS_PER_AGENT,
+      );
 
       if (eligibleAgents.length === 0) {
         console.warn(
@@ -53,9 +56,9 @@ export class OrderAssignmentService implements IOrderAssignmentService {
         return;
       }
 
-      const selectedAgent = eligibleAgents[0];
+      const selectedAgent =
+        eligibleAgents[Math.floor(Math.random() * eligibleAgents.length)];
 
-      // Execute assignment within transaction scope
       await this.orderRepository.assignOrder(
         order.id,
         selectedAgent.id,
@@ -72,6 +75,7 @@ export class OrderAssignmentService implements IOrderAssignmentService {
           activeTx,
         );
       }
+
       if (selectedAgent._count.assignedOrders + 1 >= MAX_ORDERS_PER_AGENT) {
         await this.agentRepository.updateAgentWorkStatus(
           selectedAgent.id,
@@ -79,24 +83,41 @@ export class OrderAssignmentService implements IOrderAssignmentService {
           activeTx,
         );
       }
+
+      // Record parameters for post-commit dispatch
+      notificationData = { agentId: selectedAgent.id, stationId };
     };
 
-    // Reuse active transaction or create a new transaction boundary
+    // Execute database operations
     if (tx) {
       await executeAssignment(tx);
     } else {
       await this.orderRepository.transaction(executeAssignment);
     }
+
+    // Emit SSE event AFTER transaction completes successfully
+    if (notificationData) {
+      const { agentId, stationId } = notificationData;
+      badgeSSEManager.emitToAgent(
+        agentId,
+        stationId,
+        { item: "order", value: 1 },
+        "NEW_ORDER",
+      );
+    }
+    console.log(`SSE event emitted for manual assignment: Agent Station`);
   };
 
   /**
-   * Manually assigns an agent to an order within a transaction scope.
+   * Manually assigns an agent to an order and triggers an SSE update.
    */
   assignAgentToOrder = async (
     orderId: string,
     agentId: string,
     tx?: PrismaTx,
   ): Promise<void> => {
+    let notificationData: { agentId: string; stationId: string } | null = null;
+
     const executeManualAssignment = async (
       activeTx: PrismaTx,
     ): Promise<void> => {
@@ -111,6 +132,10 @@ export class OrderAssignmentService implements IOrderAssignmentService {
       }
 
       await this.orderRepository.assignOrder(order.id, agent.id, activeTx);
+
+      if (order.stationId) {
+        notificationData = { agentId: agent.id, stationId: order.stationId };
+      }
     };
 
     if (tx) {
@@ -118,5 +143,21 @@ export class OrderAssignmentService implements IOrderAssignmentService {
     } else {
       await this.orderRepository.transaction(executeManualAssignment);
     }
+
+    // Send SSE event for manual assignments post-commit
+    if (notificationData) {
+      const { agentId: assignedAgentId, stationId } = notificationData;
+      badgeSSEManager.emitToAgent(
+        assignedAgentId,
+        stationId,
+        { item: "order", value: 1 },
+        "NEW_ORDER",
+      );
+
+      console.log(
+        `SSE event emitted for manual assignment: Agent ${assignedAgentId}, Station ${stationId}`,
+      );
+    }
+    console.log("notificationData:", notificationData);
   };
 }

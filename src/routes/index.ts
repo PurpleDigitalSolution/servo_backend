@@ -8,6 +8,8 @@ import OrderRouter from "./order.route.js";
 import WebHookRouter from "./webhook.route.js";
 import transactionRouter from "./transaction.route.js";
 import agentRouter from "./agent.route.js";
+import { pricingRoute } from "./pricing.route.js";
+import badgeRouter from "./badges.route.js";
 
 const router = express.Router();
 router.use(sanitizeBodyMiddleware);
@@ -19,5 +21,7 @@ router.use("/stations", stationRouter);
 router.use("/orders", OrderRouter);
 router.use("/transactions", transactionRouter);
 router.use("/agents", agentRouter);
+router.use("/pricing", pricingRoute);
+router.use("/badges", badgeRouter);
 router.use("/webhooks", WebHookRouter);
 export default router;

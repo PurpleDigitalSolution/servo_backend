@@ -15,4 +15,6 @@ export type * from "./models/Order.js";
 export type * from "./models/Transaction.js";
 export type * from "./models/IdempotencyRequest.js";
 export type * from "./models/AuditLog.js";
+export type * from "./models/PriceSettings.js";
+export type * from "./models/PriceSettingsValue.js";
 export type * from "./commonInputTypes.js";

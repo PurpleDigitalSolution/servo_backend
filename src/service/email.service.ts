@@ -134,3 +134,6 @@ export class EmailService implements EmailServiceInterface {
     });
   }
 }
+
+const emailService = new EmailService();
+export default emailService;

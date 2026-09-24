@@ -97,7 +97,7 @@ export class AuthenticationService {
       .digest("hex");
   }
 
-  async registerUser(dto: CreateUserDTO): Promise<any> {
+  async registerUser(dto: CreateUserDTO): Promise<userWithoutPassword> {
     const userExists = await this.authRepository.findUserByEmail(dto.email);
     const userPhoneNumberExists = await this.authRepository.findUserByPhone(
       dto.phoneNumber,
@@ -110,10 +110,41 @@ export class AuthenticationService {
     }
 
     const passwordHash = await this.hashPassword(dto.password);
-    return await this.authRepository.createUserAccount({
+    const user = await this.authRepository.createUserAccount({
       ...dto,
       password: passwordHash,
     });
+
+    // Issue an email-verification OTP the same way forgetPassword does,
+    // so a new account is created but unverified until the user confirms it.
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const secureHashedOtp = this.hashOtp(otp);
+
+    // Save state first
+    await this.authRepository.updateUserOtp(
+      user.id,
+      secureHashedOtp,
+      otpExpiry,
+    );
+
+    try {
+      await this.emailService.sendVerificationEmail(
+        user.email,
+        user.userProfile?.firstName ?? dto.firstName ?? "User",
+        otp,
+      );
+    } catch {
+      // Roll back so the account isn't left with a stale, unreachable OTP
+      await this.authRepository.updateUserOtp(user.id, null, null);
+      throw new ApiError(
+        500,
+        "Account created but failed to send the verification email. Please request a new one.",
+      );
+    }
+
+    const { password: _p, passwordHash: _ph, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async registerAgent(dto: Omit<CreateUserDTO, "password">): Promise<any> {
@@ -166,12 +197,12 @@ export class AuthenticationService {
       throw new ApiError(401, "No active session found");
     }
 
-    const { userId, sessionId } = req.user;
+    const { sessionId } = req.user;
     if (!sessionId) {
       throw new ApiError(400, "Session ID missing from token status");
     }
 
-    await this.sessionService.clearFrom(res, userId, sessionId);
+    await this.sessionService.logout(req, res);
   }
 
   async getAuthenticatedUser(req: Request): Promise<userWithoutPassword> {
@@ -279,6 +310,51 @@ export class AuthenticationService {
         this.authRepository.updateUserToken(user.id, null, null),
       ]);
       return { success: true };
+    }
+  }
+
+  async resendOtp(
+    email: string,
+    purpose: "FORGET_PASSWORD" | "EMAIL_VERIFICATION",
+  ): Promise<void> {
+    if (!email) {
+      throw new ApiError(400, "Email is required");
+    }
+
+    const user = await this.authRepository.findUserByEmailForOtp(email);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (
+      purpose === "EMAIL_VERIFICATION" &&
+      user.verificationStatus === "VERIFIED"
+    ) {
+      throw new ApiError(400, "This account is already verified");
+    }
+
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const secureHashedOtp = this.hashOtp(otp);
+
+    await this.authRepository.updateUserOtp(
+      user.id,
+      secureHashedOtp,
+      otpExpiry,
+    );
+
+    try {
+      await this.emailService.sendVerificationEmail(
+        user.email,
+        user.userProfile?.firstName ?? "User",
+        otp,
+      );
+    } catch {
+      await this.authRepository.updateUserOtp(user.id, null, null);
+      throw new ApiError(
+        500,
+        "Failed to send verification email. Please try again.",
+      );
     }
   }
 

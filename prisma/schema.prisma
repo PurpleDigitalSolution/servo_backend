@@ -340,3 +340,21 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
 }
+
+model PriceSettings {
+  id            String             @id @default(uuid())
+
+  deliveryFeeId String             @unique
+  deliveryFee   PriceSettingsValue @relation("DeliveryFeeRelation", fields: [deliveryFeeId], references: [id])
+
+  vatId         String             @unique
+  vat           PriceSettingsValue @relation("VatRelation", fields: [vatId], references: [id])
+}
+
+model PriceSettingsValue {
+  id                  String         @id @default(uuid())
+  isEnable            Boolean        @default(true)
+  value               Decimal
+  deliveryFeeSettings PriceSettings? @relation("DeliveryFeeRelation")
+  vatSettings         PriceSettings? @relation("VatRelation")
+}

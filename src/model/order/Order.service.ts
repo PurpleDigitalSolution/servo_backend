@@ -1,10 +1,10 @@
-import { PrismaClient } from "../../generated/prisma/client.js";
 import { OrderDTO, OrderResponseDTO } from "../../interface/dto/order.dto.js";
 import { IOrderAssignmentService } from "../../service/order-assignment/order-assignment.service.js";
 import { OrderStatus, PrismaTx } from "../../types/general.js";
-import { ApiError } from "../../utils/errorHandler.js";
+import { ApiError, GatewayError } from "../../utils/errorHandler.js";
 import { canChangeOrderStatus, UserRole } from "../../utils/status.js";
 import { IAgentRepository } from "../agent/agent.repository.js";
+import { IPricingRepository } from "../settings/price.settings/pricing.repository.js";
 import { IStationRepository } from "../station/Station.repository.js";
 import { ITransactionRepository } from "../Transaction/Transaction.repository.js";
 import { TransactionService } from "../Transaction/Transaction.service.js";
@@ -29,9 +29,92 @@ export class OrderService {
     private readonly stationRepository: IStationRepository,
     private readonly agentRepository: IAgentRepository,
     private readonly orderAssignment: IOrderAssignmentService,
-    private readonly prisma: PrismaClient,
+    private readonly priceSettingsRepo: IPricingRepository,
   ) {}
 
+  // async createOrder(orderData: OrderDTO): Promise<OrderResponseDTO> {
+  //   const { customerId, stationId, quantity, unitPrice } = orderData;
+
+  //   if (quantity <= 0 || unitPrice <= 0) {
+  //     throw new ApiError(
+  //       400,
+  //       "Quantity and unit price must be positive numbers.",
+  //     );
+  //   }
+
+  //   // 1. Parallel Dependency Check
+  //   const [user, station] = await Promise.all([
+  //     this.userRepository.findUserById(customerId),
+  //     this.stationRepository.findStationById(stationId),
+  //   ]);
+
+  //   if (!user) throw new ApiError(404, "Target customer profile not found.");
+  //   if (!station) throw new ApiError(404, "Target filling station not found.");
+
+  //   // 2. Server-Controlled Calculations
+  //   const pricingSettings = await this.priceSettingsRepo.getSettings();
+
+  //   const vatRate = if(pricingSettings && pricingSettings.vat.isEnable) pricingSettings.vat.value
+  //   const baselineDeliveryFee = 1200;
+
+  //   const fuelSubtotal = quantity * unitPrice;
+  //   const calculatedVat = Number((fuelSubtotal * vatRate).toFixed(2));
+  //   const totalAmount = Number(
+  //     (fuelSubtotal + calculatedVat + baselineDeliveryFee).toFixed(2),
+  //   );
+
+  //   // 3. Atomic Execution Block
+  //   try {
+  //     return await this.prisma.$transaction(async (tx: any) => {
+  //       const order = await this.orderRepository.createOrder(
+  //         {
+  //           ...orderData,
+  //           fuelSubtotal,
+  //           VAT: calculatedVat,
+  //           deliveryFee: baselineDeliveryFee,
+  //           totalAmount,
+  //         },
+  //         tx,
+  //       );
+
+  //       const transaction = await this.transactionService.initialize({
+  //         orderId: order.id,
+  //         amount: totalAmount,
+  //         name: user.name,
+  //         email: user.email,
+  //         provider: orderData.provider || "PAYSTACK",
+  //         tx,
+  //       });
+
+  //       return {
+  //         ...order,
+  //         payResponse: {
+  //           orderId: order.id,
+  //           authorizationUrl: transaction.authorizationUrl,
+  //           reference: transaction.reference,
+  //         },
+  //       };
+  //     });
+  //   } catch (error: any) {
+  //     if (error instanceof ApiError) throw error;
+  //     console.log(error);
+  //     if (
+  //       error.code === "P2003" ||
+  //       error.code === "23503" ||
+  //       error.message?.includes("foreign key")
+  //     ) {
+  //       throw new ApiError(
+  //         400,
+  //         "Order creation aborted: Invalid relational reference keys supplied.",
+  //       );
+  //     }
+
+  //     throw new ApiError(
+  //       500,
+  //       `Order processing critical error: ${error.message || error}`,
+  //     );
+  //   }
+  // }
   async createOrder(orderData: OrderDTO): Promise<OrderResponseDTO> {
     const { customerId, stationId, quantity, unitPrice } = orderData;
 
@@ -42,7 +125,6 @@ export class OrderService {
       );
     }
 
-    // 1. Parallel Dependency Check
     const [user, station] = await Promise.all([
       this.userRepository.findUserById(customerId),
       this.stationRepository.findStationById(stationId),
@@ -51,51 +133,34 @@ export class OrderService {
     if (!user) throw new ApiError(404, "Target customer profile not found.");
     if (!station) throw new ApiError(404, "Target filling station not found.");
 
-    // 2. Server-Controlled Calculations
-    const vatRate = 0.075; // 7.5% baseline tax
-    const baselineDeliveryFee = 1200;
+    const pricingSettings = await this.priceSettingsRepo.getSettings();
+
+    const deliveryFee = pricingSettings?.deliveryFee?.isEnable
+      ? Number(pricingSettings.deliveryFee.value)
+      : 0;
+    const vatRate = pricingSettings?.vat?.isEnable
+      ? Number(pricingSettings.vat.value) / 100
+      : 0;
 
     const fuelSubtotal = quantity * unitPrice;
     const calculatedVat = Number((fuelSubtotal * vatRate).toFixed(2));
     const totalAmount = Number(
-      (fuelSubtotal + calculatedVat + baselineDeliveryFee).toFixed(2),
+      (fuelSubtotal + calculatedVat + deliveryFee).toFixed(2),
     );
 
-    // 3. Atomic Execution Block
+    // 1. Create the order — a single fast local write, no network calls,
+    // so it can never blow a Prisma interactive-transaction timeout.
+    let order;
     try {
-      return await this.prisma.$transaction(async (tx: any) => {
-        const order = await this.orderRepository.createOrder(
-          {
-            ...orderData,
-            fuelSubtotal,
-            VAT: calculatedVat,
-            deliveryFee: baselineDeliveryFee,
-            totalAmount,
-          },
-          tx,
-        );
-
-        const transaction = await this.transactionService.initialize({
-          orderId: order.id,
-          amount: totalAmount,
-          name: user.name,
-          email: user.email,
-          provider: orderData.provider || "PAYSTACK",
-          tx,
-        });
-
-        return {
-          ...order,
-          payResponse: {
-            orderId: order.id,
-            authorizationUrl: transaction.authorizationUrl,
-            reference: transaction.reference,
-          },
-        };
+      order = await this.orderRepository.createOrder({
+        ...orderData,
+        fuelSubtotal,
+        VAT: calculatedVat,
+        deliveryFee,
+        totalAmount,
       });
     } catch (error: any) {
-      if (error instanceof ApiError) throw error;
-      console.log(error);
+      console.error(error);
       if (
         error.code === "P2003" ||
         error.code === "23503" ||
@@ -106,14 +171,52 @@ export class OrderService {
           "Order creation aborted: Invalid relational reference keys supplied.",
         );
       }
-
       throw new ApiError(
         500,
         `Order processing critical error: ${error.message || error}`,
       );
     }
-  }
 
+    // 2. Initialize payment OUTSIDE any DB transaction. This hits Paystack,
+    // which has unpredictable latency (and now retries on 502/503/504 — see
+    // PayStackGateWay), so it must never hold a DB connection/lock open.
+    try {
+      const transaction = await this.transactionService.initialize({
+        orderId: order.id,
+        amount: totalAmount,
+        name: user.name,
+        email: user.email,
+        provider: orderData.provider || "PAYSTACK",
+        // no `tx` — TransactionService writes this as its own standalone insert
+      });
+
+      return {
+        ...order,
+        payResponse: {
+          orderId: order.id,
+          authorizationUrl: transaction.authorizationUrl,
+          reference: transaction.reference,
+        },
+      };
+    } catch (error) {
+      // The order was created successfully and sits in PENDING_PAYMENT with
+      // no transaction attached. Don't lose it — let the client retry payment
+      // via the existing findPendingTransactionByOrderId flow.
+      console.error(
+        "Payment initialization failed after order creation:",
+        error,
+      );
+
+      if (error instanceof GatewayError && error.status >= 500) throw error;
+
+      throw new ApiError(
+        500,
+        `Order ${order.id} was created but payment initialization failed. Please retry payment for this order.`,
+        [error],
+        error instanceof Error ? error.stack : undefined,
+      );
+    }
+  }
   async listOrders(
     page: number,
     limit: number,

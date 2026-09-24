@@ -20,6 +20,7 @@ const allowedOrigins =
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:5174",
+        "http://localhost:8081",
       ];
 // app.disable("etag");
 app.use(
@@ -36,6 +37,8 @@ app.use(
     allowedHeaders: [
       "Content-Type",
       "Authorization",
+      "ngrok-skip-browser-warning",
+      "x-client-type",
       "X-Request-Id",
       "X-Idempotency-Key",
     ],

@@ -45,8 +45,22 @@ const findAndAssignOrders = async (): Promise<void> => {
   }
 };
 
+// cron/assignPendingOrders.cron.ts
+let isRunning = false;
+
 export const assignPendingOrder = () => {
   cron.schedule("* * * * *", async () => {
-    await findAndAssignOrders();
+    if (isRunning) {
+      console.log(
+        "[Cron] Previous run still in progress on this instance, skipping tick",
+      );
+      return;
+    }
+    isRunning = true;
+    try {
+      await findAndAssignOrders();
+    } finally {
+      isRunning = false;
+    }
   });
 };

@@ -29,7 +29,7 @@ export class AuthController {
         userWithoutPassword.role === "ADMIN" ||
         userWithoutPassword.role === "SUPER_ADMIN" ||
         userWithoutPassword.role === "AGENT"
-          ? "ADMIN"
+          ? "WEB"
           : "MOBILE";
 
       if (clientSource !== expectedClient) {
@@ -125,7 +125,7 @@ export class AuthController {
 
   readonly loginMobile = this.handleLoginPipeline("MOBILE");
 
-  readonly loginAdmin = this.handleLoginPipeline("ADMIN");
+  readonly loginAdmin = this.handleLoginPipeline("WEB");
 
   readonly refreshSession = asyncHandler(
     async (req: Request, res: Response) => {

@@ -30,21 +30,26 @@ export async function withAdvisoryLock<T>(
 ): Promise<{ executed: boolean; result?: T }> {
   const [key1, key2] = hashKeyTo32BitPair(lockKeyName);
 
-  return await prisma.$transaction(async (tx: PrismaTx) => {
-    // Pass two signed 32-bit integers to pg_try_advisory_xact_lock(key1, key2)
-    const [{ acquired }] = await tx.$queryRawUnsafe<
-      Array<{ acquired: boolean }>
-    >(
-      `SELECT pg_try_advisory_xact_lock($1::integer, $2::integer) AS acquired`,
-      key1,
-      key2,
-    );
+  return await prisma.$transaction(
+    async (tx: PrismaTx) => {
+      const [{ acquired }] = await tx.$queryRawUnsafe<
+        Array<{ acquired: boolean }>
+      >(
+        `SELECT pg_try_advisory_xact_lock($1::integer, $2::integer) AS acquired`,
+        key1,
+        key2,
+      );
 
-    if (!acquired) {
-      return { executed: false };
-    }
+      if (!acquired) {
+        return { executed: false };
+      }
 
-    const result = await fn(tx);
-    return { executed: true, result };
-  });
+      const result = await fn(tx);
+      return { executed: true, result };
+    },
+    {
+      maxWait: 5000, // how long to wait for a pool connection before giving up
+      timeout: 20000, // how long the transaction itself is allowed to run
+    },
+  );
 }

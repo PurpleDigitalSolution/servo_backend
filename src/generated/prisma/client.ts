@@ -86,3 +86,13 @@ export type IdempotencyRequest = Prisma.IdempotencyRequestModel;
  *
  */
 export type AuditLog = Prisma.AuditLogModel;
+/**
+ * Model PriceSettings
+ *
+ */
+export type PriceSettings = Prisma.PriceSettingsModel;
+/**
+ * Model PriceSettingsValue
+ *
+ */
+export type PriceSettingsValue = Prisma.PriceSettingsValueModel;

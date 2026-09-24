@@ -62,6 +62,8 @@ export const ModelName = {
   Transaction: "Transaction",
   IdempotencyRequest: "IdempotencyRequest",
   AuditLog: "AuditLog",
+  PriceSettings: "PriceSettings",
+  PriceSettingsValue: "PriceSettingsValue",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -235,6 +237,24 @@ export const AuditLogScalarFieldEnum = {
 
 export type AuditLogScalarFieldEnum =
   (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
+export const PriceSettingsScalarFieldEnum = {
+  id: "id",
+  deliveryFeeId: "deliveryFeeId",
+  vatId: "vatId",
+} as const;
+
+export type PriceSettingsScalarFieldEnum =
+  (typeof PriceSettingsScalarFieldEnum)[keyof typeof PriceSettingsScalarFieldEnum];
+
+export const PriceSettingsValueScalarFieldEnum = {
+  id: "id",
+  isEnable: "isEnable",
+  value: "value",
+} as const;
+
+export type PriceSettingsValueScalarFieldEnum =
+  (typeof PriceSettingsValueScalarFieldEnum)[keyof typeof PriceSettingsValueScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",
