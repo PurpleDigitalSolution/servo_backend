@@ -132,6 +132,11 @@ authenticationRouter.get(
 authenticationRouter.post("/logout", protect, authController.logout);
 authenticationRouter.post("/refresh", authController.refreshSession);
 authenticationRouter.post("/mobile/logout", protect, authController.logout);
+authenticationRouter.delete(
+  "/mobile/account",
+  protect,
+  authController.deleteAccount,
+);
 
 // Admin Agent Registration
 authenticationRouter.post(
