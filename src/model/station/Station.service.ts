@@ -49,7 +49,7 @@ export class StationService {
   }
 
   async getAvailableStations(limit: string, page: string) {
-    const take = Math.min(100, Math.max(1, Number(limit) || 5));
+    const take = Math.min(100, Math.max(1, Number(limit) || 50));
     const pageNum = Math.max(1, Number(page) || 1);
     const skip = (pageNum - 1) * take;
 
