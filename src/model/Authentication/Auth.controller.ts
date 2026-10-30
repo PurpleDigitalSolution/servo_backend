@@ -150,6 +150,13 @@ export class AuthController {
       .json(new ApiResponse(200, null, "User logged out successfully"));
   });
 
+  readonly deleteAccount = asyncHandler(async (req: Request, res: Response) => {
+    await this.authService.deleteAccount(res, req);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "User account deleted successfully"));
+  });
+
   readonly getAuthenticatedUser = asyncHandler(
     async (req: Request, res: Response) => {
       const userWithoutPassword =

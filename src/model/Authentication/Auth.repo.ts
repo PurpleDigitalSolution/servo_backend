@@ -175,4 +175,10 @@ export class AuthRepository implements IAuthRepository {
       select: this.defaultUserSelect,
     });
   }
+
+  async deleteUserAccount(userId: string): Promise<void> {
+    await this.prismaClient.user.delete({
+      where: { id: userId },
+    });
+  }
 }

@@ -179,6 +179,40 @@ registry.registerPath({
     },
   },
 });
+
+registry.registerPath({
+  method: "delete",
+  path: "/auth/account",
+  tags: ["Authentication"],
+  summary: "Delete the authenticated user's account",
+  description:
+    "Permanently deletes the authenticated user's account and clears all active sessions.",
+  security: [{ bearerAuth: [] }],
+  responses: {
+    200: {
+      description: "Account deleted successfully",
+      content: {
+        "application/json": {
+          schema: z.object({
+            statusCode: z.number(),
+            data: z.null(),
+            message: z.string(),
+            success: z.boolean(),
+          }),
+        },
+      },
+    },
+    401: {
+      description: "Unauthorized",
+      content: {
+        "application/json": {
+          schema: errorSchema,
+        },
+      },
+    },
+  },
+});
+
 registry.registerPath({
   method: "post",
   path: "/auth/test-email",

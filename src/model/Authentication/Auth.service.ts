@@ -47,6 +47,7 @@ export interface IAuthRepository {
     },
     tx?: PrismaTx,
   ): Promise<any>;
+  deleteUserAccount(userId: string): Promise<void>;
 }
 
 export interface IEmailService {
@@ -202,6 +203,15 @@ export class AuthenticationService {
       throw new ApiError(400, "Session ID missing from token status");
     }
 
+    await this.sessionService.logout(req, res);
+  }
+
+  async deleteAccount(res: Response, req: Request): Promise<void> {
+    if (!req.user) {
+      throw new ApiError(401, "No active session found");
+    }
+
+    await this.authRepository.deleteUserAccount(req.user.userId);
     await this.sessionService.logout(req, res);
   }
 
